@@ -1,0 +1,40 @@
+digraph TaskTree {
+
+Home [shape=doublecircle]
+Settings
+Bluetooth
+Enable_PairingMode [shape=pentagon]
+Deable_PairingMode [shape=pentagon]
+Wifi
+Enable_Wifi [shape=pentagon]
+Deable_Wifi [shape=pentagon]
+Search [shape=pentagon]
+keyword_Access [shape=pentagon]
+
+Music
+Source [shape=pentagon]
+Equalizer [shape=pentagon]
+
+
+Home -> Settings
+Home -> Music
+
+Settings -> Bluetooth
+Settings -> Wifi
+
+
+Bluetooth -> Enable_PairingMode
+Bluetooth -> Deable_PairingMode
+
+
+Wifi -> Enable_Wifi
+Wifi -> Deable_Wifi
+Wifi -> Search
+Wifi -> keyword_Access
+
+
+Music -> Source
+Music -> Equalizer
+
+
+}
