@@ -1,0 +1,11 @@
+Audio Konzept:
+
+Audio Routing:
+Pulseaudio / ALSA	/ Routing
+BlueALSA  		/ BT Geräte
+
+Balance-Slider
+Volume-Slider
+5-Band EQ
+5-Band Visualizer
+Source-Finder / -Selecter
