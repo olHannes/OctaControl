@@ -9,7 +9,8 @@ def install_apt_packages():
         "pulseaudio",           
         "pulseaudio-module-bluetooth",
         "libportaudio2",        
-        "ffmpeg",               
+        "ffmpeg",    
+        "playerctl",
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)
