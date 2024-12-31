@@ -1,1 +1,61 @@
-/*file for styles*/
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top center, var(--main-color, rgb(48, 48, 48)), black);
+    transition: background-color 0.5s ease;
+}
+
+.slider-container {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 20vh;
+    box-sizing: border-box;
+}
+
+.slider {
+    width: 80%;
+}
+
+input[type=range] {
+    width: 80%;
+    height: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%; 
+    height: 0.75vw;
+    background: #7c7c7c;
+    border-radius: 25px;
+    border: 0;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    width: 6vw;
+    height: 3vw;
+    background: url('../static/media/slider_thumb.png') no-repeat center center;
+    background-size: contain;
+    border: 0;
+    border-radius: 5px;
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -1.125vw;
+    box-shadow: 5px 5px 15px 5px #000000; 
+}
