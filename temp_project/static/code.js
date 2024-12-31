@@ -37,4 +37,33 @@ function updateBackgroundColor() {
     background.style.setProperty('--main-color', newColor);
 }
 
+function updateBrightness() {
+    const sliderValue = brightnessSlider.value;
+    const brightness = sliderValue / 100;
+    document.body.style.filter = `brightness(${brightness})`;
+}
+
 colorSlider.addEventListener('input', updateBackgroundColor);
+brightnessSlider.addEventListener('input', updateBrightness);
+
+
+function switchToSection(section){
+    switch (section){
+        case 'home':
+            document.getElementById('settings').style.display = 'none';
+            document.getElementById('audioControl').style.display = 'none';
+            document.getElementById('home').style.display = 'block';
+            break;
+        case 'settings':
+            document.getElementById('audioControl').style.display = 'none';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('settings').style.display = 'block';
+            break;
+        case 'audioControl':
+            document.getElementById('settings').style.display = 'none';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('audioControl').style.display = 'block';
+            break;
+    }
+}
+
