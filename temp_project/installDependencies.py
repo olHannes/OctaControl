@@ -11,6 +11,7 @@ def install_apt_packages():
         "libportaudio2",        
         "ffmpeg",    
         "playerctl",
+        "alsa-utils",
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)

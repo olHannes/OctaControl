@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamischer Farbverlauf</title>
+    <title>Infotainment System</title>
     <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
@@ -13,15 +13,21 @@
         <div class="title">
             <h1>Home</h1>
         </div>
-        <button onclick="switchToSection('audioControl')">audio control</button>
-        <button onclick="switchToSection('settings')">settings</button>
+
+        <div class="buttonContainer">
+            <button onclick="switchToSection('audioControl')" class="audioControlButton"></button>
+            <button onclick="switchToSection('settings')" class="settingsButton"></button>
+        </div>
+        
     </div>
+
+
 
     <div id="settings" style="display: none;">
         <div class="title">
             <h1>Settings</h1>
         </div>
-        <button onclick="switchToSection('home')">home</button>
+        <button onclick="switchToSection('home')" class="homeButton"></button>
         <div class="slider-container">
             <div class="slider-item">
                 <h5>Color</h5>
@@ -32,6 +38,19 @@
                 <input type="range" id="brightnessSlider" class="slider" min="0" max="200" value="100">
             </div>
         </div>
+
+
+        <div id="bluetooth-container" class="toggle-container">
+            <h5>Bluetooth</h5>
+            <img id="bluetoothToggle" src="../static/media/turnOff.png" alt="Bluetooth Toggle" class="toggle-button">
+        </div>
+        
+        <div id="pairing-container" class="toggle-container">
+            <h5>Pairing Mode</h5>
+            <img id="pairingToggle" src="../static/media/BTPairingOff.png" alt="Pairing Mode Toggle" class="toggle-button">
+        </div>
+        
+        
     </div>
     
 
@@ -39,7 +58,15 @@
         <div class="title">
             <h1>Audio Control</h1>
         </div>
-        <button onclick="switchToSection('home')">home</button>
+        <button onclick="switchToSection('home')" class="homeButton"></button>
+
+        <div class="slider-container">
+            <div class="slider-item">
+                <h5>Volume</h5>
+                <input type="range" id="volumeSlider" class="slider" min="0" max="100" value="25">
+            </div>
+            
+        </div>
     </div>
     
     <script src="../static/code.js"></script>

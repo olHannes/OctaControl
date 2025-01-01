@@ -129,5 +129,47 @@ def get_audio_information():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+
+def run_amixer_command(command):
+    """Helper function to run amixer commands."""
+    try:
+        result = subprocess.run(
+            ["amixer"] + command.split(),
+            text=True,
+            capture_output=True
+        )
+        return result.stdout.strip()
+    except Exception as e:
+        return str(e)
+
+@app.route("/volume/get", methods=["GET"])
+def get_volume():
+    """Get the current system volume."""
+    output = run_amixer_command("get Master")
+    for line in output.split("\n"):
+        if "%" in line:
+            volume = line.split("[")[1].split("%")[0]
+            is_muted = "off" in line
+            return jsonify({
+                "status": "success",
+                "volume": int(volume),
+                "is_muted": is_muted
+            })
+    return jsonify({"status": "error", "message": "Could not retrieve volume."})
+
+@app.route("/volume/set", methods=["POST"])
+def set_volume():
+    """Set the system volume."""
+    data = request.json
+    if "volume" not in data:
+        return jsonify({"status": "error", "message": "Please provide a volume level."}), 400
+    volume = data["volume"]
+    if not (0 <= volume <= 100):
+        return jsonify({"status": "error", "message": "Volume must be between 0 and 100."}), 400
+    output = run_amixer_command(f"set Master {volume}%")
+    return jsonify({"status": "success", "message": output})
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
