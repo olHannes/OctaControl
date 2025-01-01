@@ -176,9 +176,30 @@ input[type=range]::-webkit-slider-thumb {
     top: 20%;
 }
 
+/*style for music Control*/
+#musicControl {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2%;
+    margin: 20px auto;
+}
 
+#musicControl button {
+    padding: 1em 2em;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s, transform 0.2s;
+    flex: 1 1 auto;
+    max-width: 10rem;
+}
 
-
+#musicControl button:hover {
+    background-color: #b4b9c4;
+    transform: scale(1.05);
+}
 
 
 
