@@ -159,46 +159,118 @@ let isBluetoothOn = false;
 let isPairingOn = false;
 
 bluetoothToggle.addEventListener('click', () => {
-    isBluetoothOn = !isBluetoothOn;
     if (isBluetoothOn) {
-        bluetoothToggle.src = '../static/media/turnOn.png';
         enableBt();
     } else {
-        bluetoothToggle.src = '../static/media/turnOff.png';
         disableBt();
     }
 });
 
 pairingToggle.addEventListener('click', () => {
-    isPairingOn = !isPairingOn;
     if (isPairingOn) {
-        pairingToggle.src = '../static/media/BTPairingOn.png';
         enablePairingMode();
     } else {
-        pairingToggle.src = '../static/media/BTPairingOff.png';
         disablePairingMode();
     }
 });
 
-function enableBt() {
+async function enableBt() {
     console.log("Bluetooth eingeschaltet.");
-
+    bluetoothToggle.style.pointerEvents = 'none';
+    try {
+        const response = await fetch("http://localhost:5000/bluetooth/on", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("turned Bluetooth on");
+            bluetoothToggle.src = '../static/media/turnOn.png';
+            isBluetoothOn = !isBluetoothOn;
+        } else {
+            bluetoothToggle.src = '../static/media/turnOff.png';
+            console.error("Error enable Bluetooth:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+    finally{
+        bluetoothToggle.style.pointerEvents = 'auto';
+    }
 }
 
-function disableBt() {
+async function disableBt() {
     console.log("Bluetooth ausgeschaltet.");
+    try {
+        const response = await fetch("http://localhost:5000/bluetooth/off", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("turned Bluetooth off");
+            bluetoothToggle.src = '../static/media/turnOff.png';
+            isBluetoothOn = !isBluetoothOn;
+        } else {
+            bluetoothToggle.src = '../static/media/turnOn.png';
+            console.error("Error disable Bluetooth:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
 
-    
     pairingToggle.src = '../static/media/BTPairingOff.png';
     isPairingOn=false;
 }
 
-function enablePairingMode() {
+async function enablePairingMode() {
     console.log("Pairing-Modus aktiviert.");
+    try {
+        const response = await fetch("http://localhost:5000/pairingmode/on", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("turned pairing mode on");
+            isPairingOn = !isPairingOn;
+            pairingToggle.src = '../static/media/BTPairingOn.png';
+        } else {
+            pairingToggle.src = '../static/media/BTPairingOff.png';
+            console.error("Error enable pairing mode:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
 }
 
-function disablePairingMode() {
+async function disablePairingMode() {
     console.log("Pairing-Modus deaktiviert.");
+    try {
+        const response = await fetch("http://localhost:5000/pairingmode/off", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("turned pairing mode off");
+            isPairingOn = !isPairingOn;
+            pairingToggle.src = '../static/media/BTPairingOff.png';
+        } else {
+            pairingToggle.src = '../static/media/BTPairingOn.png';
+            console.error("Error disable pairing mode:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
 }
 
 

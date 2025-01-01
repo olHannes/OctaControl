@@ -27,6 +27,7 @@ def run_playerctl_command(command):
     except Exception as e:
         return str(e)
 
+# functions for bluetooth-settings
 @app.route("/bluetooth/on", methods=["POST"])
 def bluetooth_on():
     """Turn on Bluetooth."""
