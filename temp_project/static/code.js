@@ -132,20 +132,113 @@ function getVolumeSlider(){
 volumeSlider.addEventListener('input', () => setVolume(getVolumeSlider()));
 
 
-/**audio Control */
-function pauseAudio(){
+/**audio music - Control: play, pause, skip, previous */
 
-}
-function playAudio(){
+async function pauseAudio(){
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
 
+    console.log("pause Audio.");
+    try {
+        const response = await fetch("http://localhost:5000/audio/pause", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("paused Audio");
+        } else {
+            console.error("Error pausing audio:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+    finally {
+        buttons.forEach(button => button.disabled = false);
+    }
 }
-function skipAudio(){
 
+async function playAudio(){
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+    
+    console.log("pause Audio.");
+    try {
+        const response = await fetch("http://localhost:5000/audio/play", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("running Audio");
+        } else {
+            console.error("Error playing audio:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+    finally {
+        buttons.forEach(button => button.disabled = false);
+    }
 }
-function prevAudio(){
 
+async function skipAudio(){
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+
+    console.log("skip Audio.");
+    try {
+        const response = await fetch("http://localhost:5000/audio/skip", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("skipped Audio");
+        } else {
+            console.error("Error skipping audio:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+    finally {
+        buttons.forEach(button => button.disabled = false);
+    }
 }
-function getInfoAudio(){
+
+async function prevAudio(){
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+
+    console.log("previous Audio.");
+    try {
+        const response = await fetch("http://localhost:5000/audio/previous", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("previous Audio");
+        } else {
+            console.error("Error previous audio:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+    finally {
+        buttons.forEach(button => button.disabled = false);
+    }
+}
+
+async function getInfoAudio(){
 
 }
 
@@ -158,20 +251,31 @@ const pairingToggle = document.getElementById('pairingToggle');
 let isBluetoothOn = false;
 let isPairingOn = false;
 
-bluetoothToggle.addEventListener('click', () => {
-    if (isBluetoothOn) {
-        enableBt();
+const bluetoothHeader = document.querySelector('#bluetooth-container');
+bluetoothToggle.addEventListener('click', async () => {
+    bluetoothToggle.style.pointerEvents = 'none';
+    bluetoothHeader.style.opacity="0.3";
+
+    if (!isBluetoothOn) {
+        await enableBt();
     } else {
-        disableBt();
+        await disableBt();
     }
+    bluetoothToggle.style.pointerEvents = 'auto';
+    bluetoothHeader.style.opacity="1";
 });
 
-pairingToggle.addEventListener('click', () => {
-    if (isPairingOn) {
-        enablePairingMode();
+const pairingHeader = document.querySelector('#pairing-container');
+pairingToggle.addEventListener('click', async () => {
+    pairingToggle.style.pointerEvents = 'none';
+    pairingHeader.style.opacity="0.3";
+    if (!isPairingOn) {
+        await enablePairingMode();
     } else {
-        disablePairingMode();
+        await disablePairingMode();
     }
+    pairingToggle.style.pointerEvents = 'auto';
+    pairingHeader.style.opacity="1";
 });
 
 async function enableBt() {
