@@ -151,7 +151,6 @@ input[type=range]::-webkit-slider-thumb {
     align-items: center;
     width: 20%;
     margin: 1rem auto;
-    margin-right: 1%;
     color: white;
 }
 .toggle-container h5 {
