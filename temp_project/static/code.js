@@ -157,6 +157,7 @@ async function pauseAudio(){
     }
     finally {
         buttons.forEach(button => button.disabled = false);
+        setMetaData();
     }
 }
 
@@ -183,6 +184,7 @@ async function playAudio(){
     }
     finally {
         buttons.forEach(button => button.disabled = false);
+        setMetaData();
     }
 }
 
@@ -209,6 +211,7 @@ async function skipAudio(){
     }
     finally {
         buttons.forEach(button => button.disabled = false);
+        setMetaData();
     }
 }
 
@@ -235,12 +238,68 @@ async function prevAudio(){
     }
     finally {
         buttons.forEach(button => button.disabled = false);
+        setMetaData();
     }
 }
 
-async function getInfoAudio(){
-
+async function getInfoAudio() {
+    try {
+        const response = await fetch("http://localhost:5000/audio/getinformation");
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("Info Audio:", data.message);
+            return data.message;
+        } else {
+            console.error("Error Info audio:", data.message);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return null;
+    }
 }
+
+async function setMetaData() {
+    const title = document.getElementById('songTitle');
+    const artist = document.getElementById('artist');
+    const album = document.getElementById('album');
+    const genre = document.getElementById('genre');
+
+    try {
+        const message = await getInfoAudio();
+        if (message) {
+            title.innerHTML = message.title || "Unknown Title";
+            artist.innerHTML = message.artist || "Unknown Artist";
+            album.innerHTML = message.album || "Unknown Album";
+            genre.innerHTML = message.genre || "Unknown Genre";
+        } else {
+            console.error("Metadata konnte nicht geladen werden.");
+        }
+    } catch (error) {
+        console.error("Error beim Setzen der Metadaten:", error);
+    }
+}
+
+function setGenreColor(genre){
+    const genreColors = {
+        "Rock": "#ff0000",
+        "Pop": "#00ff00",
+        "Jazz": "#0000ff",
+        "Classic": "#ff00ff",
+        "Rap": "#ffff00",
+        "Unknown Genre": "#ffffff"
+    };
+    const metaData = document.getElementById('metaData');
+    const genreColor = genreColors[genre] || genreColors["Unknown Genre"];
+    metaData.style.background = `radial-gradient(circle at top center, ${genreColor} 1%, rgb(2, 2, 2) 65%)`;
+}
+
+const genres = ["Rock", "Pop", "Jazz", "Classic", "Rap", "Unknown Genre"];
+
+/*check for new metaData*/
+setInterval(() => {
+    setMetaData();
+}, 5000);
 
 
 /**The following part represents the functions for the bluetooth control */
