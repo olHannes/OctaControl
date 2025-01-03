@@ -4,6 +4,23 @@ document.addEventListener ("DOMContentLoaded", () => {
 });
 
 
+/*function to show errors on the page*/
+function showErrorMessage(title, message) {
+    var errorDiv = document.getElementById('errorMessage');
+    var titleElement = errorDiv.querySelector('h6');
+    var messageElement = errorDiv.querySelector('p');
+
+    titleElement.textContent = title;
+    messageElement.textContent = message;
+
+    errorDiv.style.display = 'block';
+
+    setTimeout(function() {
+        errorDiv.style.display = 'none';
+    }, 3500);
+}
+
+
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');
 const colorValue = document.getElementById('colorValue');
@@ -92,11 +109,10 @@ async function getVolume() {
         if (data.status === "success") {
             return data.volume;
         } else {
-            console.error("Error fetching volume:", data.message);
+            showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + data.message);
         }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + error);    }
 }
 
 async function setVolume(volume) {
@@ -113,10 +129,10 @@ async function setVolume(volume) {
         if (data.status === "success") {
             console.log("Volume set successfully:", data.message);
         } else {
-            console.error("Error setting volume:", data.message);
+            showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + data.message);
         }
     } catch (error) {
-        console.error("Error:", error);
+        showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + error);
     }
 }
 
@@ -150,11 +166,9 @@ async function pauseAudio(){
         if (data.status === "success") {
             console.log("paused Audio");
         } else {
-            console.error("Error pausing audio:", data.message);
-        }
+            showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + data.message);        }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + error);    }
     finally {
         buttons.forEach(button => button.disabled = false);
         setMetaData();
@@ -177,11 +191,9 @@ async function playAudio(){
         if (data.status === "success") {
             console.log("running Audio");
         } else {
-            console.error("Error playing audio:", data.message);
-        }
+            showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + data.message);        }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + error);    }
     finally {
         buttons.forEach(button => button.disabled = false);
         setMetaData();
@@ -204,11 +216,9 @@ async function skipAudio(){
         if (data.status === "success") {
             console.log("skipped Audio");
         } else {
-            console.error("Error skipping audio:", data.message);
-        }
+            showErrorMessage("Fehler beim Überspringen des Titels", data.message);        }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Fehler beim Überspringen des Titels", error);    }
     finally {
         buttons.forEach(button => button.disabled = false);
         setMetaData();
@@ -231,11 +241,9 @@ async function prevAudio(){
         if (data.status === "success") {
             console.log("previous Audio");
         } else {
-            console.error("Error previous audio:", data.message);
-        }
+            showErrorMessage("Fehler beim Zurückspulen", data.message);        }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Fehler beim Zurückspulen", error);    }
     finally {
         buttons.forEach(button => button.disabled = false);
         setMetaData();
@@ -251,10 +259,11 @@ async function getInfoAudio() {
             return data.message;
         } else {
             console.error("Error Info audio:", data.message);
+            showErrorMessage("Fehler beim abrufen der Metadaten", data.message);
             return null;
         }
     } catch (error) {
-        console.error("Error:", error);
+        console.log(error);
         return null;
     }
 }
@@ -379,11 +388,9 @@ async function enableBt() {
             isBluetoothOn = !isBluetoothOn;
         } else {
             bluetoothToggle.src = '../static/media/turnOff.png';
-            console.error("Error enable Bluetooth:", data.message);
-        }
+            showErrorMessage("Bluetooth Fehler", "Fehler beim Einschalten von Bluetooth: " + data.message);        }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Bluetooth Fehler", "Fehler beim Einschalten von Bluetooth: " + error);    }
     finally{
         bluetoothToggle.style.pointerEvents = 'auto';
     }
@@ -405,11 +412,9 @@ async function disableBt() {
             isBluetoothOn = !isBluetoothOn;
         } else {
             bluetoothToggle.src = '../static/media/turnOn.png';
-            console.error("Error disable Bluetooth:", data.message);
-        }
+            showErrorMessage("Bluetooth Fehler", "Fehler beim Ausschalten von Bluetooth: " + data.message);        }
     } catch (error) {
-        console.error("Error:", error);
-    }
+        showErrorMessage("Bluetooth Fehler", "Fehler beim Ausschalten von Bluetooth: " + error);    }
 
     pairingToggle.src = '../static/media/BTPairingOff.png';
     isPairingOn=false;
@@ -431,10 +436,10 @@ async function enablePairingMode() {
             pairingToggle.src = '../static/media/BTPairingOn.png';
         } else {
             pairingToggle.src = '../static/media/BTPairingOff.png';
-            console.error("Error enable pairing mode:", data.message);
+             showErrorMessage("Bluetooth Fehler", "Fehler beim Aktivieren des Pairing-Modus: " + data.message);
         }
     } catch (error) {
-        console.error("Error:", error);
+        showErrorMessage("Bluetooth Fehler", "Fehler beim Aktivieren des Pairing-Modus: " + error);
     }
 }
 
@@ -454,10 +459,10 @@ async function disablePairingMode() {
             pairingToggle.src = '../static/media/BTPairingOff.png';
         } else {
             pairingToggle.src = '../static/media/BTPairingOn.png';
-            console.error("Error disable pairing mode:", data.message);
+            showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + data.message);
         }
     } catch (error) {
-        console.error("Error:", error);
+        showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + error);
     }
 }
 

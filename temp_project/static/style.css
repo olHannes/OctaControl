@@ -15,6 +15,32 @@ body, html {
     z-index: -1;
 }
 
+#errorMessage {
+    position: absolute;
+    bottom: 3%;
+    left: 1%;
+    display: none;
+    background-color: #e9d5d7;
+    color: #721c24;
+    border: 1px solid #883b43;
+    border-radius: 5px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    width: 40%;
+}
+
+#errorMessage h6 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#errorMessage p {
+    margin: 5px 0 0;
+}
+
+
+
 .homeButton {
     position: absolute;
     transform: translate(-50%, -50%);
