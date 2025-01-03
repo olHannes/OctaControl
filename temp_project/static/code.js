@@ -259,6 +259,16 @@ async function getInfoAudio() {
     }
 }
 
+let colorMode = true;
+const genreColors = {
+    "Rock": "#ff0000",
+    "Pop": "#00ff00",
+    "Jazz": "#0000ff",
+    "Classic": "#ff00ff",
+    "Rap": "#ffff00",
+    "Unknown Genre": "#ffffff"
+};
+
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
@@ -272,6 +282,10 @@ async function setMetaData() {
             artist.innerHTML = message.artist || "Unknown Artist";
             album.innerHTML = message.album || "Unknown Album";
             genre.innerHTML = message.genre || "Unknown Genre";
+            
+            if(colorMode){
+                setGenreColor(message.genre);
+            }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
         }
@@ -281,20 +295,23 @@ async function setMetaData() {
 }
 
 function setGenreColor(genre){
-    const genreColors = {
-        "Rock": "#ff0000",
-        "Pop": "#00ff00",
-        "Jazz": "#0000ff",
-        "Classic": "#ff00ff",
-        "Rap": "#ffff00",
-        "Unknown Genre": "#ffffff"
-    };
+    console.log("setGenreColor");
     const metaData = document.getElementById('metaData');
     const genreColor = genreColors[genre] || genreColors["Unknown Genre"];
     metaData.style.background = `radial-gradient(circle at top center, ${genreColor} 1%, rgb(2, 2, 2) 65%)`;
 }
 
-const genres = ["Rock", "Pop", "Jazz", "Classic", "Rap", "Unknown Genre"];
+const colorModeToggle = document.getElementById("genreColorToggle");
+
+colorModeToggle.addEventListener("change", function() {
+    if (colorModeToggle.checked) {
+        colorMode=true;
+        console.log("colorMode is ON");
+    } else {
+        colorMode=false;
+        console.log("colorMode is OFF");
+        metaData.style.background = `radial-gradient(circle at top center, var(--accent-color) 1%, rgb(2, 2, 2) 65%)`;    }
+});
 
 /*check for new metaData*/
 setInterval(() => {

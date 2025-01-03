@@ -232,18 +232,66 @@ input[type=range]::-webkit-slider-thumb {
     align-items: flex-end;
 }
 
-.genre-rock {
-    --accent-color: rgb(255, 0, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.genre-color-toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
 }
 
-.genre-pop {
-    --accent-color: rgb(0, 255, 255);
+.genre-color-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
-.genre-jazz {
-    --accent-color: rgb(255, 215, 0);
+.genre-color-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 30px;
 }
 
-.genre-classical {
-    --accent-color: rgb(128, 0, 128);
+.genre-color-slider::before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .genre-color-slider {
+    background-color: #4caf50;
+}
+
+input:checked + .genre-color-slider::before {
+    transform: translateX(30px);
 }
