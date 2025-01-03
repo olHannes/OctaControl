@@ -167,16 +167,27 @@ def get_volume():
 
 @app.route("/volume/set", methods=["POST"])
 def set_volume():
-    print("try to set Volume")
+    print("Try to set Volume")
     data = request.json
+    if not data:
+        return jsonify({"status": "error", "message": "Invalid JSON format."}), 400  # Für ungültige JSON-Daten
+
     if "volume" not in data:
         return jsonify({"status": "error", "message": "Please provide a volume level."}), 400
-    volume = data["volume"]
+    try:
+        volume = int(data["volume"])
+    except ValueError:
+        return jsonify({"status": "error", "message": "Volume must be an integer."}), 400
+
     if not (0 <= volume <= 100):
         return jsonify({"status": "error", "message": "Volume must be between 0 and 100."}), 400
-    output = run_amixer_command(f"set Master {volume}%")
-    return jsonify({"status": "success", "message": output})
 
+    try:
+        output = run_amixer_command(f"set Master {volume}%")
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Error running amixer: {str(e)}"}), 500  # Fehlerbehandlung für amixer
+
+    return jsonify({"status": "success", "message": output})
 
 
 
