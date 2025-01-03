@@ -103,7 +103,7 @@ const volumeSlider = document.getElementById('volumeSlider');
 
 async function getVolume() {
     try {
-        const response = await fetch("http://localhost:5000/volume/get");
+        const response = await fetch("http://127.0.0.1:5000/volume/get");
         const data = await response.json();
         //data contains status, volume, is_muted
         if (data.status === "success") {
@@ -118,7 +118,7 @@ async function getVolume() {
 async function setVolume(volume) {
     console.log(volume+"%");
     try {
-        const response = await fetch("http://localhost:5000/volume/set", {
+        const response = await fetch("http://127.0.0.1:5000/volume/set", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -156,7 +156,7 @@ async function pauseAudio(){
 
     console.log("pause Audio.");
     try {
-        const response = await fetch("http://localhost:5000/audio/pause", {
+        const response = await fetch("http://127.0.0.1:5000/audio/pause", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -181,7 +181,7 @@ async function playAudio(){
     
     console.log("pause Audio.");
     try {
-        const response = await fetch("http://localhost:5000/audio/play", {
+        const response = await fetch("http://127.0.0.1:5000/audio/play", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -206,7 +206,7 @@ async function skipAudio(){
 
     console.log("skip Audio.");
     try {
-        const response = await fetch("http://localhost:5000/audio/skip", {
+        const response = await fetch("http://127.0.0.1:5000/audio/skip", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -231,7 +231,7 @@ async function prevAudio(){
 
     console.log("previous Audio.");
     try {
-        const response = await fetch("http://localhost:5000/audio/previous", {
+        const response = await fetch("http://127.0.0.1:5000/audio/previous", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -252,7 +252,7 @@ async function prevAudio(){
 
 async function getInfoAudio() {
     try {
-        const response = await fetch("http://localhost:5000/audio/getinformation");
+        const response = await fetch("http://127.0.0.1:5000/audio/getinformation");
         const data = await response.json();
         if (data.status === "success") {
             console.log("Info Audio:", data.message);
@@ -375,7 +375,7 @@ async function enableBt() {
     console.log("Bluetooth eingeschaltet.");
     bluetoothToggle.style.pointerEvents = 'none';
     try {
-        const response = await fetch("http://localhost:5000/bluetooth/on", {
+        const response = await fetch("http://127.0.0.1:5000/bluetooth/on", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -399,7 +399,7 @@ async function enableBt() {
 async function disableBt() {
     console.log("Bluetooth ausgeschaltet.");
     try {
-        const response = await fetch("http://localhost:5000/bluetooth/off", {
+        const response = await fetch("http://127.0.0.1:5000/bluetooth/off", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -423,7 +423,7 @@ async function disableBt() {
 async function enablePairingMode() {
     console.log("Pairing-Modus aktiviert.");
     try {
-        const response = await fetch("http://localhost:5000/pairingmode/on", {
+        const response = await fetch("http://127.0.0.1:5000/pairingmode/on", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -446,7 +446,7 @@ async function enablePairingMode() {
 async function disablePairingMode() {
     console.log("Pairing-Modus deaktiviert.");
     try {
-        const response = await fetch("http://localhost:5000/pairingmode/off", {
+        const response = await fetch("http://127.0.0.1:5000/pairingmode/off", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
