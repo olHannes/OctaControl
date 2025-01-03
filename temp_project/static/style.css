@@ -19,6 +19,7 @@ body, html {
     position: absolute;
     bottom: 3%;
     left: 1%;
+    z-index: 5;
     display: none;
     background-color: #e9d5d7;
     color: #721c24;
