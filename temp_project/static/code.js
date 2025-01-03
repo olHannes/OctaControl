@@ -104,16 +104,20 @@ const volumeSlider = document.getElementById('volumeSlider');
 async function getVolume() {
     try {
         const response = await fetch("http://127.0.0.1:5000/volume/get");
+        if (!response.ok) {
+            throw new Error('Netzwerkantwort war nicht ok');
+        }
         const data = await response.json();
-        //data contains status, volume, is_muted
         if (data.status === "success") {
             return data.volume;
         } else {
             showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + data.message);
         }
     } catch (error) {
-        showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + error);    }
+        showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + error);
+    }
 }
+
 
 async function setVolume(volume) {
     print(volume);
@@ -151,7 +155,8 @@ function getVolumeSlider(){
     return volumeSlider.value;
 }
 
-volumeSlider.addEventListener('input', () => setVolume(getVolumeSlider()));
+volumeSlider.addEventListener('input', () => setVolume(volumeSlider.value));
+
 
 
 /**audio music - Control: play, pause, skip, previous */
