@@ -126,13 +126,18 @@ async function setVolume(volume) {
             },
             body: JSON.stringify({ volume })
         });
-        const data = await response.json();
+        const textResponse = await response.text(); 
+        console.log("Raw response:", textResponse);  // Ausgabe der Antwort ohne Parsing
+    
+        // Falls der Text eine gültige JSON-Antwort ist, umwandeln
+        const data = JSON.parse(textResponse);
         if (data.status === "success") {
             console.log("Volume set successfully:", data.message);
         } else {
             showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + data.message);
         }
     } catch (error) {
+        console.error("Error:", error);
         showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + error);
     }
 }
