@@ -329,7 +329,9 @@ let isPairingOn = false;
 const bluetoothHeader = document.querySelector('#bluetooth-container');
 bluetoothToggle.addEventListener('click', async () => {
     bluetoothToggle.style.pointerEvents = 'none';
+    pairingToggle.style.pointerEvents = 'none';
     bluetoothHeader.style.opacity="0.3";
+    pairingHeader.style.opacity="0.3";
 
     if (!isBluetoothOn) {
         await enableBt();
@@ -337,19 +339,26 @@ bluetoothToggle.addEventListener('click', async () => {
         await disableBt();
     }
     bluetoothToggle.style.pointerEvents = 'auto';
+    pairingToggle.style.pointerEvents = 'auto';
     bluetoothHeader.style.opacity="1";
+    pairingHeader.style.opacity="1";
 });
 
 const pairingHeader = document.querySelector('#pairing-container');
 pairingToggle.addEventListener('click', async () => {
+    bluetoothToggle.style.pointerEvents = 'none';
     pairingToggle.style.pointerEvents = 'none';
+    bluetoothHeader.style.opacity="0.3";
     pairingHeader.style.opacity="0.3";
+
     if (!isPairingOn) {
         await enablePairingMode();
     } else {
         await disablePairingMode();
     }
+    bluetoothToggle.style.pointerEvents = 'auto';
     pairingToggle.style.pointerEvents = 'auto';
+    bluetoothHeader.style.opacity="1";
     pairingHeader.style.opacity="1";
 });
 
