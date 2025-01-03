@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
+import alsaaudio
 
 import subprocess
 
@@ -117,52 +118,24 @@ def pairing_mode_off():
     return jsonify({"status": "success", "message": output})
 
 
-#the following can be ignored for now
-@app.route("/devices/connected", methods=["GET"])
-def connected_devices():
-    output = run_bluetoothctl_command("info")
-    devices = []
-    for line in output.split("\n"):
-        if "Device" in line:
-            device_info = line.split()
-            devices.append({"mac": device_info[1], "name": " ".join(device_info[2:])})
-    return jsonify({"status": "success", "devices": devices})
-
-@app.route("/devices/available", methods=["GET"])
-def available_devices():
-    output = run_bluetoothctl_command("paired-devices")
-    devices = []
-    for line in output.split("\n"):
-        if "Device" in line:
-            device_info = line.split()
-            devices.append({"mac": device_info[1], "name": " ".join(device_info[2:])})
-    return jsonify({"status": "success", "devices": devices})
-
-@app.route("/disconnect", methods=["POST"])
-def disconnect_device():
-    data = request.json
-    if "mac" not in data:
-        return jsonify({"status": "error", "message": "Please provide a MAC address."}), 400
-    mac_address = data["mac"]
-    output = run_bluetoothctl_command(f"disconnect {mac_address}")
-    return jsonify({"status": "success", "message": output})
-
 #volume routes
-
 @app.route("/volume/get", methods=["GET"])
 def get_volume():
-    print("try to get Volume")
-    output = run_amixer_command("get Master")
-    for line in output.split("\n"):
-        if "%" in line:
-            volume = line.split("[")[1].split("%")[0]
-            is_muted = "off" in line
-            return jsonify({
-                "status": "success",
-                "volume": int(volume),
-                "is_muted": is_muted
-            })
-    return jsonify({"status": "error", "message": "Could not retrieve volume."})
+    print("Try to get volume using alsaaudio")
+    try:
+        mixer = alsaaudio.Mixer()
+        volume = mixer.getvolume()[0]
+        is_muted = mixer.getmute()[0] == 1
+        return jsonify({
+            "status": "success",
+            "volume": volume,
+            "is_muted": is_muted
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Could not retrieve volume: {str(e)}"
+        }), 500
 
 
 @app.route("/volume/set", methods=["POST"])
@@ -170,24 +143,30 @@ def set_volume():
     print("Try to set Volume")
     data = request.json
     if not data:
-        return jsonify({"status": "error", "message": "Invalid JSON format."}), 400  # Für ungültige JSON-Daten
-
+        return jsonify({"status": "error", "message": "Invalid JSON format."}), 400
     if "volume" not in data:
         return jsonify({"status": "error", "message": "Please provide a volume level."}), 400
     try:
         volume = int(data["volume"])
     except ValueError:
         return jsonify({"status": "error", "message": "Volume must be an integer."}), 400
-
     if not (0 <= volume <= 100):
         return jsonify({"status": "error", "message": "Volume must be between 0 and 100."}), 400
-
     try:
-        output = run_amixer_command(f"set Master {volume}%")
-    except Exception as e:
-        return jsonify({"status": "error", "message": f"Error running amixer: {str(e)}"}), 500  # Fehlerbehandlung für amixer
+        set_volume_with_alsa(volume)  # Hier wird die Funktion aus `alsaaudio` aufgerufen
+    except alsaaudio.ALSAAudioError as e:
+        return jsonify({"status": "error", "message": f"Error setting volume: {str(e)}"}), 500
 
-    return jsonify({"status": "success", "message": output})
+    return jsonify({"status": "success", "message": f"Volume set to {volume}%"})
+
+
+def set_volume_with_alsa(volume):
+    """Sets the system volume using alsaaudio."""
+    mixer = alsaaudio.Mixer()
+    vol = max(0, min(100, int(volume)))  # Sicherstellen, dass der Wert zwischen 0 und 100 liegt
+    mixer.setvolume(vol)
+
+
 
 
 
@@ -195,6 +174,5 @@ def set_volume():
 def index():
     return render_template("index.html")
 
-# Start the Flask app
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

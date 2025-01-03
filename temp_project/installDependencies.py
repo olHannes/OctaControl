@@ -29,6 +29,7 @@ def install_pip_packages():
         "numpy",
         "sounddevice",
         "pyaudio",
+        "pyalsaaudio",
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
