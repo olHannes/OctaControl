@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..helpers import run_bluetoothctl_command
+from helpers import run_bluetoothctl_command
 
 bluetooth_routes = Blueprint('bluetooth', __name__)
 

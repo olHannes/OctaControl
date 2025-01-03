@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..helpers import run_amixer_command
+from helpers import run_amixer_command
 
 volume_routes = Blueprint('volume', __name__)
 

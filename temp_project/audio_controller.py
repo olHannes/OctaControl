@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from ..helpers import run_playerctl_command
+from helpers import run_playerctl_command
 
 audio_routes = Blueprint('audio', __name__)
 

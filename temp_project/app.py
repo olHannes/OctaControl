@@ -1,7 +1,7 @@
 from flask import Flask
-from controllers.bluetooth_controller import bluetooth_routes
-from controllers.audio_controller import audio_routes
-from controllers.volume_controller import volume_routes
+from bluetooth_controller import bluetooth_routes
+from audio_controller import audio_routes
+from volume_controller import volume_routes
 
 app = Flask(__name__)
 
