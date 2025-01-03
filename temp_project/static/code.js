@@ -320,7 +320,6 @@ setInterval(() => {
 
 
 /**The following part represents the functions for the bluetooth control */
-
 const bluetoothToggle = document.getElementById('bluetoothToggle');
 const pairingToggle = document.getElementById('pairingToggle');
 
