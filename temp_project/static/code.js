@@ -116,6 +116,7 @@ async function getVolume() {
 }
 
 async function setVolume(volume) {
+    print(volume);
     console.log(volume+"%");
     try {
         const response = await fetch("http://127.0.0.1:5000/volume/set", {

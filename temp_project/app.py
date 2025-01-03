@@ -44,26 +44,31 @@ app = Flask(__name__)
 #audio routes
 @app.route("/audio/play", methods=["POST"])
 def play_audio():
+    print("trying to play audio")
     output = run_playerctl_command("play")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/audio/pause", methods=["POST"])
 def pause_audio():
+    print("trying to pause audio")
     output = run_playerctl_command("pause")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/audio/skip", methods=["POST"])
 def skip_audio():
+    print("trying to skip audio")
     output = run_playerctl_command("next")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/audio/previous", methods=["POST"])
 def previous_audio():
+    print("trying to previous audio")
     output = run_playerctl_command("previous")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/audio/getinformation", methods=["GET"])
 def get_audio_information():
+    print("trying to get audio information")
     try:
         title = run_playerctl_command("metadata xesam:title")
         artist = run_playerctl_command("metadata xesam:artist")
@@ -87,22 +92,26 @@ def get_audio_information():
 
 @app.route("/bluetooth/on", methods=["POST"])
 def bluetooth_on():
+    print("try to turn on bluetooth")
     output = run_bluetoothctl_command("power on")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/bluetooth/off", methods=["POST"])
 def bluetooth_off():
+    print("try to turn off bluetooth")
     output = run_bluetoothctl_command("power off")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/pairingmode/on", methods=["POST"])
 def pairing_mode_on():
+    print("try to turn on pairing mode")
     run_bluetoothctl_command("discoverable on")
     output = run_bluetoothctl_command("pairable on")
     return jsonify({"status": "success", "message": output})
 
 @app.route("/pairingmode/off", methods=["POST"])
 def pairing_mode_off():
+    print("try to turn off pairing mode")
     run_bluetoothctl_command("discoverable off")
     output = run_bluetoothctl_command("pairable off")
     return jsonify({"status": "success", "message": output})
@@ -142,7 +151,7 @@ def disconnect_device():
 
 @app.route("/volume/get", methods=["GET"])
 def get_volume():
-    print("get Volume -------------------")
+    print("try to get Volume")
     output = run_amixer_command("get Master")
     for line in output.split("\n"):
         if "%" in line:
@@ -158,6 +167,7 @@ def get_volume():
 
 @app.route("/volume/set", methods=["POST"])
 def set_volume():
+    print("try to set Volume")
     data = request.json
     if "volume" not in data:
         return jsonify({"status": "error", "message": "Please provide a volume level."}), 400
