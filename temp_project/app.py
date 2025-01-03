@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from bluetooth_controller import bluetooth_routes
 from audio_controller import audio_routes
 from volume_controller import volume_routes
@@ -9,6 +9,10 @@ app = Flask(__name__)
 app.register_blueprint(bluetooth_routes)
 app.register_blueprint(audio_routes)
 app.register_blueprint(volume_routes)
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 # Start the Flask app
 if __name__ == "__main__":
