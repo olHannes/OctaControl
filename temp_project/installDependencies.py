@@ -5,7 +5,8 @@ def install_apt_packages():
     apt_packages = [
         "python3",              
         "python3-pip",          
-        "bluez",                
+        "bluez",
+        "gir1.2-glib-2.0",                
         "pulseaudio",           
         "pulseaudio-module-bluetooth",
         "libportaudio2",        
@@ -30,6 +31,8 @@ def install_pip_packages():
         "sounddevice",
         "pyaudio",
         "pyalsaaudio",
+        "pydbus",
+        "Pillow",
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
