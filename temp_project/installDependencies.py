@@ -30,7 +30,7 @@ def install_pip_packages():
         "pyaudio",
     ]
     try:
-        subprocess.run(["pip3", "install"] + pip_packages, check=True)
+        subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
         print("Python packages installed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error installing Python packages: {e}")
