@@ -25,6 +25,7 @@ def install_pip_packages():
     print("Installing necessary Python packages...")
     pip_packages = [
         "flask",
+        "flask-cors",
         "numpy",
         "sounddevice",
         "pyaudio",
