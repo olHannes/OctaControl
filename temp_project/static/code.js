@@ -147,9 +147,15 @@ async function setVolume(volume) {
 }
 
 
-function setVolumeSlider(pValue){
-    volumeSlider.value=pValue;
+function setVolumeSlider(pValuePromise) {
+    pValuePromise.then(pValue => {
+        console.log(pValue);
+        volumeSlider.value = pValue;
+    }).catch(error => {
+        console.error("Fehler beim Abrufen des Volume-Werts:", error);
+    });
 }
+
 
 function getVolumeSlider(){
     return volumeSlider.value;
