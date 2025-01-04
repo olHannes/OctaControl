@@ -35,11 +35,13 @@ def run_amixer_command(command):
         return str(e)
 
 def set_volume_with_alsa(volume):
+    print("set Volume with alsa -->")
     mixer = alsaaudio.Mixer()
-    vol = max(0, min(100, int(volume)))  # Ensure volume is within the valid range
+    vol = max(0, min(100, int(volume)))
     mixer.setvolume(vol)
 
 def get_volume_with_alsa():
+    print("get Volume with alsa <--")
     mixer = alsaaudio.Mixer()
     volume = mixer.getvolume()[0]
     is_muted = mixer.getmute()[0] == 1

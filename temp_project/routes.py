@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from media_player import MediaPlayer
+from media_player import *
 from utils import *
 
 app_routes = Blueprint('app_routes', __name__)

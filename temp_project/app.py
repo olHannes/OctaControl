@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
-from routes import app_routes
+from routes import *
 
 app = Flask(__name__)
 
