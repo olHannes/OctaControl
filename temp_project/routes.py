@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
 from media_player import MediaPlayer
-from utils import run_bluetoothctl_command, run_playerctl_command, run_amixer_command, set_volume_with_alsa
+from utils import *
 
 app_routes = Blueprint('app_routes', __name__)
+
 
 # Audio Routes
 @app_routes.route("/audio/play", methods=["POST"])
