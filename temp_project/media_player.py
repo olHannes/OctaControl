@@ -17,24 +17,28 @@ class MediaPlayer:
 
     def play(self):
         try:
+            print("try to -play-")
             self.Play()
         except Exception as e:
             raise Exception(f"Failed to play: {str(e)}")
 
     def pause(self):
         try:
+            print("try to -pause-")
             self.Pause()
         except Exception as e:
             raise Exception(f"Failed to pause: {str(e)}")
 
     def next(self):
         try:
+            print("try to -next-")
             self.Next()
         except Exception as e:
             raise Exception(f"Failed to skip to next track: {str(e)}")
 
     def previous(self):
         try:
+            print("try to -previous-")
             self.Previous()
         except Exception as e:
             raise Exception(f"Failed to go to previous track: {str(e)}")
