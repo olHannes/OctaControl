@@ -272,8 +272,8 @@ async function getInfoAudio() {
         const response = await fetch("http://127.0.0.1:5000/audio/getinformation");
         const data = await response.json();
         if (data.status === "success") {
-            console.log("Info Audio:", data.message);
-            return data.message;
+            console.log("Info Audio:", data.information);
+            return data.information;
         } else {
             console.error("Error Info audio:", data.message);
             showErrorMessage("Fehler beim abrufen der Metadaten", data.message);
