@@ -50,6 +50,49 @@ def previous_audio():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+
+
+def get_audio_metadata():
+    try:
+        player = MediaPlayer()
+        metadata = player.Track
+        
+        title = metadata.get('Title', 'Unknown Title')
+        artist = metadata.get('Artist', 'Unknown Artist')
+        album = metadata.get('Album', 'Unknown Album')
+        genre = metadata.get('Genre', 'Unknown Genre')
+        
+        return {
+            "title": title,
+            "artist": artist,
+            "album": album,
+            "genre": genre
+        }
+    except MediaPlayer.DeviceNotFoundError:
+        raise Exception("No Bluetooth media player found.")
+    except Exception as e:
+        raise Exception(f"Failed to retrieve metadata: {str(e)}")
+
+
+
+@app_routes.route("/audio/getinformation", methods=["GET"])
+def get_audio_information():
+    """Flask route to get audio information."""
+    print("Trying to get audio information")
+    try:
+        metadata = get_audio_metadata()
+        return jsonify({
+            "status": "success",
+            "information": metadata
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+
+
 # Bluetooth routes
 @app_routes.route("/bluetooth/on", methods=["POST"])
 def bluetooth_on():

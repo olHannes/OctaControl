@@ -13,20 +13,28 @@ class MediaPlayer:
     
     class DeviceNotFoundError(Exception):
         def __init__(self):
-            super().__init__('No Bluetooth media player found')
+            super().__init__('No Bluetooth media player was found')
 
     def play(self):
-        print("function: play")
-        self.Play()
+        try:
+            self.Play()
+        except Exception as e:
+            raise Exception(f"Failed to play: {str(e)}")
 
     def pause(self):
-        print("function: pause")
-        self.Pause()
+        try:
+            self.Pause()
+        except Exception as e:
+            raise Exception(f"Failed to pause: {str(e)}")
 
     def next(self):
-        print("function: next")
-        self.Next()
+        try:
+            self.Next()
+        except Exception as e:
+            raise Exception(f"Failed to skip to next track: {str(e)}")
 
     def previous(self):
-        print("function: previous")
-        self.Previous()
+        try:
+            self.Previous()
+        except Exception as e:
+            raise Exception(f"Failed to go to previous track: {str(e)}")
