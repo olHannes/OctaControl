@@ -80,24 +80,26 @@ class MediaPlayer:
             print(f"Failed to go to previous track: {str(e)}")
             raise Exception(f"Failed to go to previous track: {str(e)}")
 
-    def get_information(self):
-        """Gibt die Metadaten des aktuellen Tracks zurück."""
-        try:
-            if self.player:
-                metadata = self.player.Metadata
-                title = metadata.get('Title', 'Unknown Title')
-                artist = metadata.get('Artist', 'Unknown Artist')
-                album = metadata.get('Album', 'Unknown Album')
-                genre = metadata.get('Genre', 'Unknown Genre')
 
-                return {
-                    "title": title,
-                    "artist": artist,
-                    "album": album,
-                    "genre": genre
-                }
-            else:
-                raise Exception("No player found to retrieve metadata.")
+
+class MetaPlayer:
+    def __new__(self):
+        try:
+            bus = SystemBus()
+            manager = bus.get('org.bluez', '/')
+
+            managed_objects = manager.GetManagedObjects()
+
+            for obj, props in managed_objects.items():
+
+                if obj.endswith('/player0') and 'org.bluez.MediaPlayer1' in props:
+                    return bus.get('org.bluez', obj)
+            
+            print("No valid player0 object found.")
+            raise MediaPlayer.DeviceNotFoundError
         except Exception as e:
-            print(f"Failed to retrieve metadata: {str(e)}")
-            raise Exception(f"Failed to retrieve metadata: {str(e)}")
+            raise e
+
+    class DeviceNotFoundError(Exception):
+        def __init__(self):
+            super().__init__('No Bluetooth media player was found')
