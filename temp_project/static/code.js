@@ -1,6 +1,7 @@
 /**function executed when the page is loaded -> initial loadings */
 document.addEventListener ("DOMContentLoaded", () => {
 	setVolumeSlider(getVolume());
+    disableBt();
 });
 
 
