@@ -18,28 +18,11 @@ class MediaPlayer(object):
         def __init__(self):
             super().__init__('No bluetooth device was found')
 
-def print_metadata():
+
+def print_meta():
     try:
         handle = MediaPlayer()
-
-        # Hole die aktuellen Metadaten einmalig ab
-        track_metadata = handle.Get('org.freedesktop.DBus.Properties', 'Track')
-        title = track_metadata.get('Title', 'Unknown Title')
-        duration = track_metadata.get('Duration', 'Unknown Duration')
-        album = track_metadata.get('Album', 'Unknown Album')
-        artist = track_metadata.get('Artist', 'Unknown Artist')
-
-        # Zeige die Metadaten an
-        print("Metadata:")
-        print(f"Title: {title}")
-        print(f"Duration: {duration}")
-        print(f"Album: {album}")
-        print(f"Artist: {artist}")
-        
+        metadata = handle.Track
+        print(metadata)
     except MediaPlayer.DeviceNotFoundError:
-        print("No Bluetooth device found.")
-    except Exception as e:
-        print(f"Error: {e}")
-
-# Aufruf der Funktion
-print_metadata()
+        print("No device found")
