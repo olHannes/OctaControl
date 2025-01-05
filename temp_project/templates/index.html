@@ -9,6 +9,11 @@
 <body>
     <div class="background"></div>
 
+    <div id="sleepTimer">
+        <img src="../static/media/wallpaper.jpg" alt="wallpaper Image">
+        <p>touch to proceed...</p>
+    </div>
+    
     <div id="errorMessage">
         <h6>Error Title</h6>
         <p>Error content goes here.</p>
@@ -69,7 +74,15 @@
         <div id="fScreen-toggle">
             <button id="toggleFullscreen" onclick="toggleFullscreen()"><s>fScreen</s></button>
         </div>
-               
+
+        <label>SleepTimer</label>
+        <select id="sleepTimerSelect">
+            <option value="0">Kein Timer</option>
+            <option value="60000">1 Minute</option>
+            <option value="300000">5 Minuten</option>
+            <option value="600000">10 Minuten</option>
+        </select>
+                       
     </div>
     
 

@@ -4,6 +4,38 @@ document.addEventListener ("DOMContentLoaded", () => {
     disableBt();
 });
 
+/**function for sleepTimer*/
+let sleepTimerTime = 180000;
+const sleepTimerDiv = document.getElementById('sleepTimer');
+const sleepTimerSelect = document.getElementById('sleepTimerSelect');
+
+function showSleepTimer() {
+    if (sleepTimerTime > 0) {
+        setTimeout(() => {
+            sleepTimerDiv.style.display = 'block';
+            sleepTimerDiv.addEventListener('pointerdown', hideSleepTimer);
+        }, sleepTimerTime);
+    }
+}
+
+function hideSleepTimer() {
+    sleepTimerDiv.style.display = 'none';
+    showSleepTimer();
+}
+document.getElementById('sleepTimer').addEventListener('pointerdown', hideSleepTimer);
+showSleepTimer();
+
+sleepTimerSelect.addEventListener('change', function () {
+    sleepTimerTime = parseInt(sleepTimerSelect.value);
+
+    if (sleepTimerTime === 0) {
+        sleepTimerDiv.style.display = 'none';
+        clearTimeout();
+    } else {
+        showSleepTimer();
+    }
+});
+
 
 var logging=false;
 
