@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from media_player import *
+from BluetoothController import *
+from AudioMetadata import *
 from utils import *
 
 app_routes = Blueprint('app_routes', __name__)
@@ -8,7 +9,7 @@ app_routes = Blueprint('app_routes', __name__)
 @app_routes.route("/audio/play", methods=["POST"])
 def play_audio():
     try:
-        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
+        player = BluetoothController()
         player.play()
         return jsonify({"status": "success", "message": "Playback started"})
     except Exception as e:
@@ -17,7 +18,7 @@ def play_audio():
 @app_routes.route("/audio/pause", methods=["POST"])
 def pause_audio():
     try:
-        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
+        player = BluetoothController()
         player.pause()
         return jsonify({"status": "success", "message": "Playback paused"})
     except Exception as e:
@@ -26,7 +27,7 @@ def pause_audio():
 @app_routes.route("/audio/skip", methods=["POST"])
 def skip_audio():
     try:
-        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
+        player = BluetoothController()
         player.next()
         return jsonify({"status": "success", "message": "Skipped to the next track"})
     except Exception as e:
@@ -35,7 +36,7 @@ def skip_audio():
 @app_routes.route("/audio/previous", methods=["POST"])
 def previous_audio():
     try:
-        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
+        player = BluetoothController()
         player.previous()
         return jsonify({"status": "success", "message": "Went to the previous track"})
     except Exception as e:
@@ -43,13 +44,12 @@ def previous_audio():
 
 def get_audio_metadata():
     try:
-        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
-        metadata = player.get_metadata()
+        player = AudioMetadata()
+        metadata = player.Track
         
         if metadata is None:
             raise Exception("No metadata found.")
 
-        # Hier auf die korrekten Metadaten zugreifen
         title = metadata.get('Title', 'Unknown Title')
         artist = metadata.get('Artist', 'Unknown Artist')
         album = metadata.get('Album', 'Unknown Album')
