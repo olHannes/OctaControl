@@ -5,23 +5,15 @@ class MediaPlayer:
         try:
             print("Initializing MediaPlayer...")
             bus = SystemBus()
-            print("SystemBus initialized.")
-
             manager = bus.get('org.bluez', '/')
-            print("Manager initialized.")
 
             managed_objects = manager.GetManagedObjects()
-            print("Managed Objects:", managed_objects)  # Debugging
 
             for obj, props in managed_objects.items():
-                print(f"Checking object: {obj}, properties: {props}")  # Debugging
 
-                # Überprüfe, ob das Objekt ein MediaPlayer ist
                 if obj.endswith('/player0') and 'org.bluez.MediaPlayer1' in props:
-                    print(f"Found valid player object: {obj}")
                     return bus.get('org.bluez', obj)
             
-            # Kein gültiges Objekt gefunden
             print("No valid player0 object found.")
             raise MediaPlayer.DeviceNotFoundError
         except Exception as e:

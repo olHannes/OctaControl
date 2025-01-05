@@ -311,3 +311,39 @@ input:checked + .genre-color-slider::before {
 .right {
     align-items: flex-end;
 }
+
+
+#logging-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#toggleButton {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    outline: none;
+}
+
+#errorToggle h5 {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+    color: gray;
+}
+
+#logging-toggle.active #toggleButton {
+    background-color: red;
+}
+
+#logging-toggle.inactive #toggleButton {
+    background-color: #4CAF50;
+}

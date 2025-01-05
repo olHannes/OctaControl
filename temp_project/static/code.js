@@ -4,20 +4,41 @@ document.addEventListener ("DOMContentLoaded", () => {
 });
 
 
+var logging=false;
+
 /*function to show errors on the page*/
 function showErrorMessage(title, message) {
-    var errorDiv = document.getElementById('errorMessage');
-    var titleElement = errorDiv.querySelector('h6');
-    var messageElement = errorDiv.querySelector('p');
+    if(logging){
+        var errorDiv = document.getElementById('errorMessage');
+        var titleElement = errorDiv.querySelector('h6');
+        var messageElement = errorDiv.querySelector('p');
 
-    titleElement.textContent = title;
-    messageElement.textContent = message;
+        titleElement.textContent = title;
+        messageElement.textContent = message;
 
-    errorDiv.style.display = 'block';
+        errorDiv.style.display = 'block';
 
-    setTimeout(function() {
-        errorDiv.style.display = 'none';
-    }, 3500);
+        setTimeout(function() {
+            errorDiv.style.display = 'none';
+        }, 3500);
+    }
+}
+/*this function controlls the toggle mechanism of the logging status*/
+function toggleLogging() {
+    var loggingDiv = document.getElementById('logging-toggle');
+    var button = document.getElementById('toggleButton');
+
+    if (loggingDiv.classList.contains('inactive')) {
+        loggingDiv.classList.remove('inactive');
+        loggingDiv.classList.add('active');
+        button.innerHTML = "<s>log</s>";
+        logging=true;
+    } else {
+        loggingDiv.classList.remove('active');
+        loggingDiv.classList.add('inactive');
+        button.innerText = "log";
+        logging=false;
+    }
 }
 
 
@@ -481,7 +502,6 @@ async function disablePairingMode() {
         showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + error);
     }
 }
-
 
 
 
