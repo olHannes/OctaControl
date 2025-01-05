@@ -82,24 +82,17 @@ class MediaPlayer:
 
 
 
-class MetaPlayer:
+class MetaPlayer(object):
     def __new__(self):
-        try:
-            bus = SystemBus()
-            manager = bus.get('org.bluez', '/')
-
-            managed_objects = manager.GetManagedObjects()
-
-            for obj, props in managed_objects.items():
-
-                if obj.endswith('/player0') and 'org.bluez.MediaPlayer1' in props:
-                    return bus.get('org.bluez', obj)
-            
-            print("No valid player0 object found.")
-            raise MediaPlayer.DeviceNotFoundError
-        except Exception as e:
-            raise e
-
+        bus = SystemBus()
+        manager = bus.get('org.bluez', '/')
+        
+        for obj in manager.GetManagedObjects():
+            if obj.endswith('/player0'):
+                return bus.get('org.bluez', obj)
+        
+        raise MediaPlayer.DeviceNotFoundError
+    
     class DeviceNotFoundError(Exception):
         def __init__(self):
-            super().__init__('No Bluetooth media player was found')
+            super().__init__('No bluetooth device was found')

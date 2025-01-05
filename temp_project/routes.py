@@ -51,7 +51,7 @@ def previous_audio():
 
 def get_audio_metadata():
     try:
-        player = MediaPlayer()
+        player = MetaPlayer()
         metadata = player.Track
         
         title = metadata.get('title', 'Unknown Title')
