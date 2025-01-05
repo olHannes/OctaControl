@@ -45,7 +45,6 @@ function toggleLogging() {
 const fScreenBtn = document.getElementById('toggleFullscreen');
 function toggleFullscreen() {
     if (!document.fullscreenElement) {
-        // Vollbildmodus aktivieren
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen();
         } else if (document.documentElement.webkitRequestFullscreen) {
@@ -53,10 +52,9 @@ function toggleFullscreen() {
         } else if (document.documentElement.msRequestFullscreen) {
             document.documentElement.msRequestFullscreen();
         }
-        fScreenBtn.innerHTML = "<s>fScreen</s>"; // Button-Text ändern
-        fScreenBtn.style.backgroundColor = "red"; // Hintergrundfarbe rot
+        fScreenBtn.innerHTML = "<s>fScreen</s>";
+        fScreenBtn.style.backgroundColor = "red";
     } else {
-        // Vollbildmodus deaktivieren
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -64,8 +62,8 @@ function toggleFullscreen() {
         } else if (document.msExitFullscreen) {
             document.msExitFullscreen();
         }
-        fScreenBtn.innerHTML = "fScreen"; // Button-Text zurücksetzen
-        fScreenBtn.style.backgroundColor = "#4CAF50"; // Hintergrundfarbe zurücksetzen
+        fScreenBtn.innerHTML = "fScreen";
+        fScreenBtn.style.backgroundColor = "#4CAF50";
     }
 }
 
