@@ -19,10 +19,23 @@ class MediaPlayer(object):
             super().__init__('No bluetooth device was found')
 
 
-def print_meta():
+def getMeta():
     try:
         handle = MediaPlayer()
         metadata = handle.Track
-        print(metadata)
+
+        title = metadata.get('Title', 'Unknown Title')
+        artist = metadata.get('Artist', 'Unknown Artist')
+        album = metadata.get('Album', 'Unknown Album')
+        genre = metadata.get('Genre', 'Unknown Genre')
+
+        return {
+            "title": title,
+            "artist": artist,
+            "album": album,
+            "genre": genre
+        }
     except MediaPlayer.DeviceNotFoundError:
-        print("No device found")
+        print("No Device found")
+
+print(getMeta())
