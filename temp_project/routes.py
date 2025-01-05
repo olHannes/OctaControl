@@ -8,56 +8,52 @@ app_routes = Blueprint('app_routes', __name__)
 @app_routes.route("/audio/play", methods=["POST"])
 def play_audio():
     try:
-        player = MediaPlayer()
+        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
         player.play()
         return jsonify({"status": "success", "message": "Playback started"})
-    except MediaPlayer.DeviceNotFoundError:
-        return jsonify({"status": "error", "message": "No Bluetooth media player found"}), 404
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app_routes.route("/audio/pause", methods=["POST"])
 def pause_audio():
     try:
-        player = MediaPlayer()
+        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
         player.pause()
         return jsonify({"status": "success", "message": "Playback paused"})
-    except MediaPlayer.DeviceNotFoundError:
-        return jsonify({"status": "error", "message": "No Bluetooth media player found"}), 404
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app_routes.route("/audio/skip", methods=["POST"])
 def skip_audio():
     try:
-        player = MediaPlayer()
+        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
         player.next()
         return jsonify({"status": "success", "message": "Skipped to the next track"})
-    except MediaPlayer.DeviceNotFoundError:
-        return jsonify({"status": "error", "message": "No Bluetooth media player found"}), 404
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app_routes.route("/audio/previous", methods=["POST"])
 def previous_audio():
     try:
-        player = MediaPlayer()
+        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
         player.previous()
         return jsonify({"status": "success", "message": "Went to the previous track"})
-    except MediaPlayer.DeviceNotFoundError:
-        return jsonify({"status": "error", "message": "No Bluetooth media player found"}), 404
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 def get_audio_metadata():
     try:
-        player = MetaPlayer()
-        metadata = player.Track
+        player = BluetoothMediaPlayer()  # Verwende die neue Klasse
+        metadata = player.get_metadata()
         
-        title = metadata.get('title', 'Unknown Title')
-        artist = metadata.get('artist', 'Unknown Artist')
-        album = metadata.get('album', 'Unknown Album')
-        genre = metadata.get('genre', 'Unknown Genre')
+        if metadata is None:
+            raise Exception("No metadata found.")
+
+        # Hier auf die korrekten Metadaten zugreifen
+        title = metadata.get('Title', 'Unknown Title')
+        artist = metadata.get('Artist', 'Unknown Artist')
+        album = metadata.get('Album', 'Unknown Album')
+        genre = metadata.get('Genre', 'Unknown Genre')
         
         return {
             "title": title,
@@ -65,11 +61,8 @@ def get_audio_metadata():
             "album": album,
             "genre": genre
         }
-    except MediaPlayer.DeviceNotFoundError:
-        raise Exception("No Bluetooth media player found.")
     except Exception as e:
         raise Exception(f"Failed to retrieve metadata: {str(e)}")
-
 
 @app_routes.route("/audio/getinformation", methods=["GET"])
 def get_audio_information():
@@ -82,6 +75,7 @@ def get_audio_information():
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 # Bluetooth routes
