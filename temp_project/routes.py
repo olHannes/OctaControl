@@ -68,7 +68,7 @@ def get_audio_metadata():
 def get_audio_information():
     """Flask route to get audio information."""
     try:
-        metadata = get_audio_metadata()
+        metadata = getMeta()
         return jsonify({
             "status": "success",
             "information": metadata

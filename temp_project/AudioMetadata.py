@@ -37,5 +37,3 @@ def getMeta():
         }
     except MediaPlayer.DeviceNotFoundError:
         print("No Device found")
-
-print(getMeta())
