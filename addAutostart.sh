@@ -2,7 +2,7 @@
 
 # Definiere die Befehle für den Autostart
 PYTHON_COMMAND="python3 /home/hannes/Documents/OctaControl/temp_project/app.py"
-BROWSER_COMMAND="chromium-browser --start-fullscreen http://127.0.0.1:5000"
+BROWSER_COMMAND="chromium-browser http://127.0.0.1:5000"
 
 # Definiere den Pfad zum Autostart-Verzeichnis
 AUTOSTART_DIR="$HOME/.config/autostart"
