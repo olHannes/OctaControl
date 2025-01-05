@@ -96,25 +96,23 @@ def get_audio_information():
 # Bluetooth routes
 @app_routes.route("/bluetooth/on", methods=["POST"])
 def bluetooth_on():
-    output = run_bluetoothctl_command("power on")
-    return jsonify({"status": "success", "message": output})
+    result = enable_bluetooth()
+    return jsonify(result)
 
 @app_routes.route("/bluetooth/off", methods=["POST"])
 def bluetooth_off():
-    output = run_bluetoothctl_command("power off")
-    return jsonify({"status": "success", "message": output})
+    result = disable_bluetooth()
+    return jsonify(result)
 
 @app_routes.route("/pairingmode/on", methods=["POST"])
 def pairing_mode_on():
-    run_bluetoothctl_command("discoverable on")
-    output = run_bluetoothctl_command("pairable on")
-    return jsonify({"status": "success", "message": output})
+    result = enable_pairing_mode()
+    return jsonify(result)
 
 @app_routes.route("/pairingmode/off", methods=["POST"])
 def pairing_mode_off():
-    run_bluetoothctl_command("discoverable off")
-    output = run_bluetoothctl_command("pairable off")
-    return jsonify({"status": "success", "message": output})
+    result = disable_pairing_mode()
+    return jsonify(result)
 
 # Volume routes
 @app_routes.route("/volume/get", methods=["GET"])
