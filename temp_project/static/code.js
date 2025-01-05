@@ -41,6 +41,36 @@ function toggleLogging() {
     }
 }
 
+/**function to customize fullscreen status */
+const fScreenBtn = document.getElementById('toggleFullscreen');
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        // Vollbildmodus aktivieren
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        }
+        fScreenBtn.innerHTML = "<s>fScreen</s>"; // Button-Text ändern
+        fScreenBtn.style.backgroundColor = "red"; // Hintergrundfarbe rot
+    } else {
+        // Vollbildmodus deaktivieren
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+        fScreenBtn.innerHTML = "fScreen"; // Button-Text zurücksetzen
+        fScreenBtn.style.backgroundColor = "#4CAF50"; // Hintergrundfarbe zurücksetzen
+    }
+}
+
+
+
 
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');
