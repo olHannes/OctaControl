@@ -42,27 +42,6 @@ def previous_audio():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-def get_audio_metadata():
-    try:
-        player = AudioMetadata()
-        metadata = player.Track
-        
-        if metadata is None:
-            raise Exception("No metadata found.")
-
-        title = metadata.get('Title', 'Unknown Title')
-        artist = metadata.get('Artist', 'Unknown Artist')
-        album = metadata.get('Album', 'Unknown Album')
-        genre = metadata.get('Genre', 'Unknown Genre')
-        
-        return {
-            "title": title,
-            "artist": artist,
-            "album": album,
-            "genre": genre
-        }
-    except Exception as e:
-        raise Exception(f"Failed to retrieve metadata: {str(e)}")
 
 @app_routes.route("/audio/getinformation", methods=["GET"])
 def get_audio_information():
