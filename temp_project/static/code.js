@@ -103,18 +103,9 @@ function toggleFullscreen() {
 
 /**function to use power Settings*/
 function shutdown(){
-    try {
-        const response = fetch("http://127.0.0.1:5000/powerOptions/reboot", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
-    } catch (error) {
-        showErrorMessage("System Fehler", "Fehler beim Neustart" + error);
-    }
-}
-function reboot(){
+    const button = document.getElementById('shutdown');
+    button.disabled = true;
+    
     try {
         const response = fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
             method: "POST",
@@ -123,8 +114,25 @@ function reboot(){
             },
         });
     } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Neustart" + error);
+    }
+    button.disabled = false;
+}
+function reboot(){
+    const button = document.getElementById('reboot');
+    button.disabled = true;
+
+    try {
+        const response = fetch("http://127.0.0.1:5000/powerOptions/reboot", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+    } catch (error) {
         showErrorMessage("System Fehler", "Fehler beim herunterfahren: " + error);
     }
+    button.disabled = false;
 }
 
 
