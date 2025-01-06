@@ -405,9 +405,6 @@ input:checked + .genre-color-slider::before {
 #powerOptions #reboot {
     background-color: #007bff;
 }
-#powerOptions #update {
-    background-color: #008a12;
-}
 
 /*style for audio-control-section*/
 /*#################################################################################################*/

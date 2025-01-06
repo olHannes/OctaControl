@@ -100,26 +100,3 @@ def shutdown_system():
     except Exception as e:
         return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
-
-def updateSystem():
-    try:
-        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "update.sh"))
-
-        if not os.path.isfile(script_path):
-            raise FileNotFoundError(f"Das Skript {script_path} wurde nicht gefunden.")
-
-        # Skript ausführen
-        process = subprocess.run(["bash", script_path], capture_output=True, text=True)
-
-        # Debugging-Ausgaben
-        print(f"Return Code: {process.returncode}")
-        print(f"Stdout: {process.stdout}")
-        print(f"Stderr: {process.stderr}")
-
-        if process.returncode != 0:
-            raise RuntimeError(f"Fehler bei der Ausführung von update.sh: {process.stderr.strip()}")
-
-        return {"status": "success", "message": process.stdout.strip()}
-
-    except Exception as e:
-        raise RuntimeError(f"Ein Fehler ist aufgetreten: {str(e)}")
