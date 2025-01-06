@@ -1,5 +1,6 @@
 import subprocess
 import alsaaudio
+import os
 
 def run_bluetoothctl_command(command):
     try:
@@ -78,3 +79,23 @@ def disable_bluetooth():
         return {"status": "success", "message": "Bluetooth disabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
+    
+
+
+def reboot_system():
+    try:
+        subprocess.run(["sudo", "reboot"], check=True)
+        return {"status": "success", "message": "Reboot initiated successfully"}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": f"Reboot command failed: {str(e)}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
+
+def shutdown_system():
+    try:
+        subprocess.run(["sudo", "shutdown", "now"], check=True)
+        return {"status": "success", "message": "Shutdown initiated successfully"}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": f"Shutdown command failed: {str(e)}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Unexpected error: {str(e)}"}

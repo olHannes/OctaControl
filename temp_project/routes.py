@@ -108,3 +108,23 @@ def set_volume():
         return jsonify({"status": "error", "message": str(e)}), 400
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+# powerOptions routes
+
+@app_routes.route("/powerOptions/reboot", methods=["POST"])
+def reboot():
+    try:
+        result = reboot_system()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app_routes.route("/powerOptions/shutdown", methods=["POST"])
+def shutdown():
+    try:
+        result = shutdown_system()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
