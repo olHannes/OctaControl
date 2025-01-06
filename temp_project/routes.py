@@ -132,7 +132,7 @@ def shutdown():
 @app_routes.route("/system/updateOctaControl", methods=["POST"])
 def update_octa_control():
     try:
-        result = update_octa_control()
+        result = updateSystem()
         return jsonify(result)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

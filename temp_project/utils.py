@@ -101,9 +101,9 @@ def shutdown_system():
         return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
 
-def update_octa_control():
+def updateSystem():
     try:
-        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "update.sh")
+        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "update.sh"))
 
         if not os.path.isfile(script_path):
             raise FileNotFoundError(f"Das Skript {script_path} wurde nicht gefunden.")
