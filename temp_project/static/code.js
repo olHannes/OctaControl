@@ -101,6 +101,31 @@ function toggleFullscreen() {
 }
 
 
+/**function to use power Settings*/
+function shutdown(){
+    try {
+        const response = fetch("http://127.0.0.1:5000/powerOptions/reboot", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Neustart" + error);
+    }
+}
+function reboot(){
+    try {
+        const response = fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim herunterfahren: " + error);
+    }
+}
 
 
 /*Script for Color Settings*/
@@ -214,7 +239,6 @@ async function setVolume(volume) {
         const textResponse = await response.text(); 
         console.log("Raw response:", textResponse);  // Ausgabe der Antwort ohne Parsing
     
-        // Falls der Text eine gültige JSON-Antwort ist, umwandeln
         const data = JSON.parse(textResponse);
         if (data.status === "success") {
             console.log("Volume set successfully:", data.message);
@@ -227,7 +251,6 @@ async function setVolume(volume) {
     }
 }
 
-
 function setVolumeSlider(pValuePromise) {
     pValuePromise.then(pValue => {
         console.log(pValue);
@@ -236,7 +259,6 @@ function setVolumeSlider(pValuePromise) {
         console.error("Fehler beim Abrufen des Volume-Werts:", error);
     });
 }
-
 
 function getVolumeSlider(){
     return volumeSlider.value;

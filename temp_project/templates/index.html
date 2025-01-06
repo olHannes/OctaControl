@@ -68,21 +68,29 @@
             </label>
         </div>
 
-        <div id="logging-toggle">
-            <button id="toggleButton" onclick="toggleLogging()">log</button>
-        </div>
-        <div id="fScreen-toggle">
-            <button id="toggleFullscreen" onclick="toggleFullscreen()"><s>fScreen</s></button>
-        </div>
 
-        <label>SleepTimer</label>
-        <select id="sleepTimerSelect">
-            <option value="0">Kein Timer</option>
-            <option value="60000">1 Minute</option>
-            <option value="300000">5 Minuten</option>
-            <option value="600000">10 Minuten</option>
-        </select>
-                       
+        <div id="systemSettings">
+            <div id="logging-toggle">
+                <button id="toggleButton" onclick="toggleLogging()">log</button>
+            </div>
+            <div id="fScreen-toggle">
+                <button id="toggleFullscreen" onclick="toggleFullscreen()"><s>fScreen</s></button>
+            </div>
+
+            <label style="padding-top: 12px; text-align: center;">SleepTimer:</label>
+            <select id="sleepTimerSelect">
+                <option value="0">Kein Timer</option>
+                <option value="60000">1 Minute</option>
+                <option value="300000">5 Minuten</option>
+                <option value="600000">10 Minuten</option>
+            </select>
+
+            <div id="powerOptions">
+                <p>Power Options</p>
+                <button onclick="shutdown()">Shutdown</button>
+                <button onclick="reboot()">Reboot</button>
+            </div>
+        </div>           
     </div>
     
 
