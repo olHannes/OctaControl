@@ -108,7 +108,13 @@ def updateSystem():
         if not os.path.isfile(script_path):
             raise FileNotFoundError(f"Das Skript {script_path} wurde nicht gefunden.")
 
+        # Skript ausführen
         process = subprocess.run(["bash", script_path], capture_output=True, text=True)
+
+        # Debugging-Ausgaben
+        print(f"Return Code: {process.returncode}")
+        print(f"Stdout: {process.stdout}")
+        print(f"Stderr: {process.stderr}")
 
         if process.returncode != 0:
             raise RuntimeError(f"Fehler bei der Ausführung von update.sh: {process.stderr.strip()}")
