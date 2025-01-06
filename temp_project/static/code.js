@@ -3,6 +3,7 @@ document.addEventListener ("DOMContentLoaded", () => {
 	setVolumeSlider(getVolume());
     disableBt();
     toggleFullscreen();
+    toggleFullscreen();
 });
 
 /**function for sleepTimer*/
