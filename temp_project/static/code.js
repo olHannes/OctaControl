@@ -136,6 +136,22 @@ async function reboot(){
     button.disabled = false;
 }
 
+async function update(){
+    const button = document.getElementById('update');
+    button.disabled = true;
+
+    try {
+        const response = await fetch("http://127:0:0:1.5000/system/update2", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Update: " + error);
+    }
+}
+
 
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');

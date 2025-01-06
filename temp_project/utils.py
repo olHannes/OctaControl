@@ -100,3 +100,16 @@ def shutdown_system():
     except Exception as e:
         return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
+
+def update_system():
+    script_relative_path = "../../../../Downloads/script.sh"
+
+    script_absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), script_relative_path))
+
+    try:
+        subprocess.run(["bash", script_absolute_path], check=True)
+        print(f"{script_absolute_path} erfolgreich ausgeführt.")
+    except subprocess.CalledProcessError as e:
+        print(f"Fehler beim Ausführen des Skripts: {e}")
+    except FileNotFoundError:
+        print("Das angegebene .sh-Skript wurde nicht gefunden.")

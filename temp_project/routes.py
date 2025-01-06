@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from BluetoothController import *
 from AudioMetadata import *
 from utils import *
+import os
+import subprocess
 
 app_routes = Blueprint('app_routes', __name__)
 
@@ -129,3 +131,10 @@ def shutdown():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
     
+@app_routes.route("/system/update", methods=["POST"])
+def update():
+    try:
+        result = update_system()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
