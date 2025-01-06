@@ -91,7 +91,8 @@ body, html {
 .slider-container {
     position: absolute;
     bottom: 5%;
-    width: 100%;
+    left: 0;
+    width: 85%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
