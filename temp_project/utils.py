@@ -102,7 +102,7 @@ def shutdown_system():
 
 
 def update_system():
-    script_relative_path = "../../../../Downloads/script.sh"
+    script_relative_path = "../../../../Downloads/updateOctaControl.sh"
 
     script_absolute_path = os.path.abspath(os.path.join(os.path.dirname(__file__), script_relative_path))
 

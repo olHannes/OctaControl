@@ -102,11 +102,21 @@ function toggleFullscreen() {
 }
 
 
-/**function to use power Settings*/
+/**function to use power and system Settings*/
+const systemSettings = document.getElementById('powerOptions');
+
+function disableSystemSettings(){
+    systemSettings.style.pointerEvents = 'none';
+    systemSettings.style.opacity = '0.3';
+}
+
+function enableSystemSettings(){
+    systemSettings.style.pointerEvents = 'auto';
+    systemSettings.style.opacity = '1';
+}
+
 async function shutdown(){
-    const button = document.getElementById('shutdown');
-    button.disabled = true;
-    
+    disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
             method: "POST",
@@ -114,15 +124,20 @@ async function shutdown(){
                 "Content-Type": "application/json"
             },
         });
-    } catch (error) {
-        showErrorMessage("System Fehler", "Fehler beim Neustart" + error);
-    }
-    button.disabled = false;
-}
-async function reboot(){
-    const button = document.getElementById('reboot');
-    button.disabled = true;
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            showErrorMessage("System Fehler", "Fehler beim Herunterfahren: " + errorData.message);
+        }
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Herunterfahren: " + error);
+    } finally {
+        enableSystemSettings();
+    }
+}
+
+async function reboot(){
+    disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/powerOptions/reboot", {
             method: "POST",
@@ -130,25 +145,36 @@ async function reboot(){
                 "Content-Type": "application/json"
             },
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showErrorMessage("System Fehler", "Fehler beim Neustart: " + errorData.message);
+        }
     } catch (error) {
-        showErrorMessage("System Fehler", "Fehler beim herunterfahren: " + error);
+        showErrorMessage("System Fehler", "Fehler beim Neustart: " + error);
+    } finally {
+        enableSystemSettings();
     }
-    button.disabled = false;
 }
 
 async function update(){
-    const button = document.getElementById('update');
-    button.disabled = true;
-
+    disableSystemSettings();
     try {
-        const response = await fetch("http://127:0:0:1.5000/system/update2", {
+        const response = await fetch("http://127.0.0.1:5000/system/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showErrorMessage("System Fehler", "Fehler beim Update: " + errorData.message);
+        }
     } catch (error) {
         showErrorMessage("System Fehler", "Fehler beim Update: " + error);
+    } finally {
+        enableSystemSettings();
     }
 }
 

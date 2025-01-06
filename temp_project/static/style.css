@@ -399,13 +399,13 @@ input:checked + .genre-color-slider::before {
     box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77);
 }
 
-#powerOptions #shutdown {
+#powerOptions #shutdownBtn {
     background-color: #dc3545;
 }
-#powerOptions #reboot {
+#powerOptions #rebootBtn {
     background-color: #007bff;
 }
-#powerOptions #update {
+#powerOptions #updateBtn {
     background-color: #1a702e;
 }
 /*style for audio-control-section*/
