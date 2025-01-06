@@ -102,12 +102,12 @@ function toggleFullscreen() {
 
 
 /**function to use power Settings*/
-function shutdown(){
+async function shutdown(){
     const button = document.getElementById('shutdown');
     button.disabled = true;
     
     try {
-        const response = fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
+        const response = await fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -118,12 +118,12 @@ function shutdown(){
     }
     button.disabled = false;
 }
-function reboot(){
+async function reboot(){
     const button = document.getElementById('reboot');
     button.disabled = true;
 
     try {
-        const response = fetch("http://127.0.0.1:5000/powerOptions/reboot", {
+        const response = await fetch("http://127.0.0.1:5000/powerOptions/reboot", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -135,12 +135,12 @@ function reboot(){
     button.disabled = false;
 }
 
-function update(){
+async function update(){
     const button = document.getElementById('update');
     button.disabled = true;
 
     try {
-        const response = fetch("http://127.0.0.1:5000/system/updateOctaControl", {
+        const response = await fetch("http://127.0.0.1:5000/system/updateOctaControl", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
