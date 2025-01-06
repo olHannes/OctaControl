@@ -111,7 +111,7 @@ def set_volume():
 
 
 
-# powerOptions routes
+# system and power routes
 
 @app_routes.route("/powerOptions/reboot", methods=["POST"])
 def reboot():
@@ -125,6 +125,14 @@ def reboot():
 def shutdown():
     try:
         result = shutdown_system()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app_routes.route("/system/updateOctaControl", methods=["POST"])
+def update_octa_control():
+    try:
+        result = update_octa_control()
         return jsonify(result)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

@@ -135,6 +135,23 @@ function reboot(){
     button.disabled = false;
 }
 
+function update(){
+    const button = document.getElementById('update');
+    button.disabled = true;
+
+    try {
+        const response = fetch("http://127.0.0.1:5000/system/updateOctaControl", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Update: " + error);
+    }
+    button.disabled = false;
+}
+
 
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');

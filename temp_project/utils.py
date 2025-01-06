@@ -99,3 +99,21 @@ def shutdown_system():
         return {"status": "error", "message": f"Shutdown command failed: {str(e)}"}
     except Exception as e:
         return {"status": "error", "message": f"Unexpected error: {str(e)}"}
+
+
+def update_octa_control():
+    try:
+        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "update.sh")
+
+        if not os.path.isfile(script_path):
+            raise FileNotFoundError(f"Das Skript {script_path} wurde nicht gefunden.")
+
+        process = subprocess.run(["bash", script_path], capture_output=True, text=True)
+
+        if process.returncode != 0:
+            raise RuntimeError(f"Fehler bei der Ausführung von update.sh: {process.stderr.strip()}")
+
+        return {"status": "success", "message": process.stdout.strip()}
+
+    except Exception as e:
+        raise RuntimeError(f"Ein Fehler ist aufgetreten: {str(e)}")

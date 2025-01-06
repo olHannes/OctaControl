@@ -365,7 +365,7 @@ input:checked + .genre-color-slider::before {
 }
 
 
-/*style for power Options*/
+/*style for system Options*/
 /*#################################################################################################*/
 
 #powerOptions {
@@ -395,18 +395,19 @@ input:checked + .genre-color-slider::before {
     cursor: pointer;
     transition: background-color 0.3s ease;
     color: white;
+    -webkit-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77); 
+    box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77);
 }
 
-#powerOptions button {
+#powerOptions #shutdown {
     background-color: #dc3545;
 }
-
-#powerOptions button:last-child {
+#powerOptions #reboot {
     background-color: #007bff;
 }
-
-
-
+#powerOptions #update {
+    background-color: #008a12;
+}
 
 /*style for audio-control-section*/
 /*#################################################################################################*/
