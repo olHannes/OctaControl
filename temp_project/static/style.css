@@ -109,6 +109,9 @@ body, html {
     width: 80%;
     text-align: center;
 }
+#volumeContainer{
+    width: 100%;
+}
 
 .slider-item h5 {
     margin-bottom: 2rem;
