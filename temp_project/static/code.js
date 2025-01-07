@@ -2,8 +2,6 @@
 document.addEventListener ("DOMContentLoaded", () => {
 	setVolumeSlider(getVolume());
     disableBt();
-    toggleFullscreen();
-    toggleFullscreen();
 });
 
 /**function for sleepTimer*/
@@ -171,6 +169,9 @@ async function update(){
         if (!response.ok) {
             const errorData = await response.json();
             showErrorMessage("System Fehler", "Fehler beim Update: " + errorData.message);
+        }
+        else{
+            document.getElementById('rebootBtn').style.animation = "suggestion 2s ease-in infinite";
         }
     } catch (error) {
         showErrorMessage("System Fehler", "Fehler beim Update: " + error);

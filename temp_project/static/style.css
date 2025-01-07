@@ -409,6 +409,23 @@ input:checked + .genre-color-slider::before {
 #powerOptions #updateBtn {
     background-color: #1a702e;
 }
+
+@keyframes suggestion {
+    0% {
+        -webkit-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77); 
+        box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77);
+    }
+    50% {
+        -webkit-box-shadow: 5px 5px 15px 5px rgba(240, 85, 85, 0.9); 
+        box-shadow: 5px 5px 15px 5px rgba(240, 85, 85, 0.9);
+    }
+    100% {
+        -webkit-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77); 
+        box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.77);
+    }
+}
+
+
 /*style for audio-control-section*/
 /*#################################################################################################*/
 #audioControl .homeButton{
