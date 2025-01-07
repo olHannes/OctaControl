@@ -5,7 +5,7 @@ document.addEventListener ("DOMContentLoaded", () => {
 });
 
 /**function for sleepTimer*/
-let sleepTimerTime = 180000;
+let sleepTimerTime = 0;
 const sleepTimerDiv = document.getElementById('sleepTimer');
 const sleepTimerSelect = document.getElementById('sleepTimerSelect');
 
