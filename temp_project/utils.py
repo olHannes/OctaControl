@@ -102,7 +102,7 @@ def shutdown_system():
 
 
 def update_system():
-    script_absolute_path = "/home/hannes/Downloads/updateOctaControl.sh"
+    script_absolute_path = "/home/hannes/Documents/OctaControl/updateOctaControl.sh"
 
     try:
         subprocess.run(["bash", script_absolute_path], check=True)
