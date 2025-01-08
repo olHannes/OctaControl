@@ -92,7 +92,7 @@ body, html {
     position: absolute;
     bottom: 5%;
     left: 0;
-    width: 85%;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
