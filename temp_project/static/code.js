@@ -2,6 +2,10 @@
 document.addEventListener ("DOMContentLoaded", () => {
 	setVolumeSlider(getVolume());
     disableBt();
+    setTimeout(() => {
+        enableBt();
+        toggleFullscreen();
+    }, 3000);
 });
 
 /**function for sleepTimer*/
