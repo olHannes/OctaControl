@@ -2,11 +2,12 @@
 
 PYTHON_COMMAND="python3 /home/hannes/Documents/OctaControl/temp_project/app.py"
 BROWSER_COMMAND="chromium-browser --disable-session-crashed-bubble http://127.0.0.1:5000"
+UNCLUTTER_COMMAND="unclutter -idle 0"
 
 AUTOSTART_DIR="$HOME/.config/autostart"
 DESKTOP_FILE="$AUTOSTART_DIR/octacontrol-app.desktop"
-CRON_JOB="@reboot $PYTHON_COMMAND"
 CHROMIUM_AUTOSTART_FILE="$AUTOSTART_DIR/chromium-browser.desktop"
+UNCLUTTER_AUTOSTART_FILE="$AUTOSTART_DIR/unclutter.desktop"
 
 if [ ! -d "$AUTOSTART_DIR" ]; then
     mkdir -p "$AUTOSTART_DIR"
@@ -25,8 +26,13 @@ add_chromium_to_autostart() {
     echo -e "[Desktop Entry]\nName=Chromium Fullscreen\nComment=Start Chromium in Fullscreen Mode\nExec=$BROWSER_COMMAND\nIcon=web-browser\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$CHROMIUM_AUTOSTART_FILE"
 }
 
-add_python_to_autostart
+add_unclutter_to_autostart() {
+    echo "Füge unclutter hinzu, um den Mauszeiger auszublenden..."
+    echo -e "[Desktop Entry]\nName=Unclutter\nComment=Hide Mouse Cursor\nExec=$UNCLUTTER_COMMAND\nIcon=cursor\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$UNCLUTTER_AUTOSTART_FILE"
+}
 
+add_python_to_autostart
 add_chromium_to_autostart
+add_unclutter_to_autostart
 
 echo "Autostart-Einträge wurden überprüft, geleert und hinzugefügt."

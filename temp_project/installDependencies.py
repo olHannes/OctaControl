@@ -13,6 +13,7 @@ def install_apt_packages():
         "ffmpeg",    
         "playerctl",
         "alsa-utils",
+        "unclutter",
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)

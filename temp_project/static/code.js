@@ -6,9 +6,6 @@ document.addEventListener ("DOMContentLoaded", () => {
         enableBt();
         toggleFullscreen();
     }, 3000);
-    setTimeout(() => {
-        toggleFullscreen();
-    }, 2000);
 });
 
 /**function for sleepTimer*/
