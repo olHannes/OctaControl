@@ -342,14 +342,12 @@ async function pauseAudio(){
         const data = await response.json();
         if (data.status === "success") {
             console.log("paused Audio");
+            buttons.forEach(button => button.disabled = false);
+            setMetaData();
         } else {
             showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + data.message);        }
     } catch (error) {
         showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + error);    }
-    finally {
-        buttons.forEach(button => button.disabled = false);
-        setMetaData();
-    }
 }
 
 async function playAudio(){
@@ -367,14 +365,12 @@ async function playAudio(){
         const data = await response.json();
         if (data.status === "success") {
             console.log("running Audio");
+            buttons.forEach(button => button.disabled = false);
+            setMetaData();
         } else {
             showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + data.message);        }
     } catch (error) {
         showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + error);    }
-    finally {
-        buttons.forEach(button => button.disabled = false);
-        setMetaData();
-    }
 }
 
 async function skipAudio(){
@@ -392,14 +388,12 @@ async function skipAudio(){
         const data = await response.json();
         if (data.status === "success") {
             console.log("skipped Audio");
+            buttons.forEach(button => button.disabled = false);
+            setMetaData();
         } else {
             showErrorMessage("Fehler beim Überspringen des Titels", data.message);        }
     } catch (error) {
         showErrorMessage("Fehler beim Überspringen des Titels", error);    }
-    finally {
-        buttons.forEach(button => button.disabled = false);
-        setMetaData();
-    }
 }
 
 async function prevAudio(){
@@ -417,14 +411,12 @@ async function prevAudio(){
         const data = await response.json();
         if (data.status === "success") {
             console.log("previous Audio");
+            buttons.forEach(button => button.disabled = false);
+            setMetaData();
         } else {
             showErrorMessage("Fehler beim Zurückspulen", data.message);        }
     } catch (error) {
         showErrorMessage("Fehler beim Zurückspulen", error);    }
-    finally {
-        buttons.forEach(button => button.disabled = false);
-        setMetaData();
-    }
 }
 
 async function getInfoAudio() {
