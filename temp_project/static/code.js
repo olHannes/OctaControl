@@ -4,7 +4,7 @@ document.addEventListener ("DOMContentLoaded", () => {
     disableBt();
     setTimeout(() => {
         enableBt();
-        toggleFullscreen();
+        setVolumeSlider(20);
     }, 3000);
 });
 
@@ -445,7 +445,7 @@ async function getInfoAudio() {
     }
 }
 
-let colorMode = true;
+let colorMode = false;
 const genreColors = {
     "Rock": "#ff0000",
     "Pop": "#00ff00",
