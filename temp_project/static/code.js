@@ -5,6 +5,7 @@ document.addEventListener ("DOMContentLoaded", () => {
     setTimeout(() => {
         enableBt();
         setVolumeSlider(20);
+        setVolume(20);
     }, 3000);
 });
 
