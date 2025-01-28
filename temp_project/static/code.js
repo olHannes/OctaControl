@@ -7,6 +7,9 @@ document.addEventListener ("DOMContentLoaded", () => {
         setVolumeSlider(20);
         setVolume(20);
     }, 3000);
+    
+    document.getElementById('colorSlider').value=39;
+    updateBackgroundColor();
 });
 
 /**function for sleepTimer*/
