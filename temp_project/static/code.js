@@ -441,16 +441,6 @@ async function getInfoAudio() {
     }
 }
 
-let colorMode = false;
-const genreColors = {
-    "Rock": "#ff0000",
-    "Pop": "#00ff00",
-    "Jazz": "#0000ff",
-    "Classic": "#ff00ff",
-    "Rap": "#ffff00",
-    "Unknown Genre": "#ffffff"
-};
-
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
@@ -465,9 +455,6 @@ async function setMetaData() {
             album.innerHTML = message.album || "Unknown Album";
             genre.innerHTML = message.genre || "Unknown Genre";
             
-            if(colorMode){
-                setGenreColor(message.genre);
-            }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
         }
@@ -483,22 +470,11 @@ function setGenreColor(genre){
     metaData.style.background = `radial-gradient(circle at top center, ${genreColor} 1%, rgb(2, 2, 2) 65%)`;
 }
 
-const colorModeToggle = document.getElementById("genreColorToggle");
-
-colorModeToggle.addEventListener("change", function() {
-    if (colorModeToggle.checked) {
-        colorMode=true;
-        console.log("colorMode is ON");
-    } else {
-        colorMode=false;
-        console.log("colorMode is OFF");
-        metaData.style.background = `radial-gradient(circle at top center, var(--accent-color) 1%, rgb(2, 2, 2) 65%)`;    }
-});
 
 /*check for new metaData*/
 setInterval(() => {
     setMetaData();
-}, 5000);
+}, 2500);
 
 
 /**The following part represents the functions for the bluetooth control */
