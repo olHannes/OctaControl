@@ -94,10 +94,39 @@
         <button onclick="switchToSection('home')" class="homeButton"></button>
 
         <div id="musicControl">
-            <button onclick="prevAudio()">previous</button>
-            <button onclick="playAudio()">play</button>
-            <button onclick="pauseAudio()">pause</button>
-            <button onclick="skipAudio()">skip</button>
+            <div class="container">
+                <a href="#" class="btn" onclick="animateButton(this); prevAudio();">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="circle" cx="60" cy="60" r="50"></circle>
+                        <polygon class="icon" points="70,35 30,60 70,85"></polygon>
+                        <line class="icon" x1="30" y1="35" x2="30" y2="85"></line>
+                    </svg>
+                </a>
+                
+                <a href="#" class="btn" onclick="animateButton(this); playAudio();">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="circle" cx="60" cy="60" r="50"></circle>
+                        <polygon class="icon" points="45,35 85,60 45,85"></polygon>
+                    </svg>
+                </a>
+        
+                <a href="#" class="btn" onclick="animateButton(this), pauseAudio();">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="circle" cx="60" cy="60" r="50"></circle>
+                        <line class="icon" x1="45" y1="35" x2="45" y2="85"></line>
+                        <line class="icon" x1="75" y1="35" x2="75" y2="85"></line>
+                    </svg>
+                </a>
+        
+                <a href="#" class="btn" onclick="animateButton(this); skipAudio();">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="circle" cx="60" cy="60" r="50"></circle>
+                        <polygon class="icon" points="45,35 85,60 45,85"></polygon>
+                        <line class="icon" x1="85" y1="35" x2="85" y2="85"></line>
+                    </svg>
+                </a>
+            </div>
+            
         </div>
 
         <div id="metaData" class="genre-rock">

@@ -476,6 +476,16 @@ setInterval(() => {
     setMetaData();
 }, 2500);
 
+function animateButton(button) {
+    button.classList.remove("clicked"); 
+    void button.offsetWidth;
+    button.classList.add("clicked");
+
+    setTimeout(() => {
+        button.classList.remove("clicked");
+    }, 1000);
+}
+
 
 /**The following part represents the functions for the bluetooth control */
 const bluetoothToggle = document.getElementById('bluetoothToggle');

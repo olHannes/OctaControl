@@ -456,9 +456,71 @@ input:checked + .genre-color-slider::before {
     max-width: 10rem;
 }
 
-#musicControl button:hover {
-    background-color: #b4b9c4;
-    transform: scale(1.05);
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+    position: relative;
+    touch-action: manipulation;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+}
+
+svg {
+    width: 80px;
+    height: 80px;
+}
+
+.circle, .icon {
+    stroke: #28a745;
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    transition: stroke-dashoffset 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.circle {
+    stroke-dasharray: 330;
+    stroke-dashoffset: 330;
+    opacity: 0;
+}
+
+.icon {
+    stroke-dasharray: 150;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    stroke: white;
+}
+
+.btn.clicked .circle {
+    opacity: 1;
+    animation: draw-ring 1s ease-in-out forwards;
+}
+
+.btn.clicked .icon {
+    animation: nudge 0.5s ease-in-out;
+}
+
+@keyframes draw-ring {
+    0% { stroke-dashoffset: 330; }
+    100% { stroke-dashoffset: 0; }
+}
+
+@keyframes nudge {
+    0% { transform: translateX(0); }
+    30% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    70% { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
 }
 
 #metaData {
