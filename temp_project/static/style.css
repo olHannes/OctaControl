@@ -183,41 +183,51 @@ input[type=range]::-webkit-slider-thumb {
 
 #settingPanels {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 30px;
     flex-direction: row;
 }
 
-
-/*Style for Connections-Page*/
-/*#################################################################################################*/
-.connButton {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    width: 12vw;  /* Etwas größer */
-    height: 12vw; /* Etwas größer */
-    background: url('media/conn.png') no-repeat center center;
-    background-size: calc(100% - 10px);
-    padding: 5px;
+.connButton, .expButton {
+    width: 12vw;
+    height: 12vw;
+    padding: 0;
     border: none;
-    z-index: 10; /* Hoher Z-Index, damit der Button über anderen Elementen ist */
+    z-index: 10;
     -webkit-box-shadow: 5px 5px 15px 5px #00000090; 
     box-shadow: 5px 5px 15px 5px #00000090;
     border-radius: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
-.connButton:hover {
-    transform: translate(-50%, -50%) scale(1.1);
+.connButton{
+    background: url('media/conn.png') no-repeat center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.expButton{
+    background: url('media/systemSetting.png') no-repeat center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.connButton:hover, .expButton:hover {
+    transform: scale(1.1);
     transition: transform 0.3s ease;
 }
 
+
+
+
 /* Das Panel mit Animation */
-#connPanel {
+#connPanel, #expPanel {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -229,20 +239,18 @@ input[type=range]::-webkit-slider-thumb {
     padding: 30px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    visibility: hidden;
-    opacity: 0;
-    transition: transform 0.5s ease-out, visibility 0s 0.5s, opacity 0.5s ease-out;
+    display: none;
+    transition: transform 0.5s ease-out;
 }
 
-#connPanel.show {
+#connPanel.show, #expPanel.show {
     visibility: visible;
     opacity: 1;
     transform: translate(-50%, -50%) scaleX(1);
     transition: transform 0.5s ease-out, visibility 0s, opacity 0.5s ease-out;
 }
 
-
-#back {
+.backButton {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -251,9 +259,13 @@ input[type=range]::-webkit-slider-thumb {
     height: 40px;
 }
 
-#back img {
+.backButton img {
     width: 100%;
     height: 100%;
+}
+
+#logging-toggle, #fScreen-toggle, #sleepTimerSelect, #powerOptions {
+    margin-top: 15px;
 }
 
 /* Container für die Toggle Buttons */
@@ -413,6 +425,8 @@ input:checked + .genre-color-slider::before {
 #sleepTimerSelect {
     top: 120px;;
     right: 10px;
+    width: 100%;
+    text-align: center;
     padding: 5px;
     font-size: 1rem;
     background-color: rgba(0, 0, 0, 0.5);

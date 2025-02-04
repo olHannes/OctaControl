@@ -262,13 +262,35 @@ function switchToSection(section){
             document.getElementById('audioControl').style.display = 'block';
             break;
         case 'connections':
-            document.getElementById('connPanel').classList.add('show');
+            document.getElementById('connPanel').style.display='block';
+            setTimeout(() => {
+                document.getElementById('connPanel').classList.add('show');
+            }, 10);
+            break;
+        case 'expert':
+            document.getElementById('expPanel').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('expPanel').classList.add('show');
+            }, 10);
             break;
     }
 }
 
-function closeConnPanel() {
-    document.getElementById('connPanel').classList.remove('show');
+function closePanel(panel) {
+    switch (panel){
+        case 'connPanel':
+            document.getElementById('connPanel').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('connPanel').style.display = 'none';
+            }, 500);
+            break;
+        case 'expPanel':
+            document.getElementById('expPanel').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('expPanel').style.display = 'none';
+            }, 500);
+            break;
+    }
 }
 
 

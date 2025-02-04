@@ -51,12 +51,14 @@
 
         <div id="settingPanels">
             <button onclick="switchToSection('connections')" class="connButton"></button>
+            <button onclick="switchToSection('expert')" class="expButton"></button>
         </div>
 
         <div id="connPanel">
-            <div id="back" onclick="closeConnPanel()">
+            <div id="backConn" class="backButton" onclick="closePanel('connPanel')">
                 <img src="../static/media/back.png" alt="goBack img">
             </div>
+            <h2>Connection Settings</h2>
 
             <div id="bluetooth-container" class="toggle-container">
                 <h5>Bluetooth</h5>
@@ -74,9 +76,12 @@
             </div>
         </div>
 
+        <div id="expPanel">
+            <div id="backExpert" class="backButton" onclick="closePanel('expPanel')">
+                <img src="../static/media/back.png" alt="goBack img">
+            </div>
+            <h2>Expert Settings</h2>
 
-
-        <div id="systemSettings">
             <div id="logging-toggle">
                 <button id="toggleButton" onclick="toggleLogging()">log</button>
             </div>
@@ -98,7 +103,8 @@
                 <button onclick="reboot()" id="rebootBtn">Reboot</button>
                 <button onclick="update()" id="updateBtn">update</button>
             </div>
-        </div>           
+        </div>
+         
     </div>
     
 
