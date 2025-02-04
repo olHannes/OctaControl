@@ -6,6 +6,7 @@ document.addEventListener ("DOMContentLoaded", () => {
         enableBt();
         setVolumeSlider(20);
         setVolume(20);
+        disableWlan();
     }, 3000);
     
     document.getElementById('colorSlider').value=39;
@@ -487,12 +488,14 @@ function animateButton(button) {
 }
 
 
-/**The following part represents the functions for the bluetooth control */
+/**The following part represents the functions for the bluetooth control and wlan functions*/
 const bluetoothToggle = document.getElementById('bluetoothToggle');
 const pairingToggle = document.getElementById('pairingToggle');
+const wlanToggle = document.getElementById('wlanToggle');
 
 let isBluetoothOn = false;
 let isPairingOn = false;
+let isWlanOn = false;
 
 const bluetoothHeader = document.querySelector('#bluetooth-container');
 bluetoothToggle.addEventListener('click', async () => {
@@ -528,6 +531,20 @@ pairingToggle.addEventListener('click', async () => {
     pairingToggle.style.pointerEvents = 'auto';
     bluetoothHeader.style.opacity="1";
     pairingHeader.style.opacity="1";
+});
+
+const wlanHeader = document.querySelector('#wlan-container');
+wlanHeader.addEventListener('click', async () => {
+    wlanToggle.style.pointerEvents = 'none';
+    wlanHeader.style.opacity="0.3";
+
+    if (!isWlanOn) {
+        await enableWlan();
+    } else {
+        await disableWlan();
+    }
+    wlanToggle.style.pointerEvents = 'auto';
+    wlanHeader.style.opacity="1";
 });
 
 async function enableBt() {
@@ -626,8 +643,56 @@ async function disablePairingMode() {
 }
 
 
+async function enableWlan() {
+    console.log("Wlan eingeschaltet.");
+    wlanToggle.style.pointerEvents = 'none';
+    
+    try {
+        const response = await fetch("http://127.0.0.1:5000/wlan/on", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        
+        if (data.status === "success") {
+            console.log("Wlan wurde erfolgreich eingeschaltet.");
+            wlanToggle.src = '../static/media/wlanOn.png';
+            isWlanOn = true;
+        } else {
+            showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + data.message);
+        }
+    } catch (error) {
+        showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + error);
+    } finally {
+        wlanToggle.style.pointerEvents = 'auto';
+    }
+}
 
-
-
-
-
+async function disableWlan() {
+    console.log("Wlan ausgeschaltet.");
+    wlanToggle.style.pointerEvents = 'none';
+    
+    try {
+        const response = await fetch("http://127.0.0.1:5000/wlan/off", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        
+        if (data.status === "success") {
+            console.log("Wlan wurde erfolgreich ausgeschaltet.");
+            wlanToggle.src = '../static/media/wlanOff.png';
+            isWlanOn = false;
+        } else {
+            showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + data.message);
+        }
+    } catch (error) {
+        showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + error);
+    } finally {
+        wlanToggle.style.pointerEvents = 'auto';
+    }
+}

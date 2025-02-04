@@ -111,3 +111,18 @@ def update_system():
         print(f"Fehler beim Ausführen des Skripts: {e}")
     except FileNotFoundError:
         print("Das angegebene .sh-Skript wurde nicht gefunden.")
+
+
+def enable_wlan():
+    try:
+        subprocess.run(["rfkill", "unblock", "wifi"], check=True)
+        return {"status": "success", "message": "WLAN wurde eingeschaltet."}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": str(e)}
+
+def disable_wlan():
+    try:
+        subprocess.run(["rfkill", "block", "wifi"], check=True)
+        return {"status": "success", "message": "WLAN wurde ausgeschaltet."}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": str(e)}

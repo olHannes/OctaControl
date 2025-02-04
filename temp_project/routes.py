@@ -80,6 +80,19 @@ def pairing_mode_off():
     result = disable_pairing_mode()
     return jsonify(result)
 
+
+# Wlan routes
+@app_routes.route("/wlan/on", methods=["POST"])
+def wlan_on():
+    result = enable_wlan()
+    return jsonify(result)
+
+@app_routes.route("/wlan/off", methods=["POST"])
+def wlan_off():
+    result = disable_wlan()
+    return jsonify(result)
+
+
 # Volume routes
 @app_routes.route("/volume/get", methods=["GET"])
 def get_volume():
