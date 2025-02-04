@@ -1,7 +1,15 @@
 #!/bin/bash
 
 PYTHON_COMMAND="python3 /home/hannes/Documents/OctaControl/temp_project/app.py"
-BROWSER_COMMAND="chromium-browser http://127.0.0.1:5000 --start-fullscreen --disable-session-crashed-bubble --disable-infobars"
+BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
+                 --start-fullscreen \
+                 --disable-session-crashed-bubble \
+                 --disable-infobars \
+                 --disable-popup-blocking \
+                 --disable-translate \
+                 --noerrdialogs \
+                 --overscroll-history-navigation=0 \
+                 --incognito"
 UNCLUTTER_COMMAND="unclutter -idle 0"
 
 AUTOSTART_DIR="$HOME/.config/autostart"
