@@ -49,22 +49,32 @@
             </div>
         </div>
 
-
-        <div id="bluetooth-container" class="toggle-container">
-            <h5>Bluetooth</h5>
-            <img id="bluetoothToggle" src="../static/media/turnOff.png" alt="Bluetooth Toggle" class="toggle-button">
-        </div>
-        
-        <div id="pairing-container" class="toggle-container">
-            <h5>Pairing Mode</h5>
-            <img id="pairingToggle" src="../static/media/BTPairingOff.png" alt="Pairing Mode Toggle" class="toggle-button">
+        <div id="settingPanels">
+            <button onclick="switchToSection('connections')" class="connButton"></button>
         </div>
 
-        <div id="wlan-container" class="toggle-container">
-            <h5>Wlan</h5>
-            <img id="wlanToggle" src="../static/media/wlanOff.png" alt="Wlan Toggle" class="toggle-button">
+        <div id="connPanel">
+            <div id="back" onclick="closeConnPanel()">
+                <img src="../static/media/back.png" alt="goBack img">
+            </div>
+
+            <div id="bluetooth-container" class="toggle-container">
+                <h5>Bluetooth</h5>
+                <img id="bluetoothToggle" src="../static/media/turnOff.png" alt="Bluetooth Toggle" class="toggle-button">
+            </div>
+
+            <div id="pairing-container" class="toggle-container">
+                <h5>Pairing Mode</h5>
+                <img id="pairingToggle" src="../static/media/BTPairingOff.png" alt="Pairing Mode Toggle" class="toggle-button">
+            </div>
+
+            <div id="wlan-container" class="toggle-container">
+                <h5>Wlan</h5>
+                <img id="wlanToggle" src="../static/media/wlanOff.png" alt="Wlan Toggle" class="toggle-button">
+            </div>
         </div>
-        
+
+
 
         <div id="systemSettings">
             <div id="logging-toggle">

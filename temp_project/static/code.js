@@ -261,9 +261,15 @@ function switchToSection(section){
             document.getElementById('home').style.display = 'none';
             document.getElementById('audioControl').style.display = 'block';
             break;
+        case 'connections':
+            document.getElementById('connPanel').classList.add('show');
+            break;
     }
 }
 
+function closeConnPanel() {
+    document.getElementById('connPanel').classList.remove('show');
+}
 
 
 /**The following part represents the functions for the audio control */
