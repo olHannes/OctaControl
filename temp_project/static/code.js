@@ -183,41 +183,52 @@ async function reboot(){
     }
 }
 
-async function update(){
-    showMessage("Update", "Try to update the system");
-    const wlanResponse = await fetch("http://127.0.0.1:5000/wlan/status");
-    const wlanStatus = await wlanResponse.json();
-    
-    showMessage("Wlan", "Wlan status: "+wlanStatus.status);
-    
-    if (wlanStatus.status !== "enabled") {
-        showMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
-        enableSystemSettings();
-        return;
-    }
-    
-    disableSystemSettings();
+async function update() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/system/update", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
+        showMessage("Update", "Versuche, das System zu aktualisieren...");
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            showErrorMessage("System Fehler", "Fehler beim Update: " + errorData.message);
+        const wlanResponse = await fetch("http://127.0.0.1:5000/wlan/status");
+        if (!wlanResponse.ok) {
+            throw new Error("WLAN-Status konnte nicht abgerufen werden");
         }
-        else{
-            document.getElementById('rebootBtn').style.animation = "suggestion 2s ease-in infinite";
+
+        const wlanStatus = await wlanResponse.json();
+        showMessage("Wlan", "WLAN-Status: " + wlanStatus.status);
+
+        if (wlanStatus.status !== "enabled") {
+            showMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
+            enableSystemSettings();
+            return;
         }
+        
+        disableSystemSettings();
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/system/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                showErrorMessage("System Fehler", "Fehler beim Update: " + errorData.message);
+            } else {
+                showMessage("Update erfolgreich", "Das System wird jetzt aktualisiert.");
+                document.getElementById('rebootBtn').style.animation = "suggestion 2s ease-in infinite";
+            }
+        } catch (error) {
+            showErrorMessage("System Fehler", "Fehler beim Update: " + error.message);
+        } finally {
+            enableSystemSettings();
+        }
+
     } catch (error) {
-        showErrorMessage("System Fehler", "Fehler beim Update: " + error);
-    } finally {
-        enableSystemSettings();
+        showErrorMessage("Fehler", "Fehler beim Abrufen des WLAN-Status: " + error.message);
     }
 }
+
 
 async function setVersion() {
     const versionLabel = document.getElementById('version');
