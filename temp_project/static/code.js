@@ -556,11 +556,13 @@ async function setMetaData() {
 }
 
 async function updateProgress() {
+    console.log("update Progress:");
     try {
         const response = await fetch("http://127.0.0.1:5000/audio/progress");
         const progress = await response.json();
 
-        const percentage = Math.min(100, Math.max(0, progress));
+        const percentage = Math.min(100, Math.max(0, progress.progress));
+        console.log("%-value:"+percentage);
         document.getElementById("progress-bar").style.width = percentage + "%";
     } catch (error) {
         console.error("Fehler beim Abrufen des Fortschritts:", error);
