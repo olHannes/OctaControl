@@ -126,3 +126,15 @@ def disable_wlan():
         return {"status": "success", "message": "WLAN wurde ausgeschaltet."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
+
+def getWlanStatus():
+    try:
+        result = subprocess.run(["rfkill", "list", "wifi"], capture_output=True, text=True, check=True)
+        output = result.stdout.lower()
+        
+        if "soft blocked: yes" in output or "hard blocked: yes" in output:
+            return {"status": "disabled", "message": "WLAN ist deaktiviert."}
+        else:
+            return {"status": "enabled", "message": "WLAN ist aktiviert."}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": str(e)}

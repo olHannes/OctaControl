@@ -167,6 +167,16 @@ async function reboot(){
 
 async function update(){
     disableSystemSettings();
+
+    const wlanResponse = await fetch("http://127.0.0.1:5000/wlan");
+    const wlanStatus = await wlanResponse.json();
+    
+    if (wlanStatus.status !== "enabled") {
+        console.log("Fehler: WLAN ist nicht verfügbar. Update wird abgebrochen.");
+        enableSystemSettings();
+        return;
+    }
+    
     try {
         const response = await fetch("http://127.0.0.1:5000/system/update", {
             method: "POST",
