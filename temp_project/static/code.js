@@ -253,12 +253,15 @@ async function setVersion() {
 
 async function openGitLog() {
     try {
-        let response = await fetch('http://127.0.0.1:5000/system/version/log');
+        let response = await fetch('/version/log');
         let logs = await response.json();
         
         let logContainer = document.getElementById("git-log-container");
-        logContainer.style.display="block";
-        logContainer.innerHTML = "";
+        logContainer.innerHTML = `
+            <div id="backConn" class="backButton" onclick="closePanel('gitLog')"> 
+                <img src="../static/media/back.png" alt="goBack img">
+            </div>
+        `;
         
         logs.forEach(log => {
             let logEntry = document.createElement("div");
@@ -385,6 +388,9 @@ function closePanel(panel) {
             setTimeout(() => {
                 document.getElementById('expPanel').style.display = 'none';
             }, 500);
+            break;
+        case 'gitLog':
+            document.getElementById('git-log-container').style.display="none";
             break;
     }
 }
