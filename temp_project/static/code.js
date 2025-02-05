@@ -283,6 +283,7 @@ async function openGitLog() {
             logContainer.appendChild(logEntry);
             logContainer.appendChild(separator);
         });
+    logContainer.style.display="block";
     } catch (error) {
         showErrorMessage("Git-Log", "Fehler beim Abrufen der Git-Logs:"+ error);
     }
