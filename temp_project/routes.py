@@ -158,4 +158,5 @@ def update():
     
 @app_routes.route("/system/version", methods=["GET"])
 def requestVersion():
-    return jsonify(getVersion())
+    result = getVersion()
+    return jsonify(result)
