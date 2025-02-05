@@ -542,20 +542,27 @@ async function getInfoAudio() {
     }
 }
 
+function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + "...";
+    }
+    return text;
+}
+
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
     const album = document.getElementById('album');
     const genre = document.getElementById('genre');
+    const maxLength=30;
 
     try {
         const message = await getInfoAudio();
         if (message) {
-            title.innerHTML = message.title || "Unknown Title";
-            artist.innerHTML = message.artist || "Unknown Artist";
-            album.innerHTML = message.album || "Unknown Album";
-            genre.innerHTML = message.genre || "Unknown Genre";
-            
+            title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
+            artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
+            album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
+            genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
         } else {
             console.error("Metadata konnte nicht geladen werden.");
         }
@@ -563,6 +570,7 @@ async function setMetaData() {
         console.error("Error beim Setzen der Metadaten:", error);
     }
 }
+
 
 const playBtn = document.getElementById('playBtn');
 const pauseBtn = document.getElementById('pauseBtn');
