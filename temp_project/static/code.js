@@ -396,6 +396,9 @@ async function setVolume(volume) {
             if(volume>80){
                 document.getElementById('metaData').style.borderColor = 'red';
             }
+            else{
+                document.getElementById('metaData').style.borderColor = 'white';
+            }
         } else {
             showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + data.message);
         }
@@ -411,6 +414,8 @@ function setVolumeSlider(pValuePromise) {
         volumeSlider.value = pValue;
         if(volumeSlider.value>80){
             document.getElementById('metaData').style.borderColor = 'red';
+        }else{
+            document.getElementById('metaData').style.borderColor = 'white';
         }
     }).catch(error => {
         console.error("Fehler beim Abrufen des Volume-Werts:", error);
