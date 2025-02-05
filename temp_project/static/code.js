@@ -555,12 +555,18 @@ async function setMetaData() {
     }
 }
 
-function setGenreColor(genre){
-    console.log("setGenreColor");
-    const metaData = document.getElementById('metaData');
-    const genreColor = genreColors[genre] || genreColors["Unknown Genre"];
-    metaData.style.background = `radial-gradient(circle at top center, ${genreColor} 1%, rgb(2, 2, 2) 65%)`;
+async function updateProgress() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/progress");
+        const progress = await response.json();
+
+        const percentage = Math.min(100, Math.max(0, progress));
+        document.getElementById("progress-bar").style.width = percentage + "%";
+    } catch (error) {
+        console.error("Fehler beim Abrufen des Fortschritts:", error);
+    }
 }
+setInterval(updateProgress, 1000);
 
 
 /*check for new metaData*/

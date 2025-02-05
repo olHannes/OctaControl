@@ -58,6 +58,18 @@ def get_audio_information():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+"""Route to get Song-Process"""
+@app_routes.route("/audio/progress", methods=["GET"])
+def requestProgress():
+    try:
+        progress = getProgress()
+        return jsonify({
+            "status": "success",
+            "progress": progress
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
 
 # Bluetooth routes
 @app_routes.route("/bluetooth/on", methods=["POST"])
