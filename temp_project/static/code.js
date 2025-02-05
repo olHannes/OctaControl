@@ -11,6 +11,7 @@ document.addEventListener ("DOMContentLoaded", () => {
     
     document.getElementById('colorSlider').value=39;
     updateBackgroundColor();
+    setVersion();
 });
 
 /**function for sleepTimer*/
@@ -183,7 +184,6 @@ async function reboot(){
 }
 
 async function update(){
-    
     const wlanResponse = await fetch("http://127.0.0.1:5000/wlan");
     const wlanStatus = await wlanResponse.json();
     
@@ -216,6 +216,9 @@ async function update(){
     }
 }
 
+function setVersion(){
+    
+}
 
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');

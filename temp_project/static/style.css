@@ -222,6 +222,28 @@ input[type=range]::-webkit-slider-thumb {
     flex-direction: row;
 }
 
+#version {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#version p {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    white-space: nowrap;
+}
+
+
 .connButton, .expButton {
     width: 12vw;
     height: 12vw;
