@@ -568,16 +568,13 @@ async function updateProgress() {
         document.getElementById("progress-bar").style.width = percentage + "%";
 
         const progressChange = Math.abs(percentage - lastProgress);
-        
-        // Wenn der Fortschritt mehr als 1% geändert wurde, wechsle den Button
+        console.log("change: "+progressChange);
         if (progressChange > 1) {
-            if (percentage === 100) {  // Wenn das Lied zu Ende ist
-                pauseBtn.style.opacity = "1";
-                playBtn.style.opacity = "0.1";
-            } else if (percentage > 0) { // Wenn das Lied abgespielt wird
-                playBtn.style.opacity = "0.1";
-                pauseBtn.style.opacity = "1";
-            }
+            pauseBtn.style.opacity = "1";
+            playBtn.style.opacity = "0.1";
+        } else {
+            playBtn.style.opacity = "0.1";
+            pauseBtn.style.opacity = "1";
         }
 
         lastProgress = percentage;
