@@ -567,7 +567,8 @@ async function updateProgress() {
         const percentage = Math.min(100, Math.max(0, progress.progress));
         document.getElementById("progress-bar").style.width = percentage + "%";
         
-        if(percentage == lastProgress){
+        const progressChange = Math.abs(percentage - lastProgress);
+        if(progressChange>1){
             pauseBtn.style.opacity="0.1";
             playBtn.style.opacity="1";
         } else{
