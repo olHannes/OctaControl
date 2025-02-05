@@ -184,8 +184,11 @@ async function reboot(){
 }
 
 async function update(){
-    const wlanResponse = await fetch("http://127.0.0.1:5000/wlan");
+    showMessage("Update", "Try to update the system");
+    const wlanResponse = await fetch("http://127.0.0.1:5000/wlan/status");
     const wlanStatus = await wlanResponse.json();
+    
+    showMessage("Wlan", "Wlan status: "+wlanStatus.status);
     
     if (wlanStatus.status !== "enabled") {
         showMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');

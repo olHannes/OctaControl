@@ -92,7 +92,7 @@ def wlan_off():
     result = disable_wlan()
     return jsonify(result)
 
-@app_routes.route("/wlan", methods=["GET"])
+@app_routes.route("/wlan/status", methods=["GET"])
 def getWlanStatus():
     result = getWlanStatus()
     return jsonify(result)
