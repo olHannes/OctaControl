@@ -568,10 +568,10 @@ async function updateProgress() {
         document.getElementById("progress-bar").style.width = percentage + "%";
         
         if(percentage == progress){
-            pauseBtn.style.opacity="0.7";
+            pauseBtn.style.opacity="0.1";
             playBtn.style.opacity="1";
         } else{
-            playBtn.style.opacity="0.7";
+            playBtn.style.opacity="0.1";
             pauseBtn.style.opacity="1";
         }
         progress = percentage;
