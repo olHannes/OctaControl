@@ -193,10 +193,10 @@ async function update() {
         }
 
         const wlanStatus = await wlanResponse.json();
-        showMessage("Wlan", "WLAN-Status: " + wlanStatus.status);
+        showErrorMessage("Wlan", "WLAN-Status: " + wlanStatus.status);
 
         if (wlanStatus.status !== "enabled") {
-            showMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
+            showErrorMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
             enableSystemSettings();
             return;
         }

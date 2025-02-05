@@ -113,13 +113,13 @@ def update_system():
         print("Das angegebene .sh-Skript wurde nicht gefunden.")
 
 def getVersion():
+    project_dir = "/home/hannes/Documents/OctaControl/temp_project"
     try:
-        commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode("utf-8").strip()
-        commit_date = subprocess.check_output(["git", "log", "-1", "--format=%cd", "--date=short"]).decode("utf-8").strip()
+        commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=project_dir).decode("utf-8").strip()
+        commit_date = subprocess.check_output(["git", "log", "-1", "--format=%cd", "--date=short"], cwd=project_dir).decode("utf-8").strip()
         return {"commit": commit_hash, "date": commit_date}
     except subprocess.CalledProcessError:
         return {"commit": "unknown", "date": "unknown"}
-
 
 def enable_wlan():
     try:
