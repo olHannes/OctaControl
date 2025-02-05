@@ -37,3 +37,20 @@ def getMeta():
         }
     except MediaPlayer.DeviceNotFoundError:
         print("No Device found")
+
+def getProgress():
+    try:
+        handle = MediaPlayer()
+        metadata = handle.Track
+
+        position = handle.Position
+        duration = metadata.get("Duration", 0)
+
+        if duration == 0:
+            return 0
+
+        progress = (position / duration) * 100
+        return int(progress)
+    
+    except MediaPlayer.DeviceNotFoundError:
+        print("No Device found")
