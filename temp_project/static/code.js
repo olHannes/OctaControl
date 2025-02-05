@@ -258,7 +258,7 @@ async function openGitLog() {
         
         let logContainer = document.getElementById("git-log-container");
         logContainer.innerHTML = `
-            <div id="backConn" class="backButton" onclick="closePanel('gitLog')"> 
+            <div id="backConn" class="backButton" onclick="closePanel('gitLog')" style='position: relative; top: 0; left: 0; width: 30px; height: 30px;'> 
                 <img src="../static/media/back.png" alt="goBack img">
             </div>
         `;
