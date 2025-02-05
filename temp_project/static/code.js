@@ -2,11 +2,11 @@
 document.addEventListener ("DOMContentLoaded", () => {
 	setVolumeSlider(getVolume());
     disableBt();
+    disableWlan();
     setTimeout(() => {
         enableBt();
         setVolumeSlider(20);
         setVolume(20);
-        disableWlan();
     }, 3000);
     
     document.getElementById('colorSlider').value=39;
@@ -566,21 +566,28 @@ async function updateProgress() {
 
         const percentage = Math.min(100, Math.max(0, progress.progress));
         document.getElementById("progress-bar").style.width = percentage + "%";
-        
+
         const progressChange = Math.abs(percentage - lastProgress);
-        if(progressChange>1){
-            pauseBtn.style.opacity="0.1";
-            playBtn.style.opacity="1";
-        } else{
-            playBtn.style.opacity="0.1";
-            pauseBtn.style.opacity="1";
+        
+        // Wenn der Fortschritt mehr als 1% geändert wurde, wechsle den Button
+        if (progressChange > 1) {
+            if (percentage === 100) {  // Wenn das Lied zu Ende ist
+                pauseBtn.style.opacity = "1";
+                playBtn.style.opacity = "0.1";
+            } else if (percentage > 0) { // Wenn das Lied abgespielt wird
+                playBtn.style.opacity = "0.1";
+                pauseBtn.style.opacity = "1";
+            }
         }
+
         lastProgress = percentage;
     } catch (error) {
-        showErrorMessage("Progress-Error", "Fehler beim Abrufen des Fortschritts: "+error);
+        showErrorMessage("Progress-Error", "Fehler beim Abrufen des Fortschritts: " + error);
     }
 }
+
 setInterval(updateProgress, 1000);
+
 
 
 /*check for new metaData*/
