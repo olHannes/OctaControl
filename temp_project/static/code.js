@@ -555,6 +555,10 @@ async function setMetaData() {
     }
 }
 
+const playBtn = document.getElementById('playBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+let progress = 0;
+
 async function updateProgress() {
     try {
         const response = await fetch("http://127.0.0.1:5000/audio/progress");
@@ -562,6 +566,15 @@ async function updateProgress() {
 
         const percentage = Math.min(100, Math.max(0, progress.progress));
         document.getElementById("progress-bar").style.width = percentage + "%";
+        
+        if(percentage == progress){
+            pauseBtn.style.opacity="0.7";
+            playBtn.style.opacity="1";
+        } else{
+            playBtn.style.opacity="0.7";
+            pauseBtn.style.opacity="1";
+        }
+        progress = percentage;
     } catch (error) {
         showErrorMessage("Progress-Error", "Fehler beim Abrufen des Fortschritts: "+error);
     }
