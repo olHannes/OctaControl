@@ -250,17 +250,18 @@ input[type=range]::-webkit-slider-thumb {
     top: 10px;
     height: 45%;
     width: 22%;
-    background-color: rgba(22, 22, 22, 0.707);
+    background-color: rgba(22, 22, 22, 0.9);
     border-radius: 10px;
-    overflow: hidden;
+    overflow-y: auto;
     color: white;
     padding: 10px;
+}
+#git-log-container::-webkit-scrollbar {
+    display: none;
 }
 
 .log-entry {
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-family: Arial, sans-serif;
     padding: 5px 0;
 }
@@ -273,8 +274,6 @@ input[type=range]::-webkit-slider-thumb {
     font-size: 14px;
     color: #ccc;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .git_separator {
