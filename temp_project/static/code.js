@@ -253,7 +253,7 @@ async function setVersion() {
 
 async function openGitLog() {
     try {
-        let response = await fetch('/version/log');
+        let response = await fetch('http://127.0.0.1:5000/system/version/log');
         let logs = await response.json();
         
         let logContainer = document.getElementById("git-log-container");
