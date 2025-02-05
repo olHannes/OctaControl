@@ -112,7 +112,7 @@ def update_system():
     except FileNotFoundError:
         print("Das angegebene .sh-Skript wurde nicht gefunden.")
 
-def get_git_version():
+def getVersion():
     try:
         commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode("utf-8").strip()
         commit_date = subprocess.check_output(["git", "log", "-1", "--format=%cd", "--date=short"]).decode("utf-8").strip()
