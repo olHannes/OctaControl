@@ -567,9 +567,11 @@ async function updateProgress() {
         const percentage = Math.min(100, Math.max(0, progress.progress));
         document.getElementById("progress-bar").style.width = percentage + "%";
 
-        const progressChange = Math.abs(percentage - lastProgress);
-        console.log("change: "+progressChange);
-        if (progressChange > 1) {
+        
+        response = await fetch("http://127.0.0.1:5000/audio/isPlaying");
+        result = await response.json();
+
+        if (result.playStatus == "running") {
             pauseBtn.style.opacity = "1";
             playBtn.style.opacity = "0.1";
         } else {

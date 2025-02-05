@@ -69,6 +69,17 @@ def requestProgress():
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
+    
+@app_routes.route("/audio/isPlaying", methods=["GET"])
+def requestSongPlaying():
+    try:
+        running = getIsRunning()
+        return jsonify({
+            "status": "success",
+            "playStatus": "running"
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
 
 # Bluetooth routes

@@ -38,7 +38,14 @@ def getMeta():
     except MediaPlayer.DeviceNotFoundError:
         print("No Device found")
 
+
+
+lastPosition = 0
+isPlaying = False
+
 def getProgress():
+    global lastPosition, isPlaying
+    
     try:
         handle = MediaPlayer()
         metadata = handle.Track
@@ -49,8 +56,18 @@ def getProgress():
         if duration == 0:
             return 0
 
+        if abs(position - lastPosition) > 10:
+            isPlaying = True
+        else:
+            isPlaying = False
+        lastPosition = position
+
         progress = (position / duration) * 100
         return int(progress)
-    
+
     except MediaPlayer.DeviceNotFoundError:
-        print("No Device found")
+        print("Kein Gerät gefunden")
+        return 0
+
+def getIsRunning():
+    return isPlaying
