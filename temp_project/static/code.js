@@ -253,7 +253,7 @@ async function setVersion() {
 
 async function openGitLog() {
     try {
-        let response = await fetch('/version/log');
+        let response = await fetch('http://127.0.0.1:5000/system/version/log');
         let logs = await response.json();
         
         let logContainer = document.getElementById("git-log-container");
@@ -263,8 +263,22 @@ async function openGitLog() {
         logs.forEach(log => {
             let logEntry = document.createElement("div");
             logEntry.classList.add("log-entry");
-            logEntry.innerHTML = `<strong>${log.date}</strong> - <code>${log.commit}</code>: ${log.message}`;
+
+            let commitInfo = document.createElement("div");
+            commitInfo.classList.add("commit-info");
+            commitInfo.innerHTML = `<strong>${log.date}</strong> - <code>${log.commit}</code>`;
+
+            let commitMessage = document.createElement("div");
+            commitMessage.classList.add("commit-message");
+            commitMessage.textContent = log.message;
+
+            let separator = document.createElement("div");
+            separator.classList.add("git_separator");
+
+            logEntry.appendChild(commitInfo);
+            logEntry.appendChild(commitMessage);
             logContainer.appendChild(logEntry);
+            logContainer.appendChild(separator);
         });
     } catch (error) {
         showErrorMessage("Git-Log", "Fehler beim Abrufen der Git-Logs:"+ error);

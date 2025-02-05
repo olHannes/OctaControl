@@ -243,7 +243,7 @@ input[type=range]::-webkit-slider-thumb {
     white-space: nowrap;
 }
 
-#git-log-container{
+#git-log-container {
     display: none;
     position: absolute;
     right: 10px;
@@ -252,17 +252,35 @@ input[type=range]::-webkit-slider-thumb {
     width: 22%;
     background-color: rgba(22, 22, 22, 0.707);
     border-radius: 10px;
+    overflow: hidden;
+    color: white;
+    padding: 10px;
 }
 
 .log-entry {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-family: Arial, sans-serif;
+    padding: 5px 0;
 }
-.log-entry code {
-    background: #f4f4f4;
-    padding: 2px 4px;
-    border-radius: 4px;
+
+.commit-info {
+    font-weight: bold;
+}
+
+.commit-message {
+    font-size: 14px;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.git_separator {
+    height: 1px;
+    background-color: #444;
+    margin: 5px 0;
 }
 
 
