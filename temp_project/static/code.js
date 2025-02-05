@@ -236,7 +236,7 @@ async function setVersion() {
     const label = versionLabel.querySelector('p');
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/system/version");
+        const response = await fetch("http://127.0.0.1:5000/system/version/current");
         if (!response.ok) {
             throw new Error('Die Netzwerkantwort war nicht erfolgreich.');
         }

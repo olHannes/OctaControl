@@ -179,7 +179,11 @@ def update():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
     
-@app_routes.route("/system/version", methods=["GET"])
+@app_routes.route("/system/version/current", methods=["GET"])
 def requestVersion():
     result = getVersion()
+    return jsonify(result)
+@app_routes.route("/system/version/log", methods=["GET"])
+def requestGitLog():
+    result = getGitLog()
     return jsonify(result)

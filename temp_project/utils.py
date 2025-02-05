@@ -121,6 +121,24 @@ def getVersion():
     except subprocess.CalledProcessError:
         return {"commit": "unknown", "date": "unknown"}
 
+
+def getGitLog():
+    project_dir = "/home/hannes/Documents/OctaControl/temp_project"
+    try:
+        log_output = subprocess.check_output(
+            ["git", "log", "-10", "--format=%cd|%h|%s", "--date=short"], cwd=project_dir
+        ).decode("utf-8").strip()
+        
+        commits = []
+        for line in log_output.split("\n"):
+            date, commit_hash, message = line.split("|", 2)
+            commits.append({"date": date, "commit": commit_hash, "message": message})
+        
+        return commits
+    except subprocess.CalledProcessError:
+        return []
+    
+
 def enable_wlan():
     try:
         subprocess.run(["rfkill", "unblock", "wifi"], check=True)
