@@ -241,14 +241,13 @@ async function setVersion() {
             throw new Error('Die Netzwerkantwort war nicht erfolgreich.');
         }
         const data = await response.json();
-        console.log(data);
         if (data.commit && data.date) {
             label.textContent = `v:${data.date}, ${data.commit}`;
         } else {
-            showMessage("Version Fehler", "Es gab ein Problem beim Abrufen der Version: Daten fehlen.");
+            showErrorMessage("Version Fehler", "Es gab ein Problem beim Abrufen der Version: Daten fehlen.");
         }
     } catch (error) {
-        showMessage("Verbindungsfehler", "Fehler beim Abrufen der Version: " + error.message);
+        showErrorMessage("Verbindungsfehler", "Fehler beim Abrufen der Version: " + error.message);
     }
 }
 
@@ -390,11 +389,13 @@ async function setVolume(volume) {
             body: JSON.stringify({ volume })
         });
         const textResponse = await response.text(); 
-        console.log("Raw response:", textResponse);  // Ausgabe der Antwort ohne Parsing
     
         const data = JSON.parse(textResponse);
         if (data.status === "success") {
             console.log("Volume set successfully:", data.message);
+            if(volume>80){
+                document.getElementById('metaData').style.borderColor = 'red';
+            }
         } else {
             showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + data.message);
         }
@@ -408,6 +409,9 @@ function setVolumeSlider(pValuePromise) {
     pValuePromise.then(pValue => {
         console.log(pValue);
         volumeSlider.value = pValue;
+        if(volumeSlider.value>80){
+            document.getElementById('metaData').style.borderColor = 'red';
+        }
     }).catch(error => {
         console.error("Fehler beim Abrufen des Volume-Werts:", error);
     });
