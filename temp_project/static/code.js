@@ -241,6 +241,7 @@ async function setVersion() {
             throw new Error('Die Netzwerkantwort war nicht erfolgreich.');
         }
         const data = await response.json();
+        console.log(data);
         if (data.commit && data.date) {
             label.textContent = `${data.date}, ${data.commit}`;
         } else {
