@@ -571,12 +571,12 @@ async function updateProgress() {
         response = await fetch("http://127.0.0.1:5000/audio/isPlaying");
         result = await response.json();
 
-        if (result.playStatus == "running") {
-            pauseBtn.style.opacity = "1";
-            playBtn.style.opacity = "0.1";
-        } else {
-            playBtn.style.opacity = "0.1";
-            pauseBtn.style.opacity = "1";
+        if(result.playStatus == true){
+            pauseBtn.style.opacity="1";
+            playBtn.style.opacity="0.1";
+        } else{
+            playBtn.style.opacity="1";
+            pauseBtn.style.opacity="0.1";
         }
 
         lastProgress = percentage;
