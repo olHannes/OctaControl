@@ -231,6 +231,7 @@ async function update() {
 
 
 async function setVersion() {
+    showMessage("Version", "try to set Version number");
     const versionLabel = document.getElementById('version');
     const label = versionLabel.querySelector('p');
 
@@ -243,10 +244,10 @@ async function setVersion() {
         if (data.commit && data.date) {
             label.textContent = `${data.date}, ${data.commit}`;
         } else {
-            showErrorMessage("Version Fehler", "Es gab ein Problem beim Abrufen der Version: Daten fehlen.");
+            showMessage("Version Fehler", "Es gab ein Problem beim Abrufen der Version: Daten fehlen.");
         }
     } catch (error) {
-        showErrorMessage("Verbindungsfehler", "Fehler beim Abrufen der Version: " + error.message);
+        showMessage("Verbindungsfehler", "Fehler beim Abrufen der Version: " + error.message);
     }
 }
 

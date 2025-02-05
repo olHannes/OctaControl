@@ -157,5 +157,5 @@ def update():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @app_routes.route("/system/version", methods=["GET"])
-def getVersion():
+def requestVersion():
     return jsonify(getVersion())
