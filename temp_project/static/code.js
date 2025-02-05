@@ -65,6 +65,23 @@ function showErrorMessage(title, message) {
         }, 3500);
     }
 }
+
+/*function to show message on the page*/
+function showMessage(title, message){
+    var msgDiv = document.getElementById('messageNotification');
+    var titleElement = msgDiv.querySelector('h6');
+    var msgElement = msgDiv.querySelector('p');
+
+    titleElement.textContent = title;
+    msgElement.textContent = message;
+
+    msgDiv.style.display = 'block';
+
+    setTimeout(function() {
+        msgDiv.style.display = 'none';
+    }, 3500);
+}
+
 /*this function controlls the toggle mechanism of the logging status*/
 function toggleLogging() {
     var loggingDiv = document.getElementById('logging-toggle');
@@ -166,17 +183,17 @@ async function reboot(){
 }
 
 async function update(){
-    disableSystemSettings();
-
+    
     const wlanResponse = await fetch("http://127.0.0.1:5000/wlan");
     const wlanStatus = await wlanResponse.json();
     
     if (wlanStatus.status !== "enabled") {
-        console.log("Fehler: WLAN ist nicht verfügbar. Update wird abgebrochen.");
+        showMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
         enableSystemSettings();
         return;
     }
     
+    disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/system/update", {
             method: "POST",
