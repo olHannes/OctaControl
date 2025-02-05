@@ -243,6 +243,28 @@ input[type=range]::-webkit-slider-thumb {
     white-space: nowrap;
 }
 
+#git-log-container{
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    height: 45%;
+    width: 22%;
+    background-color: rgba(22, 22, 22, 0.707);
+    border-radius: 10px;
+}
+
+.log-entry {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+.log-entry code {
+    background: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
 
 .connButton, .expButton {
     width: 12vw;

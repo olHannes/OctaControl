@@ -251,6 +251,26 @@ async function setVersion() {
     }
 }
 
+async function openGitLog() {
+    try {
+        let response = await fetch('/version/log');
+        let logs = await response.json();
+        
+        let logContainer = document.getElementById("git-log-container");
+        logContainer.style.display="block";
+        logContainer.innerHTML = "";
+        
+        logs.forEach(log => {
+            let logEntry = document.createElement("div");
+            logEntry.classList.add("log-entry");
+            logEntry.innerHTML = `<strong>${log.date}</strong> - <code>${log.commit}</code>: ${log.message}`;
+            logContainer.appendChild(logEntry);
+        });
+    } catch (error) {
+        showErrorMessage("Git-Log", "Fehler beim Abrufen der Git-Logs:"+ error);
+    }
+}
+
 
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');
