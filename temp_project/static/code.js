@@ -243,7 +243,7 @@ async function setVersion() {
         const data = await response.json();
         console.log(data);
         if (data.commit && data.date) {
-            label.textContent = `${data.date}, ${data.commit}`;
+            label.textContent = `v:${data.date}, ${data.commit}`;
         } else {
             showMessage("Version Fehler", "Es gab ein Problem beim Abrufen der Version: Daten fehlen.");
         }
