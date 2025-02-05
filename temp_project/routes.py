@@ -155,3 +155,7 @@ def update():
         return jsonify(result)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app_routes.route("/system/version", methods=["GET"])
+def getVersion():
+    return jsonify(getVersion())

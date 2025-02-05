@@ -216,9 +216,26 @@ async function update(){
     }
 }
 
-function setVersion(){
-    
+async function setVersion() {
+    const versionLabel = document.getElementById('version');
+    const label = versionLabel.querySelector('p');
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/system/version");
+        if (!response.ok) {
+            throw new Error('Die Netzwerkantwort war nicht erfolgreich.');
+        }
+        const data = await response.json();
+        if (data.commit && data.date) {
+            label.textContent = `${data.date}, ${data.commit}`;
+        } else {
+            showErrorMessage("Version Fehler", "Es gab ein Problem beim Abrufen der Version: Daten fehlen.");
+        }
+    } catch (error) {
+        showErrorMessage("Verbindungsfehler", "Fehler beim Abrufen der Version: " + error.message);
+    }
 }
+
 
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');
