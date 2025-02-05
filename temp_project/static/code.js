@@ -561,8 +561,8 @@ let lastProgress = 0;
 
 async function updateProgress() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/audio/progress");
-        const progress = await response.json();
+        var response = await fetch("http://127.0.0.1:5000/audio/progress");
+        var progress = await response.json();
 
         const percentage = Math.min(100, Math.max(0, progress.progress));
         document.getElementById("progress-bar").style.width = percentage + "%";

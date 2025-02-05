@@ -76,7 +76,7 @@ def requestSongPlaying():
         running = getIsRunning()
         return jsonify({
             "status": "success",
-            "playStatus": "running"
+            "playStatus": running
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
