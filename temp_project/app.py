@@ -3,14 +3,6 @@ from flask_cors import CORS
 from routes import *
 
 app = Flask(__name__)
-
-import RPi.GPIO as GPIO
-
-pin = 2
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin, GPIO.OUT)
-GPIO.output(pin, GPIO.HIGH)
-
 # Register routes from routes.py
 app.register_blueprint(app_routes)
 
