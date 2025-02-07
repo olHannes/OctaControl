@@ -299,7 +299,7 @@ const trunkPowerBtn = document.getElementById('trunkPowerBtn');
 async function toggleTrunkPower() {
     trunkPowerBtn.disabled = true;
     trunkPowerBtn.style.opacity="0.1";
-
+    
     try {
         if (trunkPower) {
             await disableTrunkPower();
@@ -317,8 +317,8 @@ async function toggleTrunkPower() {
 }
 function updateButtonIcon() {
     trunkPowerBtn.style.backgroundImage = trunkPower
-        ? "url('media/trunkPowerOn_img.png')"
-        : "url('media/trunkPowerOff_img.png')";
+        ? "url('../static/media/trunkPowerOn_img.png')"
+        : "url('../static/media/trunkPowerOff_img.png')";
 }
 
 async function enableTrunkPower() {
