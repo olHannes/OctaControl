@@ -12,6 +12,7 @@ document.addEventListener ("DOMContentLoaded", () => {
     document.getElementById('colorSlider').value=39;
     updateBackgroundColor();
     setVersion();
+    toggleTrunkPower();
 });
 
 /**function for sleepTimer*/
@@ -290,9 +291,37 @@ async function openGitLog() {
 }
 
 
-/*Script for trunkPower options*/
-async function enableTrunkPower(){
-    //disable button
+
+/* Script for trunkPower options */
+let trunkPower = false;
+const trunkPowerBtn = document.getElementById('trunkPowerBtn');
+
+async function toggleTrunkPower() {
+    trunkPowerBtn.disabled = true;
+    trunkPowerBtn.style.opacity="0.1";
+
+    try {
+        if (trunkPower) {
+            await disableTrunkPower();
+        } else {
+            await enableTrunkPower();
+        }
+        trunkPower = !trunkPower;
+        updateButtonIcon();
+    } catch (error) {
+        showErrorMessage("System Fehler", error.message);
+    } finally {
+        trunkPowerBtn.disabled = false;
+        trunkPowerBtn.style.opacity="1";
+    }
+}
+function updateButtonIcon() {
+    trunkPowerBtn.style.backgroundImage = trunkPower
+        ? "url('media/trunkPowerOn_img.png')"
+        : "url('media/trunkPowerOff_img.png')";
+}
+
+async function enableTrunkPower() {
     try {
         const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/enable", {
             method: "POST",
@@ -303,18 +332,14 @@ async function enableTrunkPower(){
 
         if (!response.ok) {
             const errorData = await response.json();
-            showErrorMessage("System Fehler", "Fehler beim Anschalten der Stromversorgung: " + errorData.message);
+            throw new Error("Fehler beim Anschalten der Stromversorgung: " + errorData.message);
         }
     } catch (error) {
-        showErrorMessage("System Fehler", "Fehler beim Anschalten der Stromversorgung: " + error);
-    }
-    finally{
-        //enable button
+        throw new Error("Fehler beim Anschalten der Stromversorgung: " + error);
     }
 }
 
 async function disableTrunkPower() {
-    //disable button
     try {
         const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/disable", {
             method: "POST",
@@ -325,20 +350,12 @@ async function disableTrunkPower() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            showErrorMessage("System Fehler", "Fehler beim Ausschalten der Stromversorgung: " + errorData.message);
+            throw new Error("Fehler beim Ausschalten der Stromversorgung: " + errorData.message);
         }
     } catch (error) {
-        showErrorMessage("System Fehler", "Fehler beim Ausschalten der Stromversorgung: " + error);
-    }
-    finally{
-        //enable button
+        throw new Error("Fehler beim Ausschalten der Stromversorgung: " + error);
     }
 }
-
-
-
-
-
 
 
 /*Script for Color Settings*/
