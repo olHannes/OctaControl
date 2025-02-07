@@ -290,6 +290,57 @@ async function openGitLog() {
 }
 
 
+/*Script for trunkPower options*/
+async function enableTrunkPower(){
+    //disable button
+    try {
+        const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/enable", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showErrorMessage("System Fehler", "Fehler beim Anschalten der Stromversorgung: " + errorData.message);
+        }
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Anschalten der Stromversorgung: " + error);
+    }
+    finally{
+        //enable button
+    }
+}
+
+async function disableTrunkPower() {
+    //disable button
+    try {
+        const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/disable", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showErrorMessage("System Fehler", "Fehler beim Ausschalten der Stromversorgung: " + errorData.message);
+        }
+    } catch (error) {
+        showErrorMessage("System Fehler", "Fehler beim Ausschalten der Stromversorgung: " + error);
+    }
+    finally{
+        //enable button
+    }
+}
+
+
+
+
+
+
+
 /*Script for Color Settings*/
 const colorSlider = document.getElementById('colorSlider');
 const colorValue = document.getElementById('colorValue');
