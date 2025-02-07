@@ -14,6 +14,7 @@ def install_apt_packages():
         "playerctl",
         "alsa-utils",
         "unclutter",
+        "RPi.GPIO",
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)

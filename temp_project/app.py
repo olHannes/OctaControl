@@ -3,8 +3,11 @@ from flask_cors import CORS
 from routes import *
 
 app = Flask(__name__)
+
 # Register routes from routes.py
 app.register_blueprint(app_routes)
+
+initializeGPIO()
 
 #main route
 @app.route("/")

@@ -187,3 +187,19 @@ def requestVersion():
 def requestGitLog():
     result = getGitLog()
     return jsonify(result)
+
+@app_routes.route("/system/powerOptions/trunkPower/enable", methods=["POST"])
+def requestTrunkPowerOn():
+    try:
+        enableTrunkPower()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app_routes.route("/system/powerOptions/trunkPower/disable", methods=["POST"])
+def requestTrunkPowerOff():
+    try:
+        disableTrunkPower()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500

@@ -1,6 +1,9 @@
 import subprocess
 import alsaaudio
 import os
+import RPi.GPIO as GPIO
+
+trunkPowerPin = 2
 
 def run_bluetoothctl_command(command):
     try:
@@ -34,6 +37,12 @@ def run_amixer_command(command):
         return result.stdout.strip()
     except Exception as e:
         return str(e)
+
+def initializeGPIO():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(trunkPowerPin, GPIO.OUT)
+    GPIO.output(trunkPowerPin, GPIO.HIGH)
+
 
 def set_volume_with_alsa(volume):
     print("set Volume with alsa -->")
@@ -164,3 +173,10 @@ def getWlanStatus():
             return {"status": "enabled", "message": "WLAN ist aktiviert."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
+
+
+def enableTrunkPower():
+    GPIO.output(trunkPowerPin, GPIO.HIGH)
+
+def disableTrunkPower():
+    GPIO.output(trunkPowerPin, GPIO.LOW)
