@@ -4,9 +4,6 @@ import os
 import RPi.GPIO as GPIO
 
 pin = 23
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin, GPIO.OUT)
-GPIO.output(pin, GPIO.HIGH)
 
 def run_bluetoothctl_command(command):
     try:
@@ -218,9 +215,19 @@ def getWlanStatus():
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
 
+def initializeGPIO():
+    if not GPIO.getmode():
+        GPIO.setmode(GPIO.BCM)
+    try:
+        GPIO.cleanup(pin)
+    except RuntimeError:
+        pass
+    print(f"GPIO Pin '{pin}' wurde aktualisiert")
 
 def enableTrunkPower():
+    initializeGPIO()
     GPIO.output(pin, GPIO.HIGH)
 
 def disableTrunkPower():
+    initializeGPIO()
     GPIO.output(pin, GPIO.LOW)
