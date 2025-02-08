@@ -44,18 +44,62 @@ def initializeGPIO():
     GPIO.output(trunkPowerPin, GPIO.HIGH)
 
 
+# ---------------------- ALSA HELPER ----------------------
+
 def set_volume_with_alsa(volume):
-    print("set Volume with alsa -->")
-    mixer = alsaaudio.Mixer()
-    vol = max(0, min(100, int(volume)))
-    mixer.setvolume(vol)
+    try:
+        mixer = alsaaudio.Mixer()
+        vol = max(0, min(100, int(volume)))
+        mixer.setvolume(vol)
+        print(f"Volume set to {vol}%")
+    except alsaaudio.ALSAAudioError as e:
+        raise Exception(f"ALSA Error: {str(e)}")
+
 
 def get_volume_with_alsa():
-    print("get Volume with alsa <--")
-    mixer = alsaaudio.Mixer()
-    volume = mixer.getvolume()[0]
-    is_muted = mixer.getmute()[0] == 1
-    return volume, is_muted
+    try:
+        mixer = alsaaudio.Mixer()
+        volume = mixer.getvolume()[0]
+        is_muted = mixer.getmute()[0] == 1
+        return volume, is_muted
+    except alsaaudio.ALSAAudioError as e:
+        raise Exception(f"ALSA Error: {str(e)}")
+
+
+def set_balance(balance):
+    try:
+        mixer = alsaaudio.Mixer()
+        balance = max(-100, min(100, balance))
+        volume, _ = get_volume_with_alsa()
+
+        if balance < 0:
+            left = volume
+            right = int(volume * (1 + balance / 100))
+        elif balance > 0:
+            right = volume
+            left = int(volume * (1 - balance / 100))
+        else:
+            left = right = volume
+
+        mixer.setvolume(left, 0)
+        mixer.setvolume(right, 1)
+    except alsaaudio.ALSAAudioError as e:
+        raise Exception(f"ALSA Error: {str(e)}")
+
+
+def get_balance():
+    try:
+        mixer = alsaaudio.Mixer()
+        left, right = mixer.getvolume()
+
+        if left == right:
+            return 0
+        if left + right == 0:
+            return 0
+
+        return int((right - left) / (left + right) * 100)
+    except alsaaudio.ALSAAudioError as e:
+        raise Exception(f"ALSA Error: {str(e)}")
 
 
 

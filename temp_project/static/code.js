@@ -5,8 +5,6 @@ document.addEventListener ("DOMContentLoaded", () => {
     disableWlan();
     setTimeout(() => {
         enableBt();
-        setVolumeSlider(20);
-        setVolume(20);
     }, 3000);
     
     document.getElementById('colorSlider').value=39;
@@ -441,6 +439,12 @@ function switchToSection(section){
                 document.getElementById('expPanel').classList.add('show');
             }, 10);
             break;
+        case 'soundSettings':
+            document.getElementById('soundSettingsPanel').style.display='block';
+            setTimeout(() => {
+                document.getElementById('soundSettingsPanel').classList.add('show');
+            }, 10);
+            break;
     }
 }
 
@@ -461,6 +465,12 @@ function closePanel(panel) {
         case 'gitLog':
             document.getElementById('git-log-container').style.display="none";
             break;
+        case 'soundSettingsPanel':
+            document.getElementById('soundSettingsPanel').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('soundSettingsPanel').style.display = 'none';
+            }, 500);
+            break;
     }
 }
 
@@ -468,74 +478,118 @@ function closePanel(panel) {
 /**The following part represents the functions for the audio control */
 /**Volume Control -> Slider and RaspberryPI */
 const volumeSlider = document.getElementById('volumeSlider');
+const balanceSlider = document.getElementById('balanceSlider');
+
+// Debounce-Funktion, um API-Calls zu reduzieren
+function debounce(func, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Initiale Werte setzen
+window.addEventListener('DOMContentLoaded', () => {
+    setVolumeSlider(getVolume());
+    setBalanceSlider(getBalance());
+});
+
+// ---------------------- VOLUME ----------------------
 
 async function getVolume() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/volume/get");
-        if (!response.ok) {
-            throw new Error('Netzwerkantwort war nicht ok');
-        }
+        const response = await fetch("/volume/get");
         const data = await response.json();
+
         if (data.status === "success") {
             return data.volume;
         } else {
-            showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + data.message);
+            showErrorMessage("Volumen Fehler", data.message);
+            return null;
         }
     } catch (error) {
-        showErrorMessage("Volumen Fehler", "Fehler beim Abrufen der Lautstärke: " + error);
+        showErrorMessage("Volumen Fehler", error.message);
+        return null;
     }
 }
-
 
 async function setVolume(volume) {
-    console.log(volume+"%");
     try {
-        const response = await fetch("http://127.0.0.1:5000/volume/set", {
+        const response = await fetch("/volume/set", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ volume })
         });
-        const textResponse = await response.text(); 
-    
-        const data = JSON.parse(textResponse);
+
+        const data = await response.json();
         if (data.status === "success") {
-            console.log("Volume set successfully:", data.message);
-            if(volume>80){
-                document.getElementById('metaData').style.borderColor = 'red';
-            }
-            else{
-                document.getElementById('metaData').style.borderColor = 'white';
-            }
+            const metaData = document.getElementById('metaData');
+            metaData.style.borderColor = volume > 80 ? 'red' : 'white';
         } else {
-            showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + data.message);
+            showErrorMessage("Volumen Fehler", data.message);
         }
     } catch (error) {
-        console.error("Error:", error);
-        showErrorMessage("Volumen Fehler", "Fehler beim Setzen der Lautstärke: " + error);
+        showErrorMessage("Volumen Fehler", error.message);
     }
 }
 
-function setVolumeSlider(pValuePromise) {
-    pValuePromise.then(pValue => {
-        console.log(pValue);
-        volumeSlider.value = pValue;
-        if(volumeSlider.value>80){
-            document.getElementById('metaData').style.borderColor = 'red';
-        }else{
-            document.getElementById('metaData').style.borderColor = 'white';
+// ---------------------- BALANCE ----------------------
+
+async function getBalance() {
+    try {
+        const response = await fetch("/balance/get");
+        const data = await response.json();
+
+        if (data.status === "success") {
+            return data.balance;
+        } else {
+            showErrorMessage("Balance Fehler", data.message);
+            return null;
         }
-    }).catch(error => {
-        console.error("Fehler beim Abrufen des Volume-Werts:", error);
-    });
+    } catch (error) {
+        showErrorMessage("Balance Fehler", error.message);
+        return null;
+    }
 }
 
-function getVolumeSlider(){
-    return volumeSlider.value;
+async function setBalance(balance) {
+    try {
+        const response = await fetch("/balance/set", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ balance })
+        });
+
+        const data = await response.json();
+        if (data.status !== "success") {
+            showErrorMessage("Balance Fehler", data.message);
+        }
+    } catch (error) {
+        showErrorMessage("Balance Fehler", error.message);
+    }
 }
 
-volumeSlider.addEventListener('input', () => setVolume(volumeSlider.value));
+// ---------------------- SLIDER ----------------------
+
+function setVolumeSlider(promise) {
+    promise.then(value => {
+        if (value !== null) {
+            volumeSlider.value = value;
+        }
+    }).catch(console.error);
+}
+
+function setBalanceSlider(promise) {
+    promise.then(value => {
+        if (value !== null) {
+            balanceSlider.value = value;
+        }
+    }).catch(console.error);
+}
+
+volumeSlider.addEventListener('input', debounce(() => setVolume(volumeSlider.value), 200));
+balanceSlider.addEventListener('input', debounce(() => setBalance(balanceSlider.value), 200));
 
 
 

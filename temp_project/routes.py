@@ -120,30 +120,28 @@ def requestWlanStatus():
     result = getWlanStatus()
     return jsonify(result)
 
-# Volume routes
+
+# Volume-Routen
 @app_routes.route("/volume/get", methods=["GET"])
-def get_volume():
+def get_volume_route():
     try:
         volume, is_muted = get_volume_with_alsa()
-        return jsonify({
-            "status": "success",
-            "volume": volume,
-            "is_muted": is_muted
-        })
+        return jsonify({"status": "success", "volume": volume, "is_muted": is_muted}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
 @app_routes.route("/volume/set", methods=["POST"])
-def set_volume():
+def set_volume_route():
     data = request.json
-    if "volume" not in data:
+    if not data or "volume" not in data:
         return jsonify({"status": "error", "message": "Please provide a volume level."}), 400
 
     try:
         volume = int(data["volume"])
         if 0 <= volume <= 100:
             set_volume_with_alsa(volume)
-            return jsonify({"status": "success", "message": f"Volume set to {volume}%"})
+            return jsonify({"status": "success", "message": f"Volume set to {volume}%"}), 200
         else:
             raise ValueError("Volume must be between 0 and 100.")
     except ValueError as e:
@@ -152,6 +150,32 @@ def set_volume():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app_routes.route("/balance/get", methods=["GET"])
+def get_balance_route():
+    try:
+        balance = get_balance()
+        return jsonify({"status": "success", "balance": balance}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app_routes.route("/balance/set", methods=["POST"])
+def set_balance_route():
+    data = request.json
+    if not data or "balance" not in data:
+        return jsonify({"status": "error", "message": "Please provide a balance value."}), 400
+
+    try:
+        balance = int(data["balance"])
+        if -100 <= balance <= 100:
+            set_balance(balance)
+            return jsonify({"status": "success", "message": f"Balance set to {balance}"}), 200
+        else:
+            raise ValueError("Balance must be between -100 and 100.")
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # system and power routes
 

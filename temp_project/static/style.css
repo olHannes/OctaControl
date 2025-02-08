@@ -190,6 +190,16 @@ input[type=range]::-webkit-slider-thumb {
     text-align: center;
     margin-top: 5vh;
 }
+.subTitle {
+    position: absolute;
+    width: 50%;
+    left: 25%;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.7vw;
+    color: white;
+    text-align: center;
+    margin-top: -6vh;
+}
 
 /*style for home-section*/
 /*#################################################################################################*/
@@ -283,7 +293,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 
-.connButton, .expButton, .trunkPowerBtn{
+.connButton, .expButton, .trunkPowerBtn, .soundSettingsBtn{
     width: 12vw;
     height: 12vw;
     padding: 0;
@@ -314,8 +324,20 @@ input[type=range]::-webkit-slider-thumb {
     background-repeat: no-repeat;
     background-position: center;
 }
+.soundSettingsBtn{
+    background: url('media/soundSettingsBtn_img.png') no-repeat center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 
-.connButton:hover, .expButton:hover, .trunkPowerBtn:hover {
+    position: absolute;
+    top: 57%;
+    left: 1%;
+    transition: transform 0.3s ease;
+    transform-origin: center center; 
+}
+
+.connButton:hover, .expButton:hover, .trunkPowerBtn:hover, .soundSettingsBtn:hover {
     transform: scale(1.1);
     transition: transform 0.3s ease;
 }
@@ -329,7 +351,7 @@ input[type=range]::-webkit-slider-thumb {
 
 
 /* different Settingpanels with animation*/
-#connPanel, #expPanel {
+#connPanel, #expPanel, #soundSettingsPanel {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -345,7 +367,13 @@ input[type=range]::-webkit-slider-thumb {
     transition: transform 0.5s ease-out;
 }
 
-#connPanel.show, #expPanel.show {
+#soundSettingsPanel {
+    width: 93%;
+    height: 70%;
+    top: 41%;
+}
+
+#connPanel.show, #expPanel.show, #soundSettingsPanel.show{
     visibility: visible;
     opacity: 1;
     transform: translate(-50%, -50%) scaleX(1);
@@ -616,6 +644,11 @@ input:checked + .genre-color-slider::before {
     left: 5%;
     top: 10%;
 }
+
+#soundSettingsBtn{
+
+}
+
 
 /*style for music Control*/
 #musicControl {
