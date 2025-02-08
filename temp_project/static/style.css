@@ -334,8 +334,8 @@ input[type=range]::-webkit-slider-thumb {
     position: absolute;
     top: 57%;
     left: 1%;
-    width: 11vw;
-    height: 11vw;
+    width: 9vw;
+    height: 10vw;
     transition: transform 0.3s ease;
     transform-origin: center center; 
 }
