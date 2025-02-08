@@ -70,19 +70,23 @@ def set_balance(balance):
     try:
         mixer = alsaaudio.Mixer()
         balance = max(-100, min(100, balance))
-        volume, _ = get_volume_with_alsa()
+
+        left, right = mixer.getvolume()
+        master_volume = (left + right) // 2
 
         if balance < 0:
-            left = volume
-            right = int(volume * (1 + balance / 100))
+            left = master_volume
+            right = int(master_volume * (1 + balance / 100))
         elif balance > 0:
-            right = volume
-            left = int(volume * (1 - balance / 100))
+            right = master_volume
+            left = int(master_volume * (1 - balance / 100))
         else:
-            left = right = volume
+            left = right = master_volume
 
         mixer.setvolume(left, 0)
         mixer.setvolume(right, 1)
+
+        print(f"Balance set: Left = {left}%, Right = {right}%")
     except alsaaudio.ALSAAudioError as e:
         raise Exception(f"ALSA Error: {str(e)}")
 
