@@ -45,16 +45,17 @@ def initializeGPIO():
 
 
 # ---------------------- ALSA HELPER ----------------------
+master_volume = 100 
 
 def set_volume_with_alsa(volume):
+    global master_volume
     try:
         mixer = alsaaudio.Mixer()
-        vol = max(0, min(100, int(volume)))
-        mixer.setvolume(vol)
-        print(f"Volume set to {vol}%")
+        master_volume = max(0, min(100, int(volume)))
+        mixer.setvolume(master_volume)
+        print(f"Master-Volume set to {master_volume}%")
     except alsaaudio.ALSAAudioError as e:
         raise Exception(f"ALSA Error: {str(e)}")
-
 
 def get_volume_with_alsa():
     try:
@@ -67,12 +68,10 @@ def get_volume_with_alsa():
 
 
 def set_balance(balance):
+    global master_volume
     try:
         mixer = alsaaudio.Mixer()
         balance = max(-100, min(100, balance))
-
-        left, right = mixer.getvolume()
-        master_volume = (left + right) // 2
 
         if balance < 0:
             left = master_volume
@@ -90,7 +89,6 @@ def set_balance(balance):
     except alsaaudio.ALSAAudioError as e:
         raise Exception(f"ALSA Error: {str(e)}")
 
-
 def get_balance():
     try:
         mixer = alsaaudio.Mixer()
@@ -98,10 +96,10 @@ def get_balance():
 
         if left == right:
             return 0
-        if left + right == 0:
-            return 0
-
-        return int((right - left) / (left + right) * 100)
+        elif left > right:
+            return -int(100 * (1 - (right / left)))
+        else:
+            return int(100 * (1 - (left / right)))
     except alsaaudio.ALSAAudioError as e:
         raise Exception(f"ALSA Error: {str(e)}")
 

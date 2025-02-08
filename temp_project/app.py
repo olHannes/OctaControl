@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Register routes from routes.py
 app.register_blueprint(app_routes)
 
-initializeGPIO()
+#initializeGPIO()
 
 #main route
 @app.route("/")
