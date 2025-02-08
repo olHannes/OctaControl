@@ -3,7 +3,10 @@ import alsaaudio
 import os
 import RPi.GPIO as GPIO
 
-trunkPowerPin = 2
+pin = 23
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pin, GPIO.OUT)
+GPIO.output(pin, GPIO.HIGH)
 
 def run_bluetoothctl_command(command):
     try:
@@ -37,11 +40,6 @@ def run_amixer_command(command):
         return result.stdout.strip()
     except Exception as e:
         return str(e)
-
-def initializeGPIO():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(trunkPowerPin, GPIO.OUT)
-    GPIO.output(trunkPowerPin, GPIO.HIGH)
 
 
 # ---------------------- ALSA HELPER ----------------------
@@ -222,7 +220,7 @@ def getWlanStatus():
 
 
 def enableTrunkPower():
-    GPIO.output(trunkPowerPin, GPIO.HIGH)
+    GPIO.output(pin, GPIO.HIGH)
 
 def disableTrunkPower():
-    GPIO.output(trunkPowerPin, GPIO.LOW)
+    GPIO.output(pin, GPIO.LOW)
