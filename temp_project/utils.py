@@ -220,6 +220,7 @@ def initializeGPIO():
         GPIO.setmode(GPIO.BCM)
     try:
         GPIO.cleanup(pin)
+        GPIO.setup(pin, GPIO.OUT)
     except RuntimeError:
         pass
     print(f"GPIO Pin '{pin}' wurde aktualisiert")
