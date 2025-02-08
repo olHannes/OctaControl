@@ -525,6 +525,7 @@ async function setVolume(volume) {
         if (data.status === "success") {
             const metaData = document.getElementById('metaData');
             metaData.style.borderColor = volume > 80 ? 'red' : 'white';
+            balanceSlider.value=0;
         } else {
             showErrorMessage("Volumen Fehler", data.message);
         }
@@ -764,14 +765,11 @@ async function updateProgress() {
     }
 }
 
-setInterval(updateProgress, 1000);
-
-
-
 /*check for new metaData*/
 setInterval(() => {
+    updateProgress();
     setMetaData();
-}, 2500);
+}, 1500);
 
 function animateButton(button) {
     button.classList.remove("clicked"); 
