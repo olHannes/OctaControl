@@ -31,6 +31,7 @@ function preloadImages(imageArray) {
         const img = new Image();
         img.src = src;
     });
+    showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
 
 /**function for sleepTimer*/
