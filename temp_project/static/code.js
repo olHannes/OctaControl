@@ -2,6 +2,7 @@
 document.addEventListener ("DOMContentLoaded", () => {
 	
     setVolumeSlider(getVolume());
+    setBalanceSlider(getBalance());
     enableBt();  
     document.getElementById('colorSlider').value=39;
     updateBackgroundColor();
@@ -508,12 +509,6 @@ function debounce(func, delay) {
     };
 }
 
-// Initiale Werte setzen
-window.addEventListener('DOMContentLoaded', () => {
-    setVolumeSlider(getVolume());
-    setBalanceSlider(getBalance());
-});
-
 // ---------------------- VOLUME ----------------------
 
 async function getVolume() {
@@ -545,7 +540,6 @@ async function setVolume(volume) {
         if (data.status === "success") {
             const metaData = document.getElementById('metaData');
             metaData.style.borderColor = volume > 80 ? 'red' : 'white';
-            balanceSlider.value=0;
         } else {
             showErrorMessage("Volumen Fehler", data.message);
         }
