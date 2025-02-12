@@ -1,16 +1,36 @@
 /**function executed when the page is loaded -> initial loadings */
 document.addEventListener ("DOMContentLoaded", () => {
-	setVolumeSlider(getVolume());
-
-    setTimeout(() => {
-        enableBt();
-    }, 3000);
-    
+	
+    setVolumeSlider(getVolume());
+    enableBt();  
     document.getElementById('colorSlider').value=39;
     updateBackgroundColor();
     setVersion();
     toggleTrunkPower();
+    
+    preloadImages([
+        '../static/media/trunkPowerOn_img.png',
+        '../static/media/trunkPowerOff_img.png',
+        '../static/media/home_img.png',
+        '../static/media/audioControl_img.png',
+        '../static/media/settings_img.png',
+        '../static/media/turnOn.png',
+        '../static/media/turnOff.png',
+        '../static/media/BTPairingOn.png',
+        '../static/media/BTPairingOff.png',
+        '../static/media/wlanOn.png',
+        '../static/media/wlanOff.png'
+    ]);
 });
+
+
+/**Function to load images*/
+function preloadImages(imageArray) {
+    imageArray.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+    });
+}
 
 /**function for sleepTimer*/
 let sleepTimerTime = 0;
