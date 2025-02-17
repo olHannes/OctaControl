@@ -57,6 +57,16 @@ def get_audio_information():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app_routes.route("/audio/player", methods=["GET"])
+def getPlayer():
+    try:
+        name = getPlayerDeviceName()
+        return jsonify({
+            "status": "success",
+            "player": name
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 """Route to get Song-Process"""
 @app_routes.route("/audio/progress", methods=["GET"])

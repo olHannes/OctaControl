@@ -38,7 +38,17 @@ def getMeta():
     except MediaPlayer.DeviceNotFoundError:
         print("No Device found")
 
+def getPlayerDeviceName():
+    bus = SystemBus()
+    manager = bus.get('org.bluez', '/')
 
+    for path, interfaces in manager.GetManagedObjects().items():
+        if 'org.bluez.MediaPlayer1' in interfaces:
+            device_path = path.rsplit('/', 1)[0]
+            device = bus.get('org.bluez', device_path)
+            return device.Name
+
+    return "Unknown Device"
 
 lastPosition = 0
 isPlaying = False
