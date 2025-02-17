@@ -716,9 +716,30 @@ async function getInfoAudio() {
         }
     } catch (error) {
         console.log(error);
+        showErrorMessage("Fehler bei den Metadaten", error);
         return null;
     }
 }
+
+async function getPlayerDevice() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/player");
+        const data = await response.json();
+        if(data.status === "success"){
+            console.log("PlayerDevice:", data.player);
+            return data.player;
+        }
+        else {
+            showErrorMessage("Fehler beim abrufen des Player-Device", data.message);
+            return null;
+        }
+    } catch (error) {
+        console.log(error);
+        showErrorMessage("Fehler beim Player-Device", error);
+        return null;
+    }
+}
+
 
 function truncateText(text, maxLength) {
     if (text.length > maxLength) {
