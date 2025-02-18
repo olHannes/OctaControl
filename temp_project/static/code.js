@@ -721,16 +721,19 @@ async function getInfoAudio() {
     }
 }
 
+const DeviceName = document.getElementById('DeviceName');
 async function getPlayerDevice() {
     try {
         const response = await fetch("http://127.0.0.1:5000/audio/player");
         const data = await response.json();
         if(data.status === "success"){
             console.log("PlayerDevice:", data.player);
+            DeviceName.innerHTML=data.player;
             return data.player;
         }
         else {
             showErrorMessage("Fehler beim abrufen des Player-Device", data.message);
+            DeviceName.innerHTML="";
             return null;
         }
     } catch (error) {
@@ -805,6 +808,7 @@ async function updateProgress() {
 setInterval(() => {
     updateProgress();
     setMetaData();
+    getPlayerDevice();
 }, 1500);
 
 function animateButton(button) {

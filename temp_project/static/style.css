@@ -786,3 +786,14 @@ svg {
     background-color: #4caf50;
     transition: width 0.5s ease-in-out;
 }
+
+
+#soundDevice{
+    position: absolute;
+    top: 0;
+    right: 10px;
+    color: white;
+}
+#soundDevice h5{
+    font-size: 1rem;
+}
