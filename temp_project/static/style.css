@@ -648,11 +648,6 @@ input:checked + .genre-color-slider::before {
     top: 10%;
 }
 
-#soundSettingsBtn{
-
-}
-
-
 /*style for music Control*/
 #musicControl {
     display: flex;
