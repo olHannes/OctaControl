@@ -122,14 +122,29 @@
             </div>
 
         </div>
-    </div>
-    
-    <div class="setPanel" id="featurePanel">
-        <div id="backFeature" class="backButton" onclick="closePanel('featurePanel')">
-            <img src="../static/media/back.png" alt="goBack img">
+        
+        <div class="setPanel" id="featurePanel">
+            <div id="backFeature" class="backButton" onclick="closePanel('featurePanel')">
+                <img src="../static/media/back.png" alt="goBack img">
+            </div>
+            <h2 style="color: white; text-align: center; text-decoration: underline;">Feature Settings</h2>
+        
+        
+            <div class="featureBtn" onclick="closePanel('featurePanel'); switchToSection('soundSettings'); switchToSection('audioControl');">
+                <h5>Audio Einstellungen</h5>
+            </div>
+
+            <div class="featureBtn" onclick="toggleTrunkPower();">
+                <h5 id="trunkPowerToggle">Anlage / Sternenhimmel: An</h5>
+            </div>
         </div>
-        <h2 style="color: white; text-align: center; text-decoration: underline;">Feature Settings</h2>
+
     </div>
+
+
+
+
+
 
     <div id="audioControl" style="display: none;">
         <div class="title">

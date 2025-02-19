@@ -315,6 +315,7 @@ async function openGitLog() {
 /* Script for trunkPower options */
 let trunkPower = false;
 const trunkPowerBtn = document.getElementById('trunkPowerBtn');
+const trunkPowerToggle = document.getElementById('trunkPowerToggle');
 
 async function toggleTrunkPower() {
     trunkPowerBtn.disabled = true;
@@ -329,6 +330,8 @@ async function toggleTrunkPower() {
         trunkPower = !trunkPower;
         updateButtonIcon();
     } catch (error) {
+        trunkPower = !trunkPower;
+        updateButtonIcon();
         showErrorMessage("System Fehler", error.message);
     } finally {
         trunkPowerBtn.disabled = false;
@@ -339,6 +342,9 @@ function updateButtonIcon() {
     trunkPowerBtn.style.backgroundImage = trunkPower
         ? "url('../static/media/trunkPowerOn_img.png')"
         : "url('../static/media/trunkPowerOff_img.png')";
+    trunkPowerToggle.innerHTML = trunkPower
+        ? "Anlage / Sternenhimmel: An"
+        : "Anlage / Sternenhimmel: Aus";
 }
 
 async function enableTrunkPower() {

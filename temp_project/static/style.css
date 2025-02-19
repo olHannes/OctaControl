@@ -650,6 +650,25 @@ input:checked + .genre-color-slider::before {
 }
 
 
+
+/*Style for Feature Buttons*/
+.featureBtn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: black;
+    background-color: white;
+    border-radius: 5px;
+    padding: 5%;
+}
+
+.featureBtn h5 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+
 /*style for audio-control-section*/
 /*#################################################################################################*/
 #audioControl .homeButton{
