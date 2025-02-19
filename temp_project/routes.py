@@ -243,7 +243,7 @@ def requestTrunkPowerOff():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @app_routes.route("/system/config", methods=["GET"])
-def requestClimateData():
+def requestConfig():
     try:
         json_file_path = os.path.expanduser("~/Documents/settings.json")
         
