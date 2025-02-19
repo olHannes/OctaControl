@@ -63,12 +63,13 @@
         </div>
 
         <div id="settingPanels">
-            <button onclick="switchToSection('connections')" class="connButton"></button>
-            <button onclick="switchToSection('expert')" class="expButton"></button>
-            <button onclick="toggleTrunkPower()" class="trunkPowerBtn" id="trunkPowerBtn"></button>
+            <button onclick="switchToSection('connections')" class="setBtn" id="connBtn"></button>
+            <button onclick="switchToSection('expert')" class="setBtn" id="expBtn"></button>
+            <button onclick="toggleTrunkPower()" class="setBtn" id="trunkPowerBtn"></button>
+            <button onclick="switchToSection('features')" class="setBtn" id="feaBtn"></button>
         </div>
 
-        <div id="connPanel">
+        <div class="setPanel" id="connPanel">
             <div id="backConn" class="backButton" onclick="closePanel('connPanel')">
                 <img src="../static/media/back.png" alt="goBack img">
             </div>
@@ -92,7 +93,7 @@
             </div>
         </div>
 
-        <div id="expPanel">
+        <div class="setPanel" id="expPanel">
             <div id="backExpert" class="backButton" onclick="closePanel('expPanel')">
                 <img src="../static/media/back.png" alt="goBack img">
             </div>
@@ -129,7 +130,7 @@
             <h1>Audio Control</h1>
         </div>
         <button onclick="switchToSection('home')" class="homeButton"></button>
-        <button onclick="switchToSection('soundSettings')" class="soundSettingsBtn"></button>
+        <button onclick="switchToSection('soundSettings')" class="setBtn" id="soundSettingsBtn"></button>
 
         <div id="musicControl">
             <div class="container">
@@ -186,7 +187,7 @@
             <h5 id="DeviceName">Device Name</h5>
         </div>
         
-        <div id="soundSettingsPanel">
+        <div class="setPanel" id="soundSettingsPanel">
             <div id="backExpert" class="backButton" onclick="closePanel('soundSettingsPanel')">
                 <img src="../static/media/back.png" alt="goBack img">
             </div>

@@ -10,17 +10,18 @@ document.addEventListener ("DOMContentLoaded", () => {
     toggleTrunkPower();
     
     preloadImages([
-        '../static/media/trunkPowerOn_img.png',
-        '../static/media/trunkPowerOff_img.png',
-        '../static/media/home_img.png',
-        '../static/media/audioControl_img.png',
-        '../static/media/settings_img.png',
-        '../static/media/turnOn.png',
-        '../static/media/turnOff.png',
-        '../static/media/BTPairingOn.png',
-        '../static/media/BTPairingOff.png',
-        '../static/media/wlanOn.png',
-        '../static/media/wlanOff.png'
+        '../static/media/trunkPowerOn_img.png'
+        ,'../static/media/trunkPowerOff_img.png'
+        ,'../static/media/home_img.png'
+        ,'../static/media/audioControl_img.png'
+        ,'../static/media/settings_img.png'
+        ,'../static/media/turnOn.png'
+        ,'../static/media/turnOff.png'
+        ,'../static/media/BTPairingOn.png'
+        ,'../static/media/BTPairingOff.png'
+        ,'../static/media/wlanOn.png'
+        ,'../static/media/wlanOff.png'
+        ,'../static/media/featureSettings.png'
     ]);
 });
 
