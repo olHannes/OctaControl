@@ -339,20 +339,6 @@ input[type=range]::-webkit-slider-thumb {
     background-repeat: no-repeat;
     background-position: center;
 }
-#soundSettingsBtn {
-    background: url('media/soundSettingsBtn_img.png') no-repeat center center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-
-    position: absolute;
-    top: 57%;
-    left: 1%;
-    width: 9vw;
-    height: 10vw;
-    transition: transform 0.3s ease;
-    transform-origin: center center; 
-}
 #feaBtn{
     background: url('media/featureSettings.png') no-repeat center center;
     background-size: 80%;
@@ -393,8 +379,8 @@ input[type=range]::-webkit-slider-thumb {
 
 #soundSettingsPanel {
     width: 93%;
-    height: 70%;
-    top: 41%;
+    height: 90%;
+    top: 50%;
 }
 
 .backButton {
