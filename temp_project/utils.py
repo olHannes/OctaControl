@@ -235,4 +235,12 @@ def disableTrunkPower():
 
 
 def getBrightness():
-    pass
+    return {
+        "brightness": 0
+    }
+
+def getClimate():
+    return {
+        "temperature": 0,
+        "humidity": 0
+    }

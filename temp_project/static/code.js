@@ -1093,3 +1093,39 @@ function toggleAdaptiveBrightness() {
         adaptiveBrightnessToggle.style.color = "red";
     }
 }
+
+const climateToggle = document.getElementById('climateData');
+const tempDisplay = document.getElementById('tempValue');
+const humidityDisplay = document.getElementById('humidityValue');
+let climateDataEnabled = false;
+let climateIntervalId = null;
+
+async function fetchClimateData() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/features/climateData");
+        if (!response.ok) {
+            throw new Error('Fehler beim Abrufen der Klimadaten');
+        }
+        const data = await response.json();
+        if (data && data.temperature !== undefined && data.humidity !== undefined) {
+            tempDisplay.innerText=`${data.temperature}°C`;
+            humidityDisplay.innerText = `${data.humidity}%`;
+        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Abrufen der Klimadaten", error);
+    }
+}
+
+function toggleClimateData() {
+    climateDataEnabled = !climateDataEnabled;
+    
+    if (climateDataEnabled) {
+        fetchClimateData();
+        climateToggle.style.color = "green";
+        climateIntervalId = setInterval(fetchClimateData, 10000);
+    } else {
+        clearInterval(climateIntervalId);
+        climateToggle.innerHTML = "Raumklima: Aus";
+        climateToggle.style.color = "red";
+    }
+}
