@@ -237,3 +237,14 @@ def requestTrunkPowerOff():
         return jsonify({"status": "success"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+
+
+@app_routes.route("/features/adaptiveBrightness", methods=["GET"])
+def requestadaptiveBrightness():
+    try:
+        result = getBrightness()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500

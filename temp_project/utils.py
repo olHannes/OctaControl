@@ -232,3 +232,7 @@ def enableTrunkPower():
 def disableTrunkPower():
     initializeGPIO()
     GPIO.output(pin, GPIO.LOW)
+
+
+def getBrightness():
+    pass
