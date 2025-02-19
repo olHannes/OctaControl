@@ -461,6 +461,12 @@ function switchToSection(section){
                 document.getElementById('expPanel').classList.add('show');
             }, 10);
             break;
+        case 'feature':
+            document.getElementById('featurePanel').style.display='block';
+            setTimeout(() => {
+                document.getElementById('featurePanel').classList.add('show');
+            }, 10);
+            break;
         case 'soundSettings':
             document.getElementById('soundSettingsPanel').style.display='block';
             setTimeout(() => {
@@ -493,6 +499,12 @@ function closePanel(panel) {
                 document.getElementById('soundSettingsPanel').style.display = 'none';
             }, 500);
             break;
+        case 'featurePanel':
+        document.getElementById('featurePanel').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('featurePanel').style.display = 'none';
+        }, 500);
+        break;
     }
 }
 
