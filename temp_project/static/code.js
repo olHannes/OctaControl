@@ -9,6 +9,8 @@ document.addEventListener ("DOMContentLoaded", () => {
     setVersion();
     toggleTrunkPower();
     toggleAdaptiveBrightness();
+    toggleClimateData();
+    toggleSongDisplay();
     
     preloadImages([
         '../static/media/trunkPowerOn_img.png'
@@ -775,6 +777,8 @@ function truncateText(text, maxLength) {
     return text;
 }
 
+let title = "default";
+let interpret = "default";
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
@@ -789,6 +793,11 @@ async function setMetaData() {
             artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
             album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
             genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
+            if(title != message.title){
+                title=message.title;
+                interpret=message.artist;
+                document.getElementById('songDisplayText').innerText="Songtitle: " + title + " | Interpret: " + interpret;
+            }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
         }
@@ -796,7 +805,6 @@ async function setMetaData() {
         console.error("Error beim Setzen der Metadaten:", error);
     }
 }
-
 
 const playBtn = document.getElementById('playBtn');
 const pauseBtn = document.getElementById('pauseBtn');
@@ -1121,11 +1129,29 @@ function toggleClimateData() {
     
     if (climateDataEnabled) {
         fetchClimateData();
+        climateToggle.innerHTML = "Raumklima: An";
         climateToggle.style.color = "green";
+        document.getElementById('climateDisplay').style.display="block";
         climateIntervalId = setInterval(fetchClimateData, 10000);
     } else {
         clearInterval(climateIntervalId);
         climateToggle.innerHTML = "Raumklima: Aus";
         climateToggle.style.color = "red";
+        document.getElementById('climateDisplay').style.display="none";
+    }
+}
+
+let songDisplay = false;
+function toggleSongDisplay() {
+    songDisplay = !songDisplay;
+
+    if(songDisplay){
+        document.getElementById('songDisplay').style.display="block"
+        document.getElementById('showSong').innerText="Musik Informationen: An";
+        document.getElementById('showSong').style.color="green";
+    } else {
+        document.getElementById('songDisplay').style.display="none";
+        document.getElementById('showSong').innerText="Musik Informationen: Aus";
+        document.getElementById('showSong').style.color="red";
     }
 }

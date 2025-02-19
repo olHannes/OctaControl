@@ -232,6 +232,30 @@ input[type=range]::-webkit-slider-thumb {
     margin: 5px 0;
 }
 
+#songDisplay {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+
+    border-radius: 80px;
+    width: 50%;
+    transform: translate(-50%, 0);
+    background-color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+#songDisplay p {
+    color: white;
+    font-size: 1rem;
+    display: inline-block;
+    animation: marquee 15s linear infinite;
+}
+
+@keyframes marquee {
+    from { transform: translate(100%);}
+    to { transform: translate(-100%);}
+}
 
 /*style for settings-section*/
 /*#################################################################################################*/
