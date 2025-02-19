@@ -28,18 +28,6 @@ function preloadImages(imageArray) {
     showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
 
-function preloadConfig(){
-    setVolumeSlider(getVolume());
-    setBalanceSlider(getBalance());
-    enableBt();  
-    document.getElementById('colorSlider').value=39;
-    updateBackgroundColor();
-    setVersion();
-    toggleTrunkPower();
-    toggleAdaptiveBrightness();
-    toggleClimateData();
-    toggleSongDisplay();
-}
 function preloadConfig() {
     fetch('http://127.0.0.1:5000/system/config')
         .then(response => {
@@ -886,6 +874,7 @@ async function setMetaData() {
             artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
             album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
             genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
+            console.log("title: "+title + "message.title: "+message.title);
             if(title != message.title){
                 title=message.title;
                 interpret=message.artist;
