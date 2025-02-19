@@ -859,7 +859,7 @@ function truncateText(text, maxLength) {
 }
 
 let pTitle = "default";
-let pInterpret = "default";
+let pArtist = "default";
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
@@ -870,19 +870,15 @@ async function setMetaData() {
     try {
         const message = await getInfoAudio();
         if (message) {
-            title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
-            artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
-            album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
-            genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
-            
-            let songTitleValue = message.title || "Unknown Title";
-            let artistValue = message.artist || "Unknown Artist";
-
-            if (title !== songTitleValue) {
-                title = songTitleValue;
-                interpret = artistValue;
-                document.getElementById('songDisplayText').innerText = 
-                    "Songtitle: " + title + " | Interpret: " + interpret;
+            if (pTitle != message.title){
+                title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
+                artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
+                album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
+                genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
+                
+                pTitle = message.title || "Unknown Title";
+                pArtist = message.artist || "Unknown Artist";
+                document.getElementById('songDisplayText').innerText = title + " | " + interpret;
             }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
