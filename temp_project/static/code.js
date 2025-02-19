@@ -1,17 +1,6 @@
 /**function executed when the page is loaded -> initial loadings */
 document.addEventListener ("DOMContentLoaded", () => {
-	
-    setVolumeSlider(getVolume());
-    setBalanceSlider(getBalance());
-    enableBt();  
-    document.getElementById('colorSlider').value=39;
-    updateBackgroundColor();
-    setVersion();
-    toggleTrunkPower();
-    toggleAdaptiveBrightness();
-    toggleClimateData();
-    toggleSongDisplay();
-    
+	    
     preloadImages([
         '../static/media/trunkPowerOn_img.png'
         ,'../static/media/trunkPowerOff_img.png'
@@ -26,6 +15,7 @@ document.addEventListener ("DOMContentLoaded", () => {
         ,'../static/media/wlanOff.png'
         ,'../static/media/featureSettings.png'
     ]);
+    preloadConfig();
 });
 
 
@@ -37,6 +27,108 @@ function preloadImages(imageArray) {
     });
     showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
+
+function preloadConfig(){
+    setVolumeSlider(getVolume());
+    setBalanceSlider(getBalance());
+    enableBt();  
+    document.getElementById('colorSlider').value=39;
+    updateBackgroundColor();
+    setVersion();
+    toggleTrunkPower();
+    toggleAdaptiveBrightness();
+    toggleClimateData();
+    toggleSongDisplay();
+}
+function preloadConfig() {
+    fetch('http://127.0.0.1:5000/system/config')
+        .then(response => {
+            if (!response.ok) {
+                console.warn('Failed to load config, falling back to defaults.');
+                fallbackFunctions();
+                showErrorMessage("Failed while loading Config.", "response was not ok.");
+                return;
+            }
+            return response.json();
+        })
+        .then(json => {
+
+            //set Volumelevel to the Volume Level of the RPi
+            setVolumeSlider(getVolume());
+            
+            //set BalanceLevel to the config-balance
+            setBalanceSlider(json.balanceValue);
+
+            if (json.isBluetoothEnabled) {
+                enableBt();
+            }
+            if(json.isPairingmodeEnabled){
+                enablePairingMode();
+            }
+            //set Value for Color Slider
+            document.getElementById('colorSlider').value = json.colorSliderValue;
+            updateBackgroundColor();
+            
+            //setting Version of System
+            setVersion();
+
+            if (json.isTrunkPowerEnabled) {
+                toggleTrunkPower();
+            }
+            if (json.isAdaptiveBrightnessEnabled) {
+                toggleAdaptiveBrightness();
+            }
+            if (json.isClimateDataEnabled) {
+                toggleClimateData();
+            }
+            if (json.isSongDisplayEnabled) {
+                toggleSongDisplay();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching config:', error);
+            fallbackFunctions();
+        });
+}
+
+function fallbackFunctions() {
+    setVolumeSlider(getVolume());
+    setBalanceSlider(getBalance());
+    enableBt();  
+    document.getElementById('colorSlider').value = 39;
+    updateBackgroundColor();
+    setVersion();
+    toggleTrunkPower();
+    toggleAdaptiveBrightness();
+    toggleClimateData();
+    toggleSongDisplay();
+}
+
+
+function updateConfig(key, value) {
+    fetch("http://127.0.0.1:5000/system/config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            key: key,
+            value: value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            console.log(`✅ Erfolgreich: ${data.message}`);
+        } else {
+            console.error(`❌ Fehler: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error("❌ Netzwerkfehler:", error);
+    });
+}
+
 
 /**function for sleepTimer*/
 let sleepTimerTime = 0;
@@ -429,6 +521,7 @@ function updateBackgroundColor() {
     const sliderValue = colorSlider.value;
     const newColor = interpolateColor(sliderValue, colorGradient);
     background.style.setProperty('--main-color', newColor);
+    updateConfig("colorSliderValue", colorSlider.value);
 }
 
 colorSlider.addEventListener('input', updateBackgroundColor);
@@ -1100,6 +1193,7 @@ function toggleAdaptiveBrightness() {
         adaptiveBrightnessToggle.innerHTML="Adaptive Helligkeit: Aus";
         adaptiveBrightnessToggle.style.color = "red";
     }
+    updateConfig("isAdaptiveBrightnessEnabled", adaptiveBrightnessEnabled);
 }
 
 const climateToggle = document.getElementById('climateData');
@@ -1139,6 +1233,7 @@ function toggleClimateData() {
         climateToggle.style.color = "red";
         document.getElementById('climateDisplay').style.display="none";
     }
+    updateConfig("isClimateDataEnabled", climateDataEnabled);
 }
 
 let songDisplay = false;
@@ -1154,4 +1249,5 @@ function toggleSongDisplay() {
         document.getElementById('showSong').innerText="Musik Informationen: Aus";
         document.getElementById('showSong').style.color="red";
     }
+    updateConfig("isSongDisplayEnabled", songDisplay);
 }

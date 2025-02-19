@@ -1,0 +1,11 @@
+{
+    "balanceValue": 0,  
+    "isBluetoothEnabled": true,
+    "isPairingmodeEnabled": false,
+    "isWlanEnabled": false,
+    "colorSliderValue": 45,
+    "isTrunkPowerEnabled": true,
+    "isAdaptiveBrightnessEnabled": false,
+    "isClimateDataEnabled": true,
+    "isSongDisplayEnabled": true
+}
