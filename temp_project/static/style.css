@@ -378,7 +378,12 @@ input[type=range]::-webkit-slider-thumb {
     z-index: 1000;
     display: none;
     transition: transform 0.5s ease-out;
+    overflow-y: auto;
 }
+.setPanel::-webkit-scrollbar {
+    display: none;
+}
+
 .setPanel.show {
     visibility: visible;
     opacity: 1;

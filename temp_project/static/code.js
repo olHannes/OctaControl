@@ -321,6 +321,7 @@ const trunkPowerToggle = document.getElementById('trunkPowerToggle');
 async function toggleTrunkPower() {
     trunkPowerBtn.disabled = true;
     trunkPowerBtn.style.opacity="0.1";
+    trunkPowerToggle.style.opacity="0.1";
     
     try {
         if (trunkPower) {
@@ -334,6 +335,7 @@ async function toggleTrunkPower() {
         showErrorMessage("System Fehler", error.message);
     } finally {
         trunkPowerBtn.disabled = false;
+        trunkPowerToggle.style.opacity="1";
         trunkPowerBtn.style.opacity="1";
     }
 }
