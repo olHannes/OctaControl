@@ -8,6 +8,7 @@ document.addEventListener ("DOMContentLoaded", () => {
     updateBackgroundColor();
     setVersion();
     toggleTrunkPower();
+    toggleAdaptiveBrightness();
     
     preloadImages([
         '../static/media/trunkPowerOn_img.png'
@@ -330,8 +331,6 @@ async function toggleTrunkPower() {
         trunkPower = !trunkPower;
         updateButtonIcon();
     } catch (error) {
-        trunkPower = !trunkPower;
-        updateButtonIcon();
         showErrorMessage("System Fehler", error.message);
     } finally {
         trunkPowerBtn.disabled = false;
@@ -339,12 +338,16 @@ async function toggleTrunkPower() {
     }
 }
 function updateButtonIcon() {
-    trunkPowerBtn.style.backgroundImage = trunkPower
-        ? "url('../static/media/trunkPowerOn_img.png')"
-        : "url('../static/media/trunkPowerOff_img.png')";
-    trunkPowerToggle.innerHTML = trunkPower
-        ? "Anlage / Sternenhimmel: An"
-        : "Anlage / Sternenhimmel: Aus";
+    if (trunkPower){
+        trunkPowerBtn.style.backgroundImage="url('../static/media/trunkPowerOn_img.png')";
+        trunkPowerToggle.innerHTML="Anlage / Sternenhimmel: An"; 
+        trunkPowerToggle.style.color="green";
+    }
+    else {
+        trunkPowerBtn.style.backgroundImage="url('../static/media/trunkPowerOff_img.png')";
+        trunkPowerToggle.innerHTML="Anlage / Sternenhimmel: Aus";
+        trunkPowerToggle.style.color="red"; 
+    }
 }
 
 async function enableTrunkPower() {
@@ -1047,5 +1050,44 @@ async function disableWlan() {
         showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + error);
     } finally {
         wlanToggle.style.pointerEvents = 'auto';
+    }
+}
+
+
+
+
+
+//Functions for special Features -not tested-
+const adaptiveBrightnessToggle = document.getElementById('adaptiveBrightness');
+let adaptiveBrightnessEnabled = true;
+let intervalId = null;
+
+async function fetchBrightness() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/features/adaptiveBrightness");
+        if (!response.ok) {
+            throw new Error('Fehler beim Abrufen der Helligkeit');
+        }
+        const data = await response.json();
+        if (data && data.brightness !== undefined) {
+            brightnessSlider.value = data.brightness;
+        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Abrufen der Helligkeit", error);
+    }
+}
+
+function toggleAdaptiveBrightness() {
+    adaptiveBrightnessEnabled = !adaptiveBrightnessEnabled;
+    
+    if (adaptiveBrightnessEnabled) {
+        fetchBrightness();
+        adaptiveBrightnessToggle.innerHTML="Adaptive Helligkeit: An";
+        adaptiveBrightnessToggle.style.color = "green";
+        intervalId = setInterval(fetchBrightness, 3000);
+    } else {
+        clearInterval(intervalId);
+        adaptiveBrightnessToggle.innerHTML="Adaptive Helligkeit: Aus";
+        adaptiveBrightnessToggle.style.color = "red";
     }
 }

@@ -661,6 +661,7 @@ input:checked + .genre-color-slider::before {
     background-color: white;
     border-radius: 5px;
     padding: 5%;
+    border: 1px green;
 }
 
 .featureBtn h5 {
