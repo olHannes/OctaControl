@@ -878,7 +878,7 @@ async function setMetaData() {
             if (pTitle != message.title){
                 pTitle = message.title || "Unknown Title";
                 pArtist = message.artist || "Unknown Artist";
-                document.getElementById('songDisplayText').innerText = title + " | " + interpret;
+                document.getElementById('songDisplayText').innerText = pTitle + " | " + pArtist;
             }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
