@@ -870,12 +870,12 @@ async function setMetaData() {
     try {
         const message = await getInfoAudio();
         if (message) {
+            title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
+            artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
+            album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
+            genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
+            
             if (pTitle != message.title){
-                title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
-                artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
-                album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
-                genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
-                
                 pTitle = message.title || "Unknown Title";
                 pArtist = message.artist || "Unknown Artist";
                 document.getElementById('songDisplayText').innerText = title + " | " + interpret;
