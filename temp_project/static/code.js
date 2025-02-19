@@ -858,8 +858,8 @@ function truncateText(text, maxLength) {
     return text;
 }
 
-let title = "default";
-let interpret = "default";
+let pTitle = "default";
+let pInterpret = "default";
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
@@ -874,11 +874,15 @@ async function setMetaData() {
             artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
             album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
             genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
-            console.log("title: "+title + "message.title: "+message.title);
-            if(title != message.title){
-                title=message.title;
-                interpret=message.artist;
-                document.getElementById('songDisplayText').innerText="Songtitle: " + title + " | Interpret: " + interpret;
+            
+            let songTitleValue = message.title || "Unknown Title";
+            let artistValue = message.artist || "Unknown Artist";
+
+            if (title !== songTitleValue) {
+                title = songTitleValue;
+                interpret = artistValue;
+                document.getElementById('songDisplayText').innerText = 
+                    "Songtitle: " + title + " | Interpret: " + interpret;
             }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
