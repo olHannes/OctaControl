@@ -278,6 +278,47 @@ input[type=range]::-webkit-slider-thumb {
     to { transform: translate(-100%);}
 }
 
+
+
+
+#positionDisplay {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    border-radius: 80px;
+    width: 22%;
+    background-color: black;
+    color: white;
+    overflow: hidden;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#compassContainer {
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+#compass {
+    width: 100%;
+    height: 100%;
+    transform-origin: center;
+    transition: transform 0.5s ease;
+}
+
+#posDisplayText {
+    flex-grow: 1;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+
+
 /*style for settings-section*/
 /*#################################################################################################*/
 #settings .homeButton{

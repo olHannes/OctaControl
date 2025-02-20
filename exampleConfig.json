@@ -7,5 +7,6 @@
     "isTrunkPowerEnabled": true,
     "isAdaptiveBrightnessEnabled": false,
     "isClimateDataEnabled": true,
-    "isSongDisplayEnabled": true
+    "isSongDisplayEnabled": true,
+    "isPosDisplayEnabled": true
 }

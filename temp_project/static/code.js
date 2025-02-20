@@ -72,6 +72,9 @@ function preloadConfig() {
             if (json.isSongDisplayEnabled) {
                 toggleSongDisplay();
             }
+            if (json.isPosDisplayEnabled){
+                togglePosDisplay();
+            }
         })
         .catch(error => {
             console.error('Error fetching config:', error);
@@ -90,6 +93,7 @@ function fallbackFunctions() {
     toggleAdaptiveBrightness();
     toggleClimateData();
     toggleSongDisplay();
+    togglePosDisplay();
 }
 
 
@@ -1322,4 +1326,47 @@ function toggleSongDisplay() {
         document.getElementById('showSong').style.color="red";
     }
     updateConfig("isSongDisplayEnabled", songDisplay);
+}
+
+
+
+
+
+function updatePosition(directionDeg, speed, altitude, altitudeChange) {
+    const directionText = getDirectionText(directionDeg);
+    const compass = document.getElementById("compass");
+    const speedElement = document.getElementById("speed");
+    const altitudeElement = document.getElementById("altitude");
+    const altArrow = document.getElementById("altArrow");
+
+    document.getElementById("direction").textContent = directionText;
+    compass.style.transform = `rotate(${directionDeg}deg)`;
+    
+    speedElement.textContent = speed;
+    altitudeElement.textContent = altitude;
+    altArrow.textContent = altitudeChange > 0 ? "⬆" : altitudeChange < 0 ? "⬇" : "⏤";
+}
+
+function getDirectionText(deg) {
+    const directions = ["N", "NO", "O", "SO", "S", "SW", "W", "NW", "N"];
+    const index = Math.round(deg / 45);
+    return directions[index];
+}
+updatePosition(135, 75, 1200, -5);
+
+
+let posDisplay = false;
+function togglePosDisplay() {
+    posDisplay = !posDisplay;
+
+    if(posDisplay){
+        document.getElementById('positionDisplay').style.display="flex"
+        document.getElementById('showPos').innerText="GPS Daten: An";
+        document.getElementById('showPos').style.color="green";
+    } else {
+        document.getElementById('positionDisplay').style.display="none";
+        document.getElementById('showPos').innerText="GPS Daten: Aus";
+        document.getElementById('showPos').style.color="red";
+    }
+    updateConfig("isPosDisplayEnabled", songDisplay);
 }

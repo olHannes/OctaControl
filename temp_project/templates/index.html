@@ -38,6 +38,13 @@
             <p id="songDisplayText">Songtitle: default | Interpret: default</p>
         </div>
         
+        <div id="positionDisplay">
+            <div id="compassContainer">
+                <img id="compass" src="../static/media/compass.png" alt="Kompass">
+            </div>
+            <p id="posDisplayText"><span id="direction">N</span> | <span id="altitude">100</span> m <span id="altArrow">⬆</span> | <span id="speed">0</span> km/h</p>
+        </div>
+        
     </div>
 
 
@@ -152,6 +159,10 @@
 
             <div class="featureBtn" onclick="toggleSongDisplay();">
                 <h5 id="showSong">Musik Informationen: Aus</h5>
+            </div>
+
+            <div class="featureBtn" onclick="togglePosDisplay();">
+                <h5 id="showPos">GPS Daten: Aus</h5>
             </div>
         </div>
 
