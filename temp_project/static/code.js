@@ -107,13 +107,13 @@ function updateConfig(key, value) {
     .then(response => response.json())
     .then(data => {
         if (data.status === "success") {
-            console.log(`✅ Erfolgreich: ${data.message}`);
+            console.log(`Erfolgreich: ${data.message}`);
         } else {
-            console.error(`❌ Fehler: ${data.message}`);
+            console.error(`Fehler: ${data.message}`);
         }
     })
     .catch(error => {
-        console.error("❌ Netzwerkfehler:", error);
+        console.error("Netzwerkfehler:", error);
     });
 }
 
@@ -1161,8 +1161,9 @@ async function fetchBrightness() {
             throw new Error('Fehler beim Abrufen der Helligkeit');
         }
         const data = await response.json();
-        if (data && data.brightness !== undefined) {
+        if (data && typeof data.brightness === "number" && !isNaN(data.brightness)) {
             brightnessSlider.value = data.brightness;
+            updateBrightness();
         }
     } catch (error) {
         showErrorMessage("Fehler beim Abrufen der Helligkeit", error);
@@ -1199,10 +1200,13 @@ async function fetchClimateData() {
         }
         const data = await response.json();
         if (data && data.temperature !== undefined && data.humidity !== undefined) {
+            console.log("getClimateData: " + `${data.temperature}°C`+ " " + `${data.humidity}%`);
             tempDisplay.innerText=`${data.temperature}°C`;
             humidityDisplay.innerText = `${data.humidity}%`;
         }
     } catch (error) {
+        tempDisplay.innerText=`x°C`;
+        humidityDisplay.innerText = `x%`;
         showErrorMessage("Fehler beim Abrufen der Klimadaten", error);
     }
 }
