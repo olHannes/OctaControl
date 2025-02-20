@@ -3,18 +3,14 @@ import subprocess
 def install_apt_packages():
     print("Installing necessary system packages...")
     apt_packages = [
-        "python3",              
-        "python3-pip",          
-        "bluez",
-        "gir1.2-glib-2.0",                
-        "pulseaudio",           
-        "pulseaudio-module-bluetooth",
-        "libportaudio2",        
-        "ffmpeg",    
-        "playerctl",
-        "alsa-utils",
+        "python3", "python3-pip", "python3-gi",
+        "bluez", "libbluetooth-dev",
+        "gir1.2-glib-2.0", "python3-smbus",
+        "pulseaudio", "pulseaudio-module-bluetooth",
+        "libportaudio2", "libasound2-dev",
+        "ffmpeg", "playerctl", "alsa-utils",
         "unclutter",
-        "RPi.GPIO",
+        "RPi.GPIO", "i2c-tools"
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)
@@ -27,14 +23,12 @@ def install_apt_packages():
 def install_pip_packages():
     print("Installing necessary Python packages...")
     pip_packages = [
-        "flask",
-        "flask-cors",
-        "numpy",
-        "sounddevice",
-        "pyaudio",
-        "pyalsaaudio",
-        "pydbus",
-        "Pillow",
+        "flask", "flask-cors", "flask-socketio",
+        "numpy", "scipy",
+        "sounddevice", "pyaudio", "pyalsaaudio",
+        "pydbus", "pybluez",
+        "Pillow", "opencv-python",
+        "Adafruit_DHT", "smbus2", "RPi.GPIO"
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
