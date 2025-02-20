@@ -286,6 +286,4 @@ def getClimate():
         }
     else:
         return {
-            "temperature": 0,
-            "humidity": 0
-        }
+            "error": "Failed to read from DHT sensor"}
