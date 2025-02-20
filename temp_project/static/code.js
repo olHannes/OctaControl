@@ -28,18 +28,6 @@ function preloadImages(imageArray) {
     showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
 
-function preloadConfig(){
-    setVolumeSlider(getVolume());
-    setBalanceSlider(getBalance());
-    enableBt();  
-    document.getElementById('colorSlider').value=39;
-    updateBackgroundColor();
-    setVersion();
-    toggleTrunkPower();
-    toggleAdaptiveBrightness();
-    toggleClimateData();
-    toggleSongDisplay();
-}
 function preloadConfig() {
     fetch('http://127.0.0.1:5000/system/config')
         .then(response => {
@@ -870,8 +858,8 @@ function truncateText(text, maxLength) {
     return text;
 }
 
-let title = "default";
-let interpret = "default";
+let pTitle = "default";
+let pArtist = "default";
 async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
@@ -886,10 +874,11 @@ async function setMetaData() {
             artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
             album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
             genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
-            if(title != message.title){
-                title=message.title;
-                interpret=message.artist;
-                document.getElementById('songDisplayText').innerText="Songtitle: " + title + " | Interpret: " + interpret;
+            
+            if (pTitle != message.title){
+                pTitle = message.title || "Unknown Title";
+                pArtist = message.artist || "Unknown Artist";
+                document.getElementById('songDisplayText').innerText = pTitle + " | " + pArtist;
             }
         } else {
             console.error("Metadata konnte nicht geladen werden.");
