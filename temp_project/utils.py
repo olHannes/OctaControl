@@ -3,9 +3,11 @@ import alsaaudio
 import os
 import json
 import RPi.GPIO as GPIO
+import Adafruit_DHT
 
-pin = 23
-
+trunkPowerPin = 23
+climatePin = 4
+climateSensor = Adafruit_DHT.DHT11
 
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
@@ -253,20 +255,20 @@ def initializeGPIO():
     if not GPIO.getmode():
         GPIO.setmode(GPIO.BCM)
     try:
-        GPIO.cleanup(pin)
-        GPIO.setup(pin, GPIO.OUT)
+        GPIO.cleanup(trunkPowerPin)
+        GPIO.setup(trunkPowerPin, GPIO.OUT)
     except RuntimeError:
         pass
-    print(f"GPIO Pin '{pin}' wurde aktualisiert")
+    print(f"GPIO trunkPowerPin '{trunkPowerPin}' wurde aktualisiert")
 
 def enableTrunkPower():
     initializeGPIO()
-    GPIO.output(pin, GPIO.HIGH)
+    GPIO.output(trunkPowerPin, GPIO.HIGH)
     update_config("isTrunkPowerEnabled", True)
 
 def disableTrunkPower():
     initializeGPIO()
-    GPIO.output(pin, GPIO.LOW)
+    GPIO.output(trunkPowerPin, GPIO.LOW)
     update_config("isTrunkPowerEnabled", False)
 
 
@@ -276,7 +278,14 @@ def getBrightness():
     }
 
 def getClimate():
-    return {
-        "temperature": 0,
-        "humidity": 0
-    }
+    humidity, temperature = Adafruit_DHT.read_retry(climateSensor, climatePin)
+    if humidity is not None and temperature is not None:
+        return {
+            "temperature": temperature,
+            "humidity": humidity
+        }
+    else:
+        return {
+            "temperature": 0,
+            "humidity": 0
+        }
