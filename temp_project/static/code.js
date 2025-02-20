@@ -151,41 +151,120 @@ sleepTimerSelect.addEventListener('change', function () {
 });
 
 
-var logging=false;
+var logging = false;
 
-/*function to show errors on the page*/
 function showErrorMessage(title, message) {
-    if(logging){
-        var errorDiv = document.getElementById('errorMessage');
-        var titleElement = errorDiv.querySelector('h6');
-        var messageElement = errorDiv.querySelector('p');
+    if (!logging) return;
 
-        titleElement.textContent = title;
-        messageElement.textContent = message;
+    var container = document.getElementById("errorContainer");
+    var errorDiv = document.createElement("div");
+    errorDiv.classList.add("errorMessage");
 
-        errorDiv.style.display = 'block';
+    var titleElement = document.createElement("h6");
+    titleElement.textContent = title;
 
-        setTimeout(function() {
-            errorDiv.style.display = 'none';
-        }, 3500);
-    }
+    var messageElement = document.createElement("p");
+    messageElement.textContent = message;
+
+    errorDiv.appendChild(titleElement);
+    errorDiv.appendChild(messageElement);
+    container.appendChild(errorDiv);
+
+    setTimeout(() => errorDiv.style.display = "block", 10);
+    setTimeout(() => removeError(errorDiv), 3500);
+    addSwipeToRemove(errorDiv);
 }
+
+function removeError(element) {
+    element.style.opacity = "0";
+    setTimeout(() => element.remove(), 300);
+}
+function addSwipeToRemove(element) {
+    let startX = 0;
+
+    element.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    element.addEventListener("touchmove", (e) => {
+        let moveX = e.touches[0].clientX - startX;
+        element.style.transform = `translateX(${moveX}px)`;
+        element.style.opacity = `${1 - Math.abs(moveX) / 200}`;
+    });
+
+    element.addEventListener("touchend", (e) => {
+        let moveX = e.changedTouches[0].clientX - startX;
+        if (Math.abs(moveX) > 100) {
+            element.style.transition = "transform 0.3s ease-out, opacity 0.3s";
+            element.style.transform = `translateX(${moveX > 0 ? "100vw" : "-100vw"})`;
+            element.style.opacity = "0";
+            setTimeout(() => element.remove(), 300);
+        } else {
+            element.style.transition = "transform 0.3s ease-out";
+            element.style.transform = "translateX(0)";
+            element.style.opacity = "1";
+        }
+    });
+}
+
 
 /*function to show message on the page*/
-function showMessage(title, message){
-    var msgDiv = document.getElementById('messageNotification');
-    var titleElement = msgDiv.querySelector('h6');
-    var msgElement = msgDiv.querySelector('p');
 
+const container = document.getElementById("messageContainer");
+function showMessage(title, message) {
+    var msgDiv = document.createElement("div");
+    msgDiv.classList.add("messageNotification");
+
+    var titleElement = document.createElement("h6");
     titleElement.textContent = title;
+
+    var msgElement = document.createElement("p");
     msgElement.textContent = message;
 
-    msgDiv.style.display = 'block';
+    msgDiv.appendChild(titleElement);
+    msgDiv.appendChild(msgElement);
+    container.appendChild(msgDiv);
 
-    setTimeout(function() {
-        msgDiv.style.display = 'none';
-    }, 3500);
+    setTimeout(() => msgDiv.style.display = "block", 10);
+
+    setTimeout(() => removeMessage(msgDiv), 3500);
+    addSwipeToRemove(msgDiv);
 }
+
+function removeMessage(element) {
+    element.style.opacity = "0";
+    setTimeout(() => element.remove(), 300);
+}
+
+function addSwipeToRemove(element) {
+    let startX = 0;
+
+    element.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    element.addEventListener("touchmove", (e) => {
+        let moveX = e.touches[0].clientX - startX;
+        element.style.transform = `translateX(${moveX}px)`;
+        element.style.opacity = `${1 - Math.abs(moveX) / 200}`;
+    });
+
+    element.addEventListener("touchend", (e) => {
+        let moveX = e.changedTouches[0].clientX - startX;
+        if (Math.abs(moveX) > 100) {
+            element.style.transition = "transform 0.3s ease-out, opacity 0.3s";
+            element.style.transform = `translateX(${moveX > 0 ? "100vw" : "-100vw"})`;
+            element.style.opacity = "0";
+            setTimeout(() => element.remove(), 300);
+        } else {
+            element.style.transition = "transform 0.3s ease-out";
+            element.style.transform = "translateX(0)";
+            element.style.opacity = "1";
+        }
+    });
+}
+
+
 
 /*this function controlls the toggle mechanism of the logging status*/
 function toggleLogging() {
