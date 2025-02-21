@@ -286,7 +286,6 @@ def requestClimateData():
 
 @app_routes.route("/features/adaptiveBrightness", methods=["GET"])
 def requestadaptiveBrightness():
-    print("###########+")
     try:
         result = getBrightness()
         return jsonify(result)

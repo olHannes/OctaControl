@@ -5,10 +5,15 @@ import json
 import RPi.GPIO as GPIO
 import adafruit_dht
 import board
+import threading
+import time
 
 trunkPowerPin = 23
 climatePin = 25
 dht_device = adafruit_dht.DHT11(board.D25)
+
+roomTemperature = 0
+roomHumidity = 0
 
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
@@ -278,19 +283,23 @@ def getBrightness():
         "brightness": 0
     }
 
-def getClimate():
-    try:
-        temperature = dht_device.temperature
-        humidity = dht_device.humidity
 
-        if humidity is not None and temperature is not None:
-            return {
-                "temperature": temperature,
-                "humidity": humidity
-            }
-        else:
-            return {
-                "error": "Failed to read from DHT sensor"}
-    except RuntimeError as error:
-        print(f"Error: {error}")
-        
+def updateClimateData():
+    global roomTemperature, roomHumidity
+    while True:
+        try:
+            temp = dht_device.temperature
+            hum = dht_device.humidity
+            roomTemperature = temp
+            roomHumidity = hum
+        except RuntimeError as error:
+            print(f"Error while reading climate Data: {error}")
+        time.sleep(2)
+
+
+def getClimate():
+    global roomHumidity, roomTemperature
+    return {
+        "temperature": roomTemperature,
+        "humidity": roomHumidity
+    }
