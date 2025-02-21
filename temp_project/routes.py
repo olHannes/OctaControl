@@ -282,7 +282,7 @@ def requestadaptiveBrightness():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app_routes.route("/features/climate", methods=["GET"])
+@app_routes.route("/features/climateData", methods=["GET"])
 def requestClimateData():
     try:
         result = getClimate()

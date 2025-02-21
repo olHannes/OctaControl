@@ -3,7 +3,7 @@ import alsaaudio
 import os
 import json
 import RPi.GPIO as GPIO
-import Adafruit_DHT
+import adafruit_dht
 import board
 
 trunkPowerPin = 23
@@ -281,7 +281,7 @@ def getBrightness():
 def getClimate():
     temperature = dht_device.temperature
     humidity = dht_device.humidity
-    
+
     if humidity is not None and temperature is not None:
         return {
             "temperature": temperature,
