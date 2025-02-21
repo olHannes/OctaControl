@@ -10,7 +10,7 @@ def install_apt_packages():
         "libportaudio2", "libasound2-dev",
         "ffmpeg", "playerctl", "alsa-utils",
         "unclutter",
-        "RPi.GPIO", "i2c-tools"
+        "i2c-tools"
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)
@@ -28,7 +28,7 @@ def install_pip_packages():
         "sounddevice", "pyaudio", "pyalsaaudio",
         "pydbus", "pybluez",
         "Pillow", "opencv-python",
-        "adafruit-circuitpython-dht", "smbus2",
+        "adafruit-circuitpython-dht", "smbus2", "RPi.GPIO",
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
