@@ -23,7 +23,7 @@ def install_apt_packages():
 def install_pip_packages():
     print("Installing necessary Python packages...")
     pip_packages = [
-        "flask", "flask-cors", "flask-socketio",
+        "flask", "flask-cors",
         "numpy", "scipy",
         "sounddevice", "pyaudio", "pyalsaaudio",
         "pydbus", "pybluez",
