@@ -4,10 +4,11 @@ import os
 import json
 import RPi.GPIO as GPIO
 import Adafruit_DHT
+import board
 
 trunkPowerPin = 23
-climatePin = 4
-climateSensor = Adafruit_DHT.DHT11
+climatePin = 25
+dht_device = adafruit_dht.DHT11(board.D25)
 
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
@@ -278,7 +279,9 @@ def getBrightness():
     }
 
 def getClimate():
-    humidity, temperature = Adafruit_DHT.read_retry(climateSensor, climatePin)
+    temperature = dht_device.temperature
+    humidity = dht_device.humidity
+    
     if humidity is not None and temperature is not None:
         return {
             "temperature": temperature,

@@ -28,10 +28,11 @@ def install_pip_packages():
         "sounddevice", "pyaudio", "pyalsaaudio",
         "pydbus", "pybluez",
         "Pillow", "opencv-python",
-        "Adafruit_DHT", "smbus2", "RPi.GPIO"
+        "adafruit-circuitpython-dht", "smbus2", "RPi.GPIO"
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
+        subprocess.run(["sudo", "apt", "install", "-y", "libgpiod2"], check=True)
         print("Python packages installed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error installing Python packages: {e}")

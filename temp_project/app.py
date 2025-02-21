@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request
 from flask_cors import CORS
 from routes import *
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Register routes from routes.py
 app.register_blueprint(app_routes)
 
-#main route
+# Main route
 @app.route("/")
 def index():
     return render_template("index.html")
