@@ -274,18 +274,21 @@ def updateConfig():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-@app_routes.route("/features/adaptiveBrightness", methods=["GET"])
-def requestadaptiveBrightness():
-    try:
-        result = getBrightness()
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@app_routes.route("/features/climateData", methods=["GET"])
+@app_routes.route("/climate/get", methods=["GET"])
 def requestClimateData():
     try:
-        result = getClimate()
+        data = getClimate()
+        print(data)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+    
+
+@app_routes.route("/features/adaptiveBrightness", methods=["GET"])
+def requestadaptiveBrightness():
+    print("###########+")
+    try:
+        result = getBrightness()
         return jsonify(result)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

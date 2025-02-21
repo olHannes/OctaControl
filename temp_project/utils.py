@@ -279,14 +279,18 @@ def getBrightness():
     }
 
 def getClimate():
-    temperature = dht_device.temperature
-    humidity = dht_device.humidity
+    try:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
 
-    if humidity is not None and temperature is not None:
-        return {
-            "temperature": temperature,
-            "humidity": humidity
-        }
-    else:
-        return {
-            "error": "Failed to read from DHT sensor"}
+        if humidity is not None and temperature is not None:
+            return {
+                "temperature": temperature,
+                "humidity": humidity
+            }
+        else:
+            return {
+                "error": "Failed to read from DHT sensor"}
+    except RuntimeError as error:
+        print(f"Error: {error}")
+        
