@@ -1277,7 +1277,7 @@ let climateIntervalId = null;
 
 async function fetchClimateData() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/features/climateData");
+        const response = await fetch("http://127.0.0.1:5000/climate/get");
         if (!response.ok) {
             throw new Error('Fehler beim Abrufen der Klimadaten');
         }
