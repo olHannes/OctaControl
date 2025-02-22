@@ -28,59 +28,68 @@ function preloadImages(imageArray) {
     showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
 
-function preloadConfig() {
-    fetch('http://127.0.0.1:5000/system/config')
-        .then(response => {
-            if (!response.ok) {
-                console.warn('Failed to load config, falling back to defaults.');
-                fallbackFunctions();
-                showErrorMessage("Failed while loading Config.", "response was not ok.");
-                return;
-            }
-            return response.json();
-        })
-        .then(json => {
+async function preloadConfig() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/system/config');
 
-            //set Volumelevel to the Volume Level of the RPi
-            setVolumeSlider(getVolume());
-            
-            //set BalanceLevel to the config-balance
-            setBalanceSlider(json.balanceValue);
-
-            if (json.isBluetoothEnabled) {
-                enableBt();
-            }
-            if(json.isPairingmodeEnabled){
-                enablePairingMode();
-            }
-            //set Value for Color Slider
-            document.getElementById('colorSlider').value = json.colorSliderValue;
-            updateBackgroundColor();
-            
-            //setting Version of System
-            setVersion();
-
-            if (json.isTrunkPowerEnabled) {
-                toggleTrunkPower();
-            }
-            if (json.isAdaptiveBrightnessEnabled) {
-                toggleAdaptiveBrightness();
-            }
-            if (json.isClimateDataEnabled) {
-                toggleClimateData();
-            }
-            if (json.isSongDisplayEnabled) {
-                toggleSongDisplay();
-            }
-            if (json.isPosDisplayEnabled){
-                togglePosDisplay();
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching config:', error);
+        if (!response.ok) {
+            console.warn('Failed to load config, falling back to defaults.');
             fallbackFunctions();
-        });
+            showErrorMessage("Failed while loading Config.", "Response was not ok.");
+            return;
+        }
+
+        const json = await response.json();
+
+        // Set Volume level to the Volume Level of the RPi
+        setVolumeSlider(getVolume());
+        
+        // Set Balance level to the config balance, or use default if not present
+        setBalanceSlider(json.balanceValue !== undefined ? json.balanceValue : getBalance());
+
+        if (json.isBluetoothEnabled !== undefined && json.isBluetoothEnabled) {
+            enableBt();
+        } else {
+            enableBt(); // Assuming Bluetooth should be enabled by default if config is missing
+        }
+
+        if (json.isPairingmodeEnabled !== undefined && json.isPairingmodeEnabled) {
+            enablePairingMode();
+        }
+
+        // Set value for Color Slider, use default if not present
+        document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
+        updateBackgroundColor();
+
+        // Setting Version of System
+        setVersion();
+
+        if (json.isTrunkPowerEnabled !== undefined && json.isTrunkPowerEnabled) {
+            toggleTrunkPower();
+        }
+
+        if (json.isAdaptiveBrightnessEnabled !== undefined && json.isAdaptiveBrightnessEnabled) {
+            toggleAdaptiveBrightness();
+        }
+
+        if (json.isClimateDataEnabled !== undefined && json.isClimateDataEnabled) {
+            toggleClimateData();
+        }
+
+        if (json.isSongDisplayEnabled !== undefined && json.isSongDisplayEnabled) {
+            toggleSongDisplay();
+        }
+
+        if (json.isPosDisplayEnabled !== undefined && json.isPosDisplayEnabled) {
+            togglePosDisplay();
+        }
+        
+    } catch (error) {
+        console.error('Error fetching config:', error);
+        fallbackFunctions();
+    }
 }
+
 
 function fallbackFunctions() {
     setVolumeSlider(getVolume());
