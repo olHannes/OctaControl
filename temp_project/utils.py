@@ -117,7 +117,6 @@ def set_balance(balance):
     try:
         mixer = alsaaudio.Mixer()
         balance = max(-100, min(100, balance))
-        update_config("balanceValue", balance)
 
         if balance < 0:
             left = master_volume
@@ -155,7 +154,6 @@ def enable_pairing_mode():
     try:
         subprocess.run(["bluetoothctl", "discoverable", "on"], check=True)
         subprocess.run(["bluetoothctl", "pairable", "on"], check=True)
-        update_config("isPairingmodeEnabled", True)
         return {"status": "success", "message": "Pairing mode enabled. Raspberry Pi is now discoverable and pairable."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -164,7 +162,6 @@ def disable_pairing_mode():
     try:
         subprocess.run(["bluetoothctl", "discoverable", "off"], check=True)
         subprocess.run(["bluetoothctl", "pairable", "off"], check=True)
-        update_config("isPairingmodeEnabled", False)
         return {"status": "success", "message": "Pairing mode disabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -172,7 +169,6 @@ def disable_pairing_mode():
 def enable_bluetooth():
     try:
         subprocess.run(["rfkill", "unblock", "bluetooth"], check=True)
-        update_config("isBluetoothEnabled", True)
         return {"status": "success", "message": "Bluetooth enabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -180,7 +176,6 @@ def enable_bluetooth():
 def disable_bluetooth():
     try:
         subprocess.run(["rfkill", "block", "bluetooth"], check=True)
-        update_config("isBluetoothEnabled", False)
         return {"status": "success", "message": "Bluetooth disabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -247,7 +242,6 @@ def getGitLog():
 def enable_wlan():
     try:
         subprocess.run(["rfkill", "unblock", "wifi"], check=True)
-        update_config("isWlanEnabled", True)
         return {"status": "success", "message": "WLAN wurde eingeschaltet."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -255,7 +249,6 @@ def enable_wlan():
 def disable_wlan():
     try:
         subprocess.run(["rfkill", "block", "wifi"], check=True)
-        update_config("isWlanEnabled", False)
         return {"status": "success", "message": "WLAN wurde ausgeschaltet."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -285,12 +278,10 @@ def initializeGPIO():
 def enableTrunkPower():
     initializeGPIO()
     GPIO.output(trunkPowerPin, GPIO.HIGH)
-    update_config("isTrunkPowerEnabled", True)
 
 def disableTrunkPower():
     initializeGPIO()
     GPIO.output(trunkPowerPin, GPIO.LOW)
-    update_config("isTrunkPowerEnabled", False)
 
 
 def getBrightness():

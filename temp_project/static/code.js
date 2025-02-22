@@ -41,27 +41,23 @@ async function preloadConfig() {
 
         const json = await response.json();
 
-        // Set Volume level to the Volume Level of the RPi
         setVolumeSlider(getVolume());
         
-        // Set Balance level to the config balance, or use default if not present
         setBalanceSlider(json.balanceValue !== undefined ? json.balanceValue : getBalance());
 
         if (json.isBluetoothEnabled !== undefined && json.isBluetoothEnabled) {
             enableBt();
         } else {
-            enableBt(); // Assuming Bluetooth should be enabled by default if config is missing
+            enableBt();
         }
 
         if (json.isPairingmodeEnabled !== undefined && json.isPairingmodeEnabled) {
             enablePairingMode();
         }
 
-        // Set value for Color Slider, use default if not present
         document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
         updateBackgroundColor();
 
-        // Setting Version of System
         setVersion();
 
         if (json.isTrunkPowerEnabled !== undefined && json.isTrunkPowerEnabled) {
@@ -612,6 +608,7 @@ function updateBrightness() {
     const sliderValue = brightnessSlider.value;
     const brightness = sliderValue / 100;
     document.body.style.filter = `brightness(${brightness})`;
+    updateConfig("balanceSliderValue", brightnessSlider.value);
 }
 
 brightnessSlider.addEventListener('input', updateBrightness);
@@ -1102,6 +1099,7 @@ async function enableBt() {
             console.log("turned Bluetooth on");
             bluetoothToggle.src = '../static/media/turnOn.png';
             isBluetoothOn = !isBluetoothOn;
+            updateConfig("isBluetoothEnabled", true);
         } else {
             bluetoothToggle.src = '../static/media/turnOff.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Einschalten von Bluetooth: " + data.message);        }
@@ -1126,6 +1124,8 @@ async function disableBt() {
             console.log("turned Bluetooth off");
             bluetoothToggle.src = '../static/media/turnOff.png';
             isBluetoothOn = !isBluetoothOn;
+            updateConfig("isBluetoothEnabled", false);
+
         } else {
             bluetoothToggle.src = '../static/media/turnOn.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Ausschalten von Bluetooth: " + data.message);        }
@@ -1150,6 +1150,7 @@ async function enablePairingMode() {
             console.log("turned pairing mode on");
             isPairingOn = !isPairingOn;
             pairingToggle.src = '../static/media/BTPairingOn.png';
+            updateConfig("isPairingmodeEnabled", true);
         } else {
             pairingToggle.src = '../static/media/BTPairingOff.png';
              showErrorMessage("Bluetooth Fehler", "Fehler beim Aktivieren des Pairing-Modus: " + data.message);
@@ -1173,6 +1174,7 @@ async function disablePairingMode() {
             console.log("turned pairing mode off");
             isPairingOn = !isPairingOn;
             pairingToggle.src = '../static/media/BTPairingOff.png';
+            updateConfig("isPairingmodeEnabled", false);
         } else {
             pairingToggle.src = '../static/media/BTPairingOn.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + data.message);
@@ -1200,6 +1202,7 @@ async function enableWlan() {
             console.log("Wlan wurde erfolgreich eingeschaltet.");
             wlanToggle.src = '../static/media/wlanOn.png';
             isWlanOn = true;
+            updateConfig("isWlanEnabled", true);
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + data.message);
         }
@@ -1227,6 +1230,7 @@ async function disableWlan() {
             console.log("Wlan wurde erfolgreich ausgeschaltet.");
             wlanToggle.src = '../static/media/wlanOff.png';
             isWlanOn = false;
+            updateConfig("isWlanEnabled", false);
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + data.message);
         }
