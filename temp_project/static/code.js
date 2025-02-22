@@ -277,6 +277,7 @@ function addSwipeToRemove(element) {
 
 /*this function controlls the toggle mechanism of the logging status*/
 function toggleLogging() {
+    playClickSound();
     var loggingDiv = document.getElementById('logging-toggle');
     var button = document.getElementById('toggleButton');
 
@@ -296,6 +297,7 @@ function toggleLogging() {
 /**function to customize fullscreen status */
 const fScreenBtn = document.getElementById('toggleFullscreen');
 function toggleFullscreen() {
+    playClickSound();
     if (!document.fullscreenElement) {
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen();
@@ -334,6 +336,7 @@ function enableSystemSettings(){
 }
 
 async function shutdown(){
+    playClickSound();
     disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
@@ -355,6 +358,7 @@ async function shutdown(){
 }
 
 async function reboot(){
+    playClickSound();
     disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/powerOptions/reboot", {
@@ -376,6 +380,7 @@ async function reboot(){
 }
 
 async function update() {
+    playClickSound();
     try {
         showMessage("Update", "Versuche, das System zu aktualisieren...");
 
@@ -444,6 +449,7 @@ async function setVersion() {
 }
 
 async function openGitLog() {
+    playClickSound();
     try {
         let response = await fetch('http://127.0.0.1:5000/system/version/log');
         let logs = await response.json();
@@ -523,6 +529,7 @@ function updateButtonIcon() {
 }
 
 async function enableTrunkPower() {
+    playClickSound();
     try {
         const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/enable", {
             method: "POST",
@@ -541,6 +548,7 @@ async function enableTrunkPower() {
 }
 
 async function disableTrunkPower() {
+    playClickSound();
     try {
         const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/disable", {
             method: "POST",
@@ -616,6 +624,7 @@ brightnessSlider.addEventListener('input', updateBrightness);
 /**Function to switch between pages/sections */
 
 function switchToSection(section){
+    playClickSound();
     switch (section){
         case 'home':
             document.getElementById('settings').style.display = 'none';
@@ -660,6 +669,7 @@ function switchToSection(section){
 }
 
 function closePanel(panel) {
+    playClickSound();
     switch (panel){
         case 'connPanel':
             document.getElementById('connPanel').classList.remove('show');
@@ -807,6 +817,7 @@ balanceSlider.addEventListener('input', debounce(() => setBalance(balanceSlider.
 /**audio music - Control: play, pause, skip, previous */
 
 async function pauseAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
 
@@ -830,6 +841,7 @@ async function pauseAudio(){
 }
 
 async function playAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
     
@@ -853,6 +865,7 @@ async function playAudio(){
 }
 
 async function skipAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
 
@@ -876,6 +889,7 @@ async function skipAudio(){
 }
 
 async function prevAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
 
@@ -1036,6 +1050,7 @@ let isWlanOn = false;
 
 const bluetoothHeader = document.querySelector('#bluetooth-container');
 bluetoothToggle.addEventListener('click', async () => {
+    playClickSound();
     bluetoothToggle.style.pointerEvents = 'none';
     pairingToggle.style.pointerEvents = 'none';
     bluetoothHeader.style.opacity="0.3";
@@ -1054,6 +1069,7 @@ bluetoothToggle.addEventListener('click', async () => {
 
 const pairingHeader = document.querySelector('#pairing-container');
 pairingToggle.addEventListener('click', async () => {
+    playClickSound();
     bluetoothToggle.style.pointerEvents = 'none';
     pairingToggle.style.pointerEvents = 'none';
     bluetoothHeader.style.opacity="0.3";
@@ -1072,6 +1088,7 @@ pairingToggle.addEventListener('click', async () => {
 
 const wlanHeader = document.querySelector('#wlan-container');
 wlanHeader.addEventListener('click', async () => {
+    playClickSound();
     wlanToggle.style.pointerEvents = 'none';
     wlanHeader.style.opacity="0.3";
 
@@ -1267,6 +1284,7 @@ async function fetchBrightness() {
 }
 
 function toggleAdaptiveBrightness() {
+    playClickSound();
     adaptiveBrightnessEnabled = !adaptiveBrightnessEnabled;
     
     if (adaptiveBrightnessEnabled) {
@@ -1308,6 +1326,7 @@ async function fetchClimateData() {
 }
 
 function toggleClimateData() {
+    playClickSound();
     climateDataEnabled = !climateDataEnabled;
     
     if (climateDataEnabled) {
@@ -1327,6 +1346,7 @@ function toggleClimateData() {
 
 let songDisplay = false;
 function toggleSongDisplay() {
+    playClickSound();
     songDisplay = !songDisplay;
 
     if(songDisplay){
@@ -1370,6 +1390,7 @@ updatePosition(135, 75, 1200, -5);
 
 let posDisplay = false;
 function togglePosDisplay() {
+    playClickSound();
     posDisplay = !posDisplay;
 
     if(posDisplay){
@@ -1382,4 +1403,28 @@ function togglePosDisplay() {
         document.getElementById('showPos').style.color="red";
     }
     updateConfig("isPosDisplayEnabled", songDisplay);
+}
+
+const clickSoundPath = '../static/media/sounds/clickSound.mp3';
+let isPlayClickSound = true;
+function playClickSound(){
+    const audio = new Audio(clickSoundPath);
+    if(isPlayClickSound){
+        audio.play().catch(error => {
+            showErrorMessage('Error playing sound:', error);
+        });
+    }
+}
+
+function togglePlayClickSound() {
+    isPlayClickSound = !isPlayClickSound;
+
+    if(isPlayClickSound) {
+        playClickSound();
+        document.getElementById('clickSoundToggle').innerText="Touch Sound: An";
+        document.getElementById('clickSoundToggle').style.color="green";
+    } else {
+        document.getElementById('clickSoundToggle').innerText="Touch Sound: Aus";
+        document.getElementById('clickSoundToggle').style.color="red";
+    }
 }
