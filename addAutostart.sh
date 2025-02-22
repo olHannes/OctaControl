@@ -43,9 +43,20 @@ add_unclutter_to_autostart() {
     echo -e "[Desktop Entry]\nName=Unclutter\nComment=Hide Mouse Cursor\nExec=$UNCLUTTER_COMMAND\nIcon=cursor\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$UNCLUTTER_AUTOSTART_FILE"
 }
 
+disable_screen_blanking() {
+    echo "Deaktiviere das automatische Ausschalten des Displays..."
+    export DISPLAY=:0
+    xset s off
+    xset s noblank
+    xset -dpms
+
+    echo "Bildschirm bleibt dauerhaft an."
+}
+
 # Einträge zum Autostart hinzufügen
 add_python_to_autostart
 add_chromium_to_autostart
 add_unclutter_to_autostart
+disable_screen_blanking
 
 echo "Autostart-Einträge wurden überprüft, geleert und hinzugefügt."
