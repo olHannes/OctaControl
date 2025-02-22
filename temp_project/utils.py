@@ -15,6 +15,8 @@ dht_device = adafruit_dht.DHT11(board.D25)
 roomTemperature = 0
 roomHumidity = 0
 
+climateLock = threading.Lock()
+
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
         if not os.path.exists(file_path):
@@ -286,20 +288,26 @@ def getBrightness():
 
 def updateClimateData():
     global roomTemperature, roomHumidity
+    try:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
+
+        if temperature is not None and humidity is not None:
+            with climateLock:
+                roomTemperature = temperature
+                roomHumidity = humidity
+    except Exception as e:
+        print(f"Fehler beim Lesen der Klimadaten: {e}")
+
+def climateDataPolling():
     while True:
-        try:
-            temp = dht_device.temperature
-            hum = dht_device.humidity
-            roomTemperature = temp
-            roomHumidity = hum
-        except RuntimeError as error:
-            print(f"Error while reading climate Data: {error}")
-        time.sleep(2)
+        updateClimateData()
+        time.sleep(5)
 
 
 def getClimate():
-    global roomHumidity, roomTemperature
-    return {
-        "temperature": roomTemperature,
-        "humidity": roomHumidity
-    }
+    with climateLock:
+        return {
+            "temperature": roomTemperature,
+            "humidity": roomHumidity
+        }

@@ -14,8 +14,7 @@ def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
-    thread = threading.Thread(target=updateClimateData)
-    thread.daemon = True
+    thread = threading.Thread(target=climateDataPolling, daemon=True)
     thread.start()
 
     app.run(debug=True, host="0.0.0.0", port=5000)
