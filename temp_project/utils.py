@@ -12,10 +12,23 @@ trunkPowerPin = 23
 climatePin = 25
 dht_device = adafruit_dht.DHT11(board.D25)
 
-roomTemperature = 0
-roomHumidity = 0
-
+FILE_PATH = "climateData.txt"
 climateLock = threading.Lock()
+
+def save_climate_data(temperature, humidity):
+    data = {"temperature": temperature, "humidity": humidity}
+    with climateLock:
+        with open(FILE_PATH, "w") as file:
+            json.dump(data, file)
+
+def load_climate_data():
+    try:
+        with climateLock:
+            with open(FILE_PATH, "r") as file:
+                return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"temperature": 0, "humidity": 0}
+
 
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
@@ -286,16 +299,15 @@ def getBrightness():
     }
 
 
+
+
 def updateClimateData():
-    global roomTemperature, roomHumidity
     try:
         temperature = dht_device.temperature
         humidity = dht_device.humidity
 
         if temperature is not None and humidity is not None:
-            with climateLock:
-                roomTemperature = temperature
-                roomHumidity = humidity
+            save_climate_data(temperature, humidity)
     except Exception as e:
         print(f"Fehler beim Lesen der Klimadaten: {e}")
 
@@ -304,10 +316,8 @@ def climateDataPolling():
         updateClimateData()
         time.sleep(5)
 
-
 def getClimate():
-    with climateLock:
-        return {
-            "temperature": roomTemperature,
-            "humidity": roomHumidity
-        }
+    return load_climate_data()
+
+climate_thread = threading.Thread(target=climateDataPolling, daemon=True)
+climate_thread.start()
