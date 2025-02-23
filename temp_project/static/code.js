@@ -1407,24 +1407,58 @@ function togglePosDisplay() {
 
 const clickSoundPath = '../static/media/sounds/clickSound.mp3';
 let isPlayClickSound = true;
-function playClickSound(){
-    const audio = new Audio(clickSoundPath);
-    if(isPlayClickSound){
+let lastClickVolume = 1;
+const audio = new Audio(clickSoundPath);
+audio.volume = lastClickVolume; // Initial Lautstärke setzen
+
+function playClickSound() {
+    if (isPlayClickSound && audio.volume > 0) {
+        audio.currentTime = 0; // Verhindert Verzögerungen durch Überspringen
         audio.play().catch(error => {
-            showErrorMessage('Error playing sound:', error);
+            console.error('Error playing sound:', error);
         });
     }
 }
 
 function togglePlayClickSound() {
     isPlayClickSound = !isPlayClickSound;
-
-    if(isPlayClickSound) {
+    
+    if (isPlayClickSound) {
+        audio.volume = lastClickVolume;
         playClickSound();
-        document.getElementById('clickSoundToggle').innerText="Touch Sound: An";
-        document.getElementById('clickSoundToggle').style.color="green";
+        document.getElementById('clickSoundToggle').innerText = "Touch Sound: An";
+        document.getElementById('clickSoundToggle').style.color = "green";
     } else {
-        document.getElementById('clickSoundToggle').innerText="Touch Sound: Aus";
-        document.getElementById('clickSoundToggle').style.color="red";
+        lastClickVolume = audio.volume;
+        audio.volume = 0;
+        document.getElementById('clickSoundToggle').innerText = "Touch Sound: Aus";
+        document.getElementById('clickSoundToggle').style.color = "red";
     }
+    updateVolumeDisplay(audio.volume);
 }
+
+function updateVolumeDisplay(volume) {
+    const bars = document.querySelectorAll('.volumeBar');
+    bars.forEach((bar, index) => {
+        bar.classList.toggle('active', index < volume / 0.25);
+    });
+}
+
+function setClickSoundVolume(louder) {
+    let newVolume = louder ? Math.min(audio.volume + 0.25, 1) : Math.max(audio.volume - 0.25, 0);
+    
+    if (!isPlayClickSound && newVolume > 0) {
+        isPlayClickSound = true;
+        document.getElementById('clickSoundToggle').innerText = "Touch Sound: An";
+        document.getElementById('clickSoundToggle').style.color = "green";
+    }
+    
+    audio.volume = newVolume;
+    playClickSound();
+    lastClickVolume = newVolume;
+    updateVolumeDisplay(newVolume);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateVolumeDisplay(audio.volume);
+});

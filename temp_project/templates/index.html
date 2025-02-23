@@ -145,9 +145,25 @@
                 <h5>Audio Einstellungen</h5>
             </div>
 
-            <div class="featureBtn" onclick="togglePlayClickSound();">
-                <h5 id="clickSoundToggle">Touch Sound: An</h5>
+            <div class="featureBtn">
+                <h5 id="clickSoundToggle" onclick="togglePlayClickSound();">Touch Sound: An</h5>
+                
+                <button class="clickVol" onclick="setClickSoundVolume(true)">
+                    <img src="../static/media/clickVolPlus.png" alt="+">
+                </button>
+                
+                <div class="volumeIndicator">
+                    <div class="volumeBar"></div>
+                    <div class="volumeBar"></div>
+                    <div class="volumeBar"></div>
+                    <div class="volumeBar"></div>
+                </div>
+                
+                <button class="clickVol" onclick="setClickSoundVolume(false)">
+                    <img src="../static/media/clickVolMinus.png" alt="-">
+                </button>
             </div>
+            
 
             <div class="featureBtn" onclick="toggleTrunkPower();">
                 <h5 id="trunkPowerToggle">Anlage / Sternenhimmel: An</h5>

@@ -765,6 +765,43 @@ input:checked + .genre-color-slider::before {
     margin: 0;
 }
 
+/*STyle for clickVolume settings*/
+.clickVol {
+    width: 51px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.clickVol img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Style for Volume Indicator */
+.volumeIndicator {
+    display: flex;
+    gap: 5px;
+}
+
+.volumeBar {
+    width: 10px;
+    height: 20px;
+    background-color: lightgray;
+    border-radius: 3px;
+}
+
+.volumeBar.active {
+    background-color: green;
+}
+
+
 
 /*style for audio-control-section*/
 /*#################################################################################################*/
