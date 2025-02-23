@@ -9,7 +9,8 @@ def install_apt_packages():
         "pulseaudio", "pulseaudio-module-bluetooth",
         "libportaudio2", "libasound2-dev",
         "ffmpeg", "playerctl", "alsa-utils",
-        "unclutter", "i2c-tools", "python3-bluez"
+        "unclutter", "i2c-tools", "python3-bluez",
+        "gpsd", "gpsd-clients", "python3-gps"
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)
@@ -28,6 +29,7 @@ def install_pip_packages():
         "pydbus",
         "Pillow", "opencv-python",
         "adafruit-circuitpython-dht", "smbus2", "RPi.GPIO",
+        "pynmea2", "pyserial"
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
