@@ -1393,7 +1393,24 @@ function toggleSongDisplay() {
 
 
 
-function updatePosition(directionDeg, speed, altitude, altitudeChange) {
+async function fetchPosition() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/position/getDisplay");
+        if (!response.ok) {
+            throw new Error('Fehler beim Abrufen der GPS-Display-Daten');
+        }
+        const data = await response.json();
+
+        if (data && data.direction !== undefined && data.speed !== undefined && data.height !== undefined) {
+            console.log(`Richtung: ${data.direction}°, Geschwindigkeit: ${data.speed} km/h, Höhe: ${data.height} m,}`);
+            updatePosition(data.direction, data.speed, data.height);
+        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Abrufen der GPS-Display-Daten", error);
+    }
+}
+
+function updatePosition(directionDeg, speed, altitude) {
     const directionText = getDirectionText(directionDeg);
     const compass = document.getElementById("compass");
     const speedElement = document.getElementById("speed");
@@ -1402,10 +1419,10 @@ function updatePosition(directionDeg, speed, altitude, altitudeChange) {
 
     document.getElementById("direction").textContent = directionText;
     compass.style.transform = `rotate(${directionDeg}deg)`;
-    
-    speedElement.textContent = speed;
-    altitudeElement.textContent = altitude;
-    altArrow.textContent = altitudeChange > 0 ? "⬆" : altitudeChange < 0 ? "⬇" : "⏤";
+
+    speedElement.textContent = `${speed} km/h`;
+    altitudeElement.textContent = `${altitude} m`;
+    altArrow.textContent = altitude > 0 ? "⬆" : altitude < 0 ? "⬇" : "⏤";
 }
 
 function getDirectionText(deg) {
@@ -1413,25 +1430,29 @@ function getDirectionText(deg) {
     const index = Math.round(deg / 45);
     return directions[index];
 }
-updatePosition(135, 75, 1200, -5);
-
 
 let posDisplay = false;
+let posIntervall = null;
 function togglePosDisplay() {
     playClickSound();
     posDisplay = !posDisplay;
 
-    if(posDisplay){
-        document.getElementById('positionDisplay').style.display="flex"
-        document.getElementById('showPos').innerText="GPS Daten: An";
-        document.getElementById('showPos').style.color="green";
+    if (posDisplay) {
+        document.getElementById('positionDisplay').style.display = "flex";
+        document.getElementById('showPos').innerText = "GPS Daten: An";
+        document.getElementById('showPos').style.color = "green";
+        posIntervall = setInterval(fetchPosition, 5000);
     } else {
-        document.getElementById('positionDisplay').style.display="none";
-        document.getElementById('showPos').innerText="GPS Daten: Aus";
-        document.getElementById('showPos').style.color="red";
+        document.getElementById('positionDisplay').style.display = "none";
+        document.getElementById('showPos').innerText = "GPS Daten: Aus";
+        document.getElementById('showPos').style.color = "red";
+        clearInterval(posIntervall);
     }
-    updateConfig("isPosDisplayEnabled", songDisplay);
+    updateConfig("isPosDisplayEnabled", posDisplay);
 }
+
+
+
 
 const clickSoundPath = '../static/media/sounds/clickSound.mp3';
 let isPlayClickSound = true;

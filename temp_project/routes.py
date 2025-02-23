@@ -291,3 +291,14 @@ def requestadaptiveBrightness():
         return jsonify(result)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+# Position and GPS Routes
+@app_routes.route('/position/getDisplay', methods=['GET'])
+def position_display():
+    return jsonify(get_display_data())
+
+@app_routes.route('/position/getSatelites', methods=['GET'])
+def position_satelites():
+    return jsonify(get_satellite_count())

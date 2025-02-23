@@ -7,6 +7,8 @@ import adafruit_dht
 import board
 import threading
 import time
+import serial
+import gps
 
 trunkPowerPin = 23
 climatePin = 25
@@ -312,3 +314,38 @@ def getClimate():
 
 climate_thread = threading.Thread(target=climateDataPolling, daemon=True)
 climate_thread.start()
+
+
+
+
+
+#GPS Data
+
+def get_gps_session():
+    return gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+
+
+def get_display_data():
+    session = get_gps_session()
+    try:
+        report = session.next()
+        if report['class'] == 'TPV':
+            data = {
+                "direction": getattr(report, 'track', 0.0),
+                "height": getattr(report, 'alt', 0.0),
+                "speed": round(getattr(report, 'speed', 0.0) * 3.6, 2)
+            }
+            return data
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_satellite_count():
+    session = get_gps_session()
+
+    try:
+        report = session.next()
+        if report['class'] == 'SKY':
+            return {"satellites": getattr(report, 'satellites_used', "N/A")}
+    except Exception as e:
+        return {"error": str(e)}
+
