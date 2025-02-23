@@ -1402,20 +1402,21 @@ async function fetchPosition() {
         const data = await response.json();
 
         if (data && data.direction !== undefined && data.speed !== undefined && data.height !== undefined) {
-            console.log(`Richtung: ${data.direction}°, Geschwindigkeit: ${data.speed} km/h, Höhe: ${data.height} m,}`);
-            updatePosition(data.direction, data.speed, data.height);
+            console.log(`Richtung: ${data.direction}°, Geschwindigkeit: ${data.speed} km/h, Höhe: ${data.height} m, numOf Satellit: ${data.satellit}}`);
+            updatePosition(data.direction, data.speed, data.height, data.satellit);
         }
     } catch (error) {
         showErrorMessage("Fehler beim Abrufen der GPS-Display-Daten", error);
     }
 }
 
-function updatePosition(directionDeg, speed, altitude) {
+function updatePosition(directionDeg, speed, altitude, numSatellit) {
     const directionText = getDirectionText(directionDeg);
     const compass = document.getElementById("compass");
     const speedElement = document.getElementById("speed");
     const altitudeElement = document.getElementById("altitude");
     const altArrow = document.getElementById("altArrow");
+    const satellitElement = document.getElementById('numSatellit');
 
     document.getElementById("direction").textContent = directionText;
     compass.style.transform = `rotate(${directionDeg}deg)`;
@@ -1423,6 +1424,7 @@ function updatePosition(directionDeg, speed, altitude) {
     speedElement.textContent = `${speed} km/h`;
     altitudeElement.textContent = `${altitude} m`;
     altArrow.textContent = altitude > 0 ? "⬆" : altitude < 0 ? "⬇" : "⏤";
+    satellitElement.textContent= numSatellit;
 }
 
 function getDirectionText(deg) {
