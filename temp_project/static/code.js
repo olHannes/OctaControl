@@ -1395,7 +1395,7 @@ function toggleSongDisplay() {
 
 async function fetchPosition() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/position/getDisplay");
+        const response = await fetch("http://127.0.0.1:5000/gps/DisplayData");
         if (!response.ok) {
             throw new Error('Fehler beim Abrufen der GPS-Display-Daten');
         }

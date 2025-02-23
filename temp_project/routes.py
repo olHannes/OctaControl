@@ -293,12 +293,15 @@ def requestadaptiveBrightness():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app_routes.route('/gps/DisplayData', methods=['GET'])
+def get_gps_data():
+    data = load_gps_data()
+    filtered_data = {
+        "direction": data.get("track"),
+        "altitude": data.get("altitude"),
+        "speed": round(data.get("speed")),
+        "satellites": data.get("satellites")
+    }
+    return jsonify(filtered_data)
 
-@app_routes.route('/position/getDisplay', methods=['GET'])
-def position_display():
-    """Flask-Route, um GPS-Daten anzuzeigen."""
-    session = get_gps_session()
-    data = get_display_data(session)
-    session.close()
-    
-    return jsonify(data)
+

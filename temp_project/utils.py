@@ -9,6 +9,7 @@ import threading
 import time
 import serial
 import gps
+import pytz
 
 trunkPowerPin = 23
 climatePin = 25
@@ -16,6 +17,9 @@ dht_device = adafruit_dht.DHT11(board.D25)
 
 FILE_PATH = "climateData.txt"
 climateLock = threading.Lock()
+
+GPS_FILE_PATH = "gpsData.txt"
+gpsLock = threading.Lock()
 
 def save_climate_data(temperature, humidity):
     data = {"temperature": temperature, "humidity": humidity}
@@ -30,6 +34,23 @@ def load_climate_data():
                 return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return {"temperature": 0, "humidity": 0}
+
+
+def save_gps_data(key, value):
+    data = {key: value}
+    with gpsLock:
+        with open(GPS_FILE_PATH, "w") as file:
+            json.dump(data, file)
+
+def load_gps_data():
+    try:
+        with gpsLock:
+            with open(GPS_FILE_PATH, "r") as file:
+                return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"value": 0}
+
+
 
 
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
@@ -304,45 +325,55 @@ def updateClimateData():
     except Exception as e:
         print(f"Fehler beim Lesen der Klimadaten: {e}")
 
-def climateDataPolling():
-    while True:
-        updateClimateData()
-        time.sleep(5)
-
 def getClimate():
     return load_climate_data()
 
-climate_thread = threading.Thread(target=climateDataPolling, daemon=True)
-climate_thread.start()
 
 
 
 
-
-#GPS Data
-def get_gps_session():
-    return gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-
-def get_display_data():
-    session = get_gps_session()
+def updateGPSData():
+    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
     try:
-        satellites = "N/A"
-        while True:
-            report = session.next()
-            if report['class'] == 'SKY':
-                satellites = getattr(report, 'satellites_used', "N/A")
-                break
-
         report = session.next()
         if report['class'] == 'TPV':
-            data = {
-                "direction": getattr(report, 'track', 0.0),
-                "height": getattr(report, 'alt', 0.0),
-                "speed": round(getattr(report, 'speed', 0.0) * 3.6, 2),
-                "satellite": satellites
+            latitude = round(getattr(report, 'lat', 0.0), 5)
+            longitude = round(getattr(report, 'lon', 0.0), 5)
+
+            altitude = getattr(report, 'alt', 0.0)
+
+            speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
+
+            track = getattr(report, 'track', 0.0)
+
+            satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
+
+            gps_data = {
+                "latitude": latitude,
+                "longitude": longitude,
+                "altitude": altitude,
+                "speed": speed,
+                "track": track,
+                "satellites": satellites
             }
-            return data
-        else:
-            return {"error": "No valid TPV data."}
+            save_gps_data("gpsData", gps_data)
+
     except Exception as e:
-        return {"error": str(e)}
+        print(f"Fehler beim Aktualisieren der GPS-Daten: {e}")
+
+
+
+
+
+
+
+
+def dataPolling():
+    while True:
+        updateClimateData()
+        updateGPSData()
+        time.sleep(5)
+
+
+dataThread = threading.Thread(target=dataPolling, daemon=True)
+dataThread.start()
