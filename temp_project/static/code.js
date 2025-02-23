@@ -1421,8 +1421,8 @@ function updatePosition(directionDeg, speed, altitude, numSatellit) {
     document.getElementById("direction").textContent = directionText;
     compass.style.transform = `rotate(${directionDeg}deg)`;
 
-    speedElement.textContent = `${speed} km/h`;
-    altitudeElement.textContent = `${altitude} m`;
+    speedElement.textContent = `${Math.round(speed)}`;
+    altitudeElement.textContent = `${Math.round(altitude)}`;
     altArrow.textContent = altitude > 0 ? "⬆" : altitude < 0 ? "⬇" : "⏤";
     satellitElement.textContent= numSatellit;
 }
