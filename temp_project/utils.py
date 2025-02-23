@@ -345,4 +345,3 @@ def get_display_data():
             return data
     except Exception as e:
         return {"error": str(e)}
-
