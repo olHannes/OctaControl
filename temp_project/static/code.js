@@ -40,48 +40,75 @@ async function preloadConfig() {
         }
 
         const json = await response.json();
+        console.log(json);
 
         setVolumeSlider(getVolume());
-        
-        setBalanceSlider(json.balanceValue !== undefined ? json.balanceValue : getBalance());
+        setBalanceSlider(getBalance());
+        setVersion();
 
-        if (json.isBluetoothEnabled !== undefined && json.isBluetoothEnabled) {
-            enableBt();
+        if (json.isBluetoothEnabled !== undefined) {
+            if (json.isBluetoothEnabled) {
+                enableBt();
+            } else {
+                disableBt();
+            }
         } else {
             enableBt();
         }
 
-        if (json.isPairingmodeEnabled !== undefined && json.isPairingmodeEnabled) {
-            enablePairingMode();
+        if (json.isPairingmodeEnabled !== undefined) {
+            if(json.isPairingmodeEnabled) {
+                enablePairingMode();
+            } else {
+                disablePairingMode();
+            }
+        } else {
+            disablePairingMode();
         }
 
         document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
         updateBackgroundColor();
 
-        setVersion();
+        document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
 
-        if (json.isTrunkPowerEnabled !== undefined && json.isTrunkPowerEnabled) {
-            toggleTrunkPower();
+        if (json.isTrunkPowerEnabled !== undefined) {
+            if (json.isTrunkPowerEnabled) {
+                toggleTrunkPower();
+            }
         }
 
-        if (json.isAdaptiveBrightnessEnabled !== undefined && json.isAdaptiveBrightnessEnabled) {
-            toggleAdaptiveBrightness();
+        if (json.isAdaptiveBrightnessEnabled !== undefined) {
+            if (json.isAdaptiveBrightnessEnabled) {
+                toggleAdaptiveBrightness();
+            }
         }
 
-        if (json.isClimateDataEnabled !== undefined && json.isClimateDataEnabled) {
-            toggleClimateData();
+        if (json.isClimateDataEnabled !== undefined) {
+            if (json.isClimateDataEnabled) {
+                toggleClimateData();
+            }
         }
 
-        if (json.isSongDisplayEnabled !== undefined && json.isSongDisplayEnabled) {
-            toggleSongDisplay();
+        if (json.isPosDisplayEnabled !== undefined) {
+            if (json.isPosDisplayEnabled) {
+                togglePosDisplay();
+            }
         }
 
-        if (json.isPosDisplayEnabled !== undefined && json.isPosDisplayEnabled) {
-            togglePosDisplay();
+        if (json.isTouchSoundEnabled !== undefined) {
+            if (json.isTouchSoundEnabled) {
+                togglePlayClickSound();
+            }
+        }
+
+        if (json.touchSoundValue !== undefined) {
+            lastClickVolume = json.touchSoundValue;
+            audio.volume = lastClickVolume;
+            updateVolumeDisplay(json.touchSoundValue);
         }
         
     } catch (error) {
-        console.error('Error fetching config:', error);
+        showErrorMessage('Error fetching config:', error);
         fallbackFunctions();
     }
 }
@@ -92,6 +119,8 @@ function fallbackFunctions() {
     setBalanceSlider(getBalance());
     enableBt();  
     document.getElementById('colorSlider').value = 39;
+    document.getElementById('brightnessSlider').value = 100;
+    updateBrightness();
     updateBackgroundColor();
     setVersion();
     toggleTrunkPower();
@@ -616,7 +645,6 @@ function updateBrightness() {
     const sliderValue = brightnessSlider.value;
     const brightness = sliderValue / 100;
     document.body.style.filter = `brightness(${brightness})`;
-    updateConfig("balanceSliderValue", brightnessSlider.value);
 }
 
 brightnessSlider.addEventListener('input', updateBrightness);
@@ -1409,11 +1437,11 @@ const clickSoundPath = '../static/media/sounds/clickSound.mp3';
 let isPlayClickSound = true;
 let lastClickVolume = 1;
 const audio = new Audio(clickSoundPath);
-audio.volume = lastClickVolume; // Initial Lautstärke setzen
+audio.volume = lastClickVolume;
 
 function playClickSound() {
     if (isPlayClickSound && audio.volume > 0) {
-        audio.currentTime = 0; // Verhindert Verzögerungen durch Überspringen
+        audio.currentTime = 0;
         audio.play().catch(error => {
             console.error('Error playing sound:', error);
         });
@@ -1435,6 +1463,7 @@ function togglePlayClickSound() {
         document.getElementById('clickSoundToggle').style.color = "red";
     }
     updateVolumeDisplay(audio.volume);
+    updateConfig("isTouchSoundEnabled", isPlayClickSound);
 }
 
 function updateVolumeDisplay(volume) {
@@ -1457,6 +1486,7 @@ function setClickSoundVolume(louder) {
     playClickSound();
     lastClickVolume = newVolume;
     updateVolumeDisplay(newVolume);
+    updateConfig("touchSoundValue", newVolume);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
