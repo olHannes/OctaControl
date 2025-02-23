@@ -1401,7 +1401,7 @@ async function fetchPosition() {
         }
         const data = await response.json();
 
-        if (data && data.direction !== undefined && data.speed !== undefined && data.height !== undefined) {
+        if (data && data.direction !== undefined && data.speed !== undefined && data.height !== undefined && data.satellit !== undefined) {
             console.log(`Richtung: ${data.direction}°, Geschwindigkeit: ${data.speed} km/h, Höhe: ${data.height} m, numOf Satellit: ${data.satellit}}`);
             updatePosition(data.direction, data.speed, data.height, data.satellit);
         }
