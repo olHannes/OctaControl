@@ -324,20 +324,21 @@ def get_gps_session():
     return gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
 def get_display_data(session):
+    """Gibt die aktuellen GPS-Daten zurück."""
     try:
         report = session.next()
-        if report['class'] == 'TPV':
-            data = {
-                "direction": getattr(report, 'track', 0.0),
-                "height": getattr(report, 'alt', 0.0),
-                "speed": round(getattr(report, 'speed', 0.0) * 3.6, 2),
-            }
+        
+        while report['class'] != 'TPV':
+            report = session.next()
 
-            satellites = getattr(report, 'satellites_used', "N/A")
-            data["satellit"] = satellites
+        data = {
+            "direction": getattr(report, 'track', 0.0),
+            "height": getattr(report, 'alt', 0.0),
+            "speed": round(getattr(report, 'speed', 0.0) * 3.6, 2),
+        }
 
-            return data
-        else:
-            return {"error": "No valid TPV data."}
+        satellites = getattr(report, 'satellites_used', "N/A")
+        data["satellit"] = satellites
+        return data
     except Exception as e:
         return {"error": str(e)}
