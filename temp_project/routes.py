@@ -294,7 +294,10 @@ def requestadaptiveBrightness():
 
 
 
-# Position and GPS Routes
 @app_routes.route('/position/getDisplay', methods=['GET'])
 def position_display():
-    return jsonify(get_display_data())
+    session = get_gps_session()
+    data = get_display_data(session)
+    session.close()
+    
+    return jsonify(data) 

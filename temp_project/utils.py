@@ -320,13 +320,10 @@ climate_thread.start()
 
 
 #GPS Data
-
 def get_gps_session():
     return gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
-
-def get_display_data():
-    session = get_gps_session()
+def get_display_data(session):
     try:
         report = session.next()
         if report['class'] == 'TPV':
@@ -336,12 +333,11 @@ def get_display_data():
                 "speed": round(getattr(report, 'speed', 0.0) * 3.6, 2),
             }
 
-            satellite_report = session.next()
-            if satellite_report['class'] == 'SKY':
-                data["satellit"] = getattr(satellite_report, 'satellites_used', "N/A")
-            else:
-                data["satellit"] = "N/A"
+            satellites = getattr(report, 'satellites_used', "N/A")
+            data["satellit"] = satellites
 
             return data
+        else:
+            return {"error": "No valid TPV data."}
     except Exception as e:
         return {"error": str(e)}
