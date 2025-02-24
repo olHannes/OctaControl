@@ -326,6 +326,7 @@ def metadata_reader():
         eventlet.sleep(1)
 
 def gps_reader():
+    from app import socketio
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
     
     while True:
