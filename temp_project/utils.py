@@ -313,8 +313,18 @@ def getClimate():
     return load_climate_data()
 
 
+from AudioMetadata import *
 
+def metadata_reader():
+    from app import socketio
 
+    while True:
+        try:
+            metadata = getMeta()
+            socketio.emit("metadata_update", metadata)
+        except Exception as e:
+            print(f"Metadata Fehler: {e}")
+        eventlet.sleep(1)
 
 gpsd.connect()
 

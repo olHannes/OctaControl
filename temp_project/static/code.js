@@ -872,7 +872,6 @@ async function pauseAudio(){
         if (data.status === "success") {
             console.log("paused Audio");
             buttons.forEach(button => button.disabled = false);
-            setMetaData();
         } else {
             showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + data.message);        }
     } catch (error) {
@@ -896,7 +895,6 @@ async function playAudio(){
         if (data.status === "success") {
             console.log("running Audio");
             buttons.forEach(button => button.disabled = false);
-            setMetaData();
         } else {
             showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + data.message);        }
     } catch (error) {
@@ -920,7 +918,6 @@ async function skipAudio(){
         if (data.status === "success") {
             console.log("skipped Audio");
             buttons.forEach(button => button.disabled = false);
-            setMetaData();
         } else {
             showErrorMessage("Fehler beim Überspringen des Titels", data.message);        }
     } catch (error) {
@@ -944,7 +941,6 @@ async function prevAudio(){
         if (data.status === "success") {
             console.log("previous Audio");
             buttons.forEach(button => button.disabled = false);
-            setMetaData();
         } else {
             showErrorMessage("Fehler beim Zurückspulen", data.message);        }
     } catch (error) {
@@ -1002,7 +998,7 @@ function truncateText(text, maxLength) {
 
 let pTitle = "default";
 let pArtist = "default";
-async function setMetaData() {
+async function setMetaData(message) {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
     const album = document.getElementById('album');
@@ -1010,7 +1006,7 @@ async function setMetaData() {
     const maxLength=30;
 
     try {
-        const message = await getInfoAudio();
+        //const message = await getInfoAudio();
         if (message) {
             title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
             artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
@@ -1029,6 +1025,10 @@ async function setMetaData() {
         console.error("Error beim Setzen der Metadaten:", error);
     }
 }
+socket.on("metadata_update", function (data) {
+    setMetaData(data);
+});
+
 
 const playBtn = document.getElementById('playBtn');
 const pauseBtn = document.getElementById('pauseBtn');
@@ -1063,7 +1063,6 @@ async function updateProgress() {
 /*check for new metaData*/
 setInterval(() => {
     updateProgress();
-    setMetaData();
     getPlayerDevice();
 }, 1500);
 

@@ -3,7 +3,7 @@ from flask_socketio import SocketIO
 from flask_cors import CORS
 from routes import app_routes
 import eventlet
-from utils import gps_reader
+from utils import gps_reader, metadata_reader
 
 eventlet.monkey_patch()
 
@@ -19,4 +19,5 @@ def index():
 
 if __name__ == "__main__":
     socketio.start_background_task(target=gps_reader)
+    socketio.start_background_task(target=metadata_reader)
     socketio.run(app, debug=True, host="0.0.0.0", port=5000)
