@@ -1,18 +1,22 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
+from flask_socketio import SocketIO
 from flask_cors import CORS
-import threading
-from routes import *
+from routes import app_routes
+import eventlet
+from utils import gps_reader
+
+eventlet.monkey_patch()
 
 app = Flask(__name__)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Register routes from routes.py
 app.register_blueprint(app_routes)
 
-# Main route
 @app.route("/")
 def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
-
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    socketio.start_background_task(target=gps_reader)
+    socketio.run(app, debug=True, host="0.0.0.0", port=5000)

@@ -1,10 +1,15 @@
 from flask import Blueprint, jsonify, request
+from flask_socketio import emit
+import gpsd
+import eventlet
+
 from BluetoothController import *
 from AudioMetadata import *
 from utils import *
 import os
 import subprocess
 import json
+
 
 app_routes = Blueprint('app_routes', __name__)
 
@@ -291,17 +296,4 @@ def requestadaptiveBrightness():
         return jsonify(result)
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
-
-
-@app_routes.route('/gps/DisplayData', methods=['GET'])
-def get_gps_data():
-    data = load_gps_data()
-    filtered_data = {
-        "direction": data.get("track"),
-        "altitude": data.get("altitude"),
-        "speed": round(data.get("speed")),
-        "satellites": data.get("satellites")
-    }
-    return jsonify(filtered_data)
-
 

@@ -1394,22 +1394,7 @@ function toggleSongDisplay() {
 
 
 
-async function fetchPosition() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/gps/DisplayData");
-        if (!response.ok) {
-            throw new Error('Fehler beim Abrufen der GPS-Display-Daten');
-        }
-        const data = await response.json();
-
-        if (data && data.direction !== undefined && data.speed !== undefined && data.height !== undefined && data.satellit !== undefined) {
-            console.log(`Richtung: ${data.direction}°, Geschwindigkeit: ${data.speed} km/h, Höhe: ${data.height} m, numOf Satellit: ${data.satellit}}`);
-            updatePosition(data.direction, data.speed, data.height, data.satellit);
-        }
-    } catch (error) {
-        showErrorMessage("Fehler beim Abrufen der GPS-Display-Daten", error);
-    }
-}
+let posDisplay = false;
 
 function updatePosition(directionDeg, speed, altitude, numSatellit) {
     const directionText = getDirectionText(directionDeg);
@@ -1425,7 +1410,7 @@ function updatePosition(directionDeg, speed, altitude, numSatellit) {
     speedElement.textContent = `${Math.floor(speed)}`;
     altitudeElement.textContent = `${Math.round(altitude)}`;
     altArrow.textContent = altitude > 0 ? "⬆" : altitude < 0 ? "⬇" : "⏤";
-    satellitElement.textContent= numSatellit;
+    satellitElement.textContent = numSatellit;
 }
 
 function getDirectionText(deg) {
@@ -1434,8 +1419,6 @@ function getDirectionText(deg) {
     return directions[index];
 }
 
-let posDisplay = false;
-let posIntervall = null;
 function togglePosDisplay() {
     playClickSound();
     posDisplay = !posDisplay;
@@ -1444,16 +1427,21 @@ function togglePosDisplay() {
         document.getElementById('positionDisplay').style.display = "flex";
         document.getElementById('showPos').innerText = "GPS Daten: An";
         document.getElementById('showPos').style.color = "green";
-        posIntervall = setInterval(fetchPosition, 5000);
+
+        socket.on("gps_update", function (data) {
+            updatePosition(data.direction, data.speed, data.height, data.satellites);
+        });
+
     } else {
         document.getElementById('positionDisplay').style.display = "none";
         document.getElementById('showPos').innerText = "GPS Daten: Aus";
         document.getElementById('showPos').style.color = "red";
-        clearInterval(posIntervall);
+
+        socket.off("gps_update");
     }
+
     updateConfig("isPosDisplayEnabled", posDisplay);
 }
-
 
 
 

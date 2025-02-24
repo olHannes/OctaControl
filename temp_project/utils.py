@@ -1,15 +1,18 @@
-import subprocess
-import alsaaudio
 import os
-import json
+import subprocess
 import RPi.GPIO as GPIO
-import adafruit_dht
 import board
-import threading
 import time
 import serial
-import gps
+import threading
+import json
+import alsaaudio
+import adafruit_dht
 import pytz
+from flask_socketio import emit
+import gps
+import gpsd
+import eventlet
 
 trunkPowerPin = 23
 climatePin = 25
@@ -17,9 +20,6 @@ dht_device = adafruit_dht.DHT11(board.D25)
 
 FILE_PATH = "climateData.txt"
 climateLock = threading.Lock()
-
-GPS_FILE_PATH = "gpsData.txt"
-gpsLock = threading.Lock()
 
 def save_climate_data(temperature, humidity):
     data = {"temperature": temperature, "humidity": humidity}
@@ -34,22 +34,6 @@ def load_climate_data():
                 return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return {"temperature": 0, "humidity": 0}
-
-
-def save_gps_data(key, value):
-    data = {key: value}
-    with gpsLock:
-        with open(GPS_FILE_PATH, "w") as file:
-            json.dump(data, file)
-
-def load_gps_data():
-    try:
-        with gpsLock:
-            with open(GPS_FILE_PATH, "r") as file:
-                return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {"value": 0}
-
 
 
 
@@ -332,46 +316,30 @@ def getClimate():
 
 
 
-def updateGPSData():
-    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-    try:
-        report = session.next()
-        if report['class'] == 'TPV':
-            latitude = round(getattr(report, 'lat', 0.0), 5)
-            longitude = round(getattr(report, 'lon', 0.0), 5)
+gpsd.connect()
 
-            altitude = getattr(report, 'alt', 0.0)
+def gps_reader():
+    from app import socketio
 
-            speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
-
-            track = getattr(report, 'track', 0.0)
-
-            satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
-
-            gps_data = {
-                "latitude": latitude,
-                "longitude": longitude,
-                "altitude": altitude,
-                "speed": speed,
-                "track": track,
-                "satellites": satellites
-            }
-            save_gps_data("gpsData", gps_data)
-
-    except Exception as e:
-        print(f"Fehler beim Aktualisieren der GPS-Daten: {e}")
-
-
-
-
-
-
+    while True:
+        try:
+            packet = gpsd.get_current()
+            if packet.mode >= 2:
+                gps_data = {
+                    "direction": packet.track if packet.track is not None else 0,
+                    "speed": round(packet.speed() if packet.speed() is not None else 0),
+                    "altitude": packet.altitude() if packet.altitude() is not None else 0,
+                    "satellites": len(packet.sats) if packet.sats is not None else 0,
+                }
+                socketio.emit("gps_update", gps_data, broadcast=True)
+        except Exception as e:
+            print(f"GPS Fehler: {e}")
+        eventlet.sleep(1) 
 
 
 def dataPolling():
     while True:
         updateClimateData()
-        updateGPSData()
         time.sleep(5)
 
 
