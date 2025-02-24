@@ -1,10 +1,13 @@
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, render_template
 from flask_socketio import SocketIO
+
 from routes import app_routes
-import eventlet
 from utils import gps_reader, metadata_reader
 
-eventlet.monkey_patch()
+
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
