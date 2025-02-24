@@ -11,7 +11,6 @@ import adafruit_dht
 import pytz
 from flask_socketio import emit
 import gps
-import gpsd
 import eventlet
 
 trunkPowerPin = 23
@@ -326,26 +325,49 @@ def metadata_reader():
             print(f"Metadata Fehler: {e}")
         eventlet.sleep(1)
 
-gpsd.connect()
-
 def gps_reader():
-    from app import socketio
-
+    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+    
     while True:
         try:
-            packet = gpsd.get_current()
-            if packet.mode >= 2:
-                gps_data = {
-                    "direction": packet.track if packet.track is not None else 0,
-                    "speed": round(packet.speed() if packet.speed() is not None else 0),
-                    "altitude": packet.altitude() if packet.altitude() is not None else 0,
-                    "satellites": len(packet.sats) if packet.sats is not None else 0,
-                }
-                socketio.emit("gps_update", gps_data, broadcast=True)
-        except Exception as e:
-            print(f"GPS Fehler: {e}")
-        eventlet.sleep(1) 
+            report = session.next()
 
+            if report['class'] == 'TPV':  
+                latitude = round(getattr(report, 'lat', 0.0), 5)
+                longitude = round(getattr(report, 'lon', 0.0), 5)
+
+                altitude = getattr(report, 'alt', 0.0)
+
+                speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
+
+                track = getattr(report, 'track', 0.0)
+
+                satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
+
+                utc_time = getattr(report, 'time', None)
+                local_time = "N/A"
+                if utc_time:
+                    utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    utc_dt = utc_dt.replace(tzinfo=pytz.utc)
+                    local_tz = pytz.timezone("Europe/Berlin")
+                    local_time = utc_dt.astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+                gps_data = {
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "altitude": altitude,
+                    "speed": speed,
+                    "direction": track,
+                    "satellites": satellites,
+                    "local_time": local_time,
+                }
+                
+                socketio.emit("gps_update", gps_data, broadcast=True)
+
+            eventlet.sleep(1)
+
+        except Exception as e:
+            print(f"Error while reading gps Data: {e}")
 
 def dataPolling():
     while True:

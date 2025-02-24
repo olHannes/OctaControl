@@ -1438,7 +1438,7 @@ function togglePosDisplay() {
         document.getElementById('showPos').style.color = "green";
 
         socket.on("gps_update", function (data) {
-            updatePosition(data.direction, data.speed, data.height, data.satellites);
+            updatePosition(data.direction, data.speed, data.altitude, data.satellites);
         });
 
     } else {

@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from flask_socketio import emit
-import gpsd
 import eventlet
 
 from BluetoothController import *
