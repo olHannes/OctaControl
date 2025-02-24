@@ -658,26 +658,26 @@ function switchToSection(section){
         case 'home':
             document.getElementById('settings').style.display = 'none';
             document.getElementById('audioControl').style.display = 'none';
-            document.getElementById('map').style.display="none";
+            document.getElementById('mapSection').style.display="none";
             document.getElementById('home').style.display = 'block';
             break;
         case 'settings':
             document.getElementById('audioControl').style.display = 'none';
             document.getElementById('home').style.display = 'none';
-            document.getElementById('map').style.display="none";
+            document.getElementById('mapSection').style.display="none";
             document.getElementById('settings').style.display = 'block';
             break;
         case 'audioControl':
             document.getElementById('settings').style.display = 'none';
             document.getElementById('home').style.display = 'none';
-            document.getElementById('map').style.display="none";
+            document.getElementById('mapSection').style.display="none";
             document.getElementById('audioControl').style.display = 'block';
             break;
-        case 'map':
+        case 'mapSection':
             document.getElementById('settings').style.display = 'none';
             document.getElementById('home').style.display = 'none';
             document.getElementById('audioControl').style.display = 'none';
-            document.getElementById('map').style.display="block";
+            document.getElementById('mapSection').style.display="block";
             break;
         case 'connections':
             document.getElementById('connPanel').style.display='block';

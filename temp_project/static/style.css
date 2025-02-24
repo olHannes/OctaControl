@@ -825,7 +825,7 @@ input:checked + .genre-color-slider::before {
 
 /*Styles for map Section*/
 /*#################################################################################################*/
-#map .homeButton{
+#mapSection .homeButton{
     left: 5%;
     top: 10%;
 }
