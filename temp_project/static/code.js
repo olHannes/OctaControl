@@ -96,16 +96,16 @@ async function preloadConfig() {
             }
         }
 
-        if (json.isTouchSoundEnabled !== undefined) {
-            if (json.isTouchSoundEnabled) {
-                togglePlayClickSound();
-            }
-        }
-
         if (json.touchSoundValue !== undefined) {
             lastClickVolume = json.touchSoundValue;
             audio.volume = lastClickVolume;
             updateVolumeDisplay(json.touchSoundValue);
+        }
+
+        if (json.isTouchSoundEnabled !== undefined) {
+            if (json.isTouchSoundEnabled) {
+                togglePlayClickSound();
+            }
         }
         
     } catch (error) {
@@ -646,6 +646,7 @@ function updateBrightness() {
     const sliderValue = brightnessSlider.value;
     const brightness = sliderValue / 100;
     document.body.style.filter = `brightness(${brightness})`;
+    updateConfig("brightnessSliderValue", sliderValue);
 }
 
 brightnessSlider.addEventListener('input', updateBrightness);
