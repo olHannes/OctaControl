@@ -367,7 +367,7 @@ def gps_reader():
                     "local_time": local_time,
                 }
                 
-                socketio.emit("gps_update", gps_data, broadcast=True)
+                socketio.emit("gps_update", gps_data, namespace="/", room="broadcast")
 
             eventlet.sleep(1)
 
