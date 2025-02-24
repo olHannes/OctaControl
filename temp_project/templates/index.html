@@ -25,6 +25,7 @@
         </div>
 
         <div class="buttonContainer">
+            <button onclick="switchToSection('map')" class="mapButton"></button>
             <button onclick="switchToSection('audioControl')" class="audioControlButton"></button>
             <button onclick="switchToSection('settings')" class="settingsButton"></button>
         </div>
@@ -53,6 +54,14 @@
     </div>
 
 
+    <div id="map" style="display: none;">
+        <div class="title">
+            <h1>Map</h1>
+        </div>
+
+        <button onclick="switchToSection('home')" class="homeButton"></button>
+        
+    </div>
 
     <div id="settings" style="display: none;">
         <div class="title">
