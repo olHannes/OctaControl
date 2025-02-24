@@ -13,11 +13,13 @@ BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --overscroll-history-navigation=0 \
                  --incognito"
 UNCLUTTER_COMMAND="unclutter -idle 0"
+SCREEN_BLANKING_COMMAND="xset s off && xset s noblank && xset -dpms"
 
 AUTOSTART_DIR="$HOME/.config/autostart"
 DESKTOP_FILE="$AUTOSTART_DIR/octacontrol-app.desktop"
 CHROMIUM_AUTOSTART_FILE="$AUTOSTART_DIR/chromium-browser.desktop"
 UNCLUTTER_AUTOSTART_FILE="$AUTOSTART_DIR/unclutter.desktop"
+SCREEN_BLANKING_AUTOSTART_FILE="$AUTOSTART_DIR/disable-screen-blanking.desktop"
 
 # Sicherstellen, dass das Verzeichnis existiert
 if [ ! -d "$AUTOSTART_DIR" ]; then
@@ -43,20 +45,15 @@ add_unclutter_to_autostart() {
     echo -e "[Desktop Entry]\nName=Unclutter\nComment=Hide Mouse Cursor\nExec=$UNCLUTTER_COMMAND\nIcon=cursor\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$UNCLUTTER_AUTOSTART_FILE"
 }
 
-disable_screen_blanking() {
-    echo "Deaktiviere das automatische Ausschalten des Displays..."
-    export DISPLAY=:0
-    xset s off
-    xset s noblank
-    xset -dpms
-
-    echo "Bildschirm bleibt dauerhaft an."
+add_screen_blanking_to_autostart() {
+    echo "Füge Bildschirm-Timeout-Deaktivierung zum Autostart hinzu..."
+    echo -e "[Desktop Entry]\nName=Disable Screen Blanking\nComment=Prevent screen from turning off\nExec=bash -c '$SCREEN_BLANKING_COMMAND'\nIcon=display\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$SCREEN_BLANKING_AUTOSTART_FILE"
 }
 
 # Einträge zum Autostart hinzufügen
 add_python_to_autostart
 add_chromium_to_autostart
 add_unclutter_to_autostart
-disable_screen_blanking
+add_screen_blanking_to_autostart
 
 echo "Autostart-Einträge wurden überprüft, geleert und hinzugefügt."
