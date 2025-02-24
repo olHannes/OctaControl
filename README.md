@@ -9,10 +9,12 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
 
 ## Home
 - Navigate between the Music and Settings pages.
+- Display of several information <GPS Data | Climate Data | Song Information>
 
 ## Music & Audio Control
 
 - **Metadata:** Displays <Title | Artist | Album | Genre> automatically received from the active Bluetooth device.
+- **Device:** Shows the current connected Bluetooth Device.
 - **Progress Bar:** Shows the current progress of the song as a percentage.
 - **Audio Control:** Provides the following functions: <Play | Pause | Previous | Skip>.
 - **Volume Control:** Adjust the Raspberry Pi's volume using a slider [0-100].
@@ -40,6 +42,18 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
 6. **Update:** Load changes from the repository, reload autostart configurations, and install all dependencies.
 7. **Version:** View the current version <Date + Commit>, including the history of the last 10 commits.
 
+### Trunk-Power
+1. **Power toggle:** Toggle the Relais for the trunk-power (stars + amplifier).
+
+### General-Settings
+1. **Audio Control:** Opens the Page to manipulate audio settings <Balance |>.
+2. **Touch Sound:** Toggle for touch soundFx <On | Off> + Loudness of these soundFx.
+3. **Power toggle:** Toggle the Relais for the trunk-power (stars + amplifier).
+4. **Adaptive Brightness:** Toggle the automatic adjusted brightness of the webpage <Sensor: BH1750>.
+5. **Climate Data:** Toggle the Display of Temperature and Humidity on the home-page.
+6. **Music Information:** Toggle the Display of Song-Data <Title | Artist> on the home-page.
+7. **GPS Data:** Toggle the Display of GPS-Data <Direction, Height, Speed> on the home-page.
+
 ## Installation
 
 1. **Clone the Repository into Documents:**
@@ -60,6 +74,9 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
    sudo raspi-config
    # Navigate to Advanced Options
    # Change display server from 'Wayland' to 'X11'
+
+   # Navigate to Interface Options
+   # Turn On: I2C and Serial Port
    ```
 
 4. **Reboot:**
@@ -80,3 +97,7 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
 
    Another relay is used to enable power delivery in the trunk, controlling the sound system and the starlight ceiling.
 
+4. **Sensors:**
+   - BH1750: Lightness Sensor
+   - DHT11: Temperature and Humidity Sensor
+   - GT-U7: GPS Modul

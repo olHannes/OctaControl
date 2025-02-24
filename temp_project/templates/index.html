@@ -42,7 +42,11 @@
             <div id="compassContainer">
                 <img id="compass" src="../static/media/compass.png" alt="Kompass">
             </div>
-            <p id="posDisplayText"><span id="direction">N</span> | <span id="altitude">100</span> m <span id="altArrow">⬆</span> | <span id="speed">0</span> km/h</p>
+            <p id="posDisplayText"><span id="direction">0</span> | <span id="altitude">0</span> m <span id="altArrow">⬆</span> | <span id="speed">0</span> km/h</p>
+            <div id="satellitContainer">
+                <img id="satellit" src="../static/media/satellit.png" alt="Sat">
+            </div>
+            <p id="numSatellit">0</p>
         </div>
         
     </div>
@@ -145,24 +149,42 @@
                 <h5>Audio Einstellungen</h5>
             </div>
 
+            <div class="featureBtn">
+                <h5 id="clickSoundToggle" onclick="togglePlayClickSound();" style="color: green;">Touch Sound: An</h5>
+                
+                <button class="clickVol" onclick="setClickSoundVolume(false)">
+                    <img src="../static/media/clickVolMinus.png" alt="-">
+                </button>
+                <div class="volumeIndicator">
+                    <div class="volumeBar"></div>
+                    <div class="volumeBar"></div>
+                    <div class="volumeBar"></div>
+                    <div class="volumeBar"></div>
+                </div>
+                <button class="clickVol" onclick="setClickSoundVolume(true)">
+                    <img src="../static/media/clickVolPlus.png" alt="+">
+                </button>
+            </div>
+            
+
             <div class="featureBtn" onclick="toggleTrunkPower();">
-                <h5 id="trunkPowerToggle">Anlage / Sternenhimmel: An</h5>
+                <h5 id="trunkPowerToggle" style="color: green;">Anlage / Sternenhimmel: An</h5>
             </div>
 
             <div class="featureBtn" onclick="toggleAdaptiveBrightness();">
-                <h5 id="adaptiveBrightness">Adaptive Helligkeit: Aus</h5>
+                <h5 id="adaptiveBrightness" style="color: red;">Adaptive Helligkeit: Aus</h5>
             </div>
 
             <div class="featureBtn" onclick="toggleClimateData();">
-                <h5 id="climateData">Raumklima: Aus</h5>
+                <h5 id="climateData" style="color: red;">Raumklima: Aus</h5>
             </div>
 
             <div class="featureBtn" onclick="toggleSongDisplay();">
-                <h5 id="showSong">Musik Informationen: Aus</h5>
+                <h5 id="showSong" style="color: red;">Musik Informationen: Aus</h5>
             </div>
 
             <div class="featureBtn" onclick="togglePosDisplay();">
-                <h5 id="showPos">GPS Daten: Aus</h5>
+                <h5 id="showPos" style="color: red;">GPS Daten: Aus</h5>
             </div>
         </div>
 

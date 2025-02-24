@@ -9,8 +9,8 @@ def install_apt_packages():
         "pulseaudio", "pulseaudio-module-bluetooth",
         "libportaudio2", "libasound2-dev",
         "ffmpeg", "playerctl", "alsa-utils",
-        "unclutter",
-        "RPi.GPIO", "i2c-tools"
+        "unclutter", "i2c-tools", "python3-bluez",
+        "gpsd", "gpsd-clients", "python3-gps"
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)
@@ -23,15 +23,17 @@ def install_apt_packages():
 def install_pip_packages():
     print("Installing necessary Python packages...")
     pip_packages = [
-        "flask", "flask-cors", "flask-socketio",
+        "flask", "flask-cors",
         "numpy", "scipy",
         "sounddevice", "pyaudio", "pyalsaaudio",
-        "pydbus", "pybluez",
+        "pydbus",
         "Pillow", "opencv-python",
-        "Adafruit_DHT", "smbus2", "RPi.GPIO"
+        "adafruit-circuitpython-dht", "smbus2", "RPi.GPIO",
+        "pynmea2", "pyserial"
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)
+        subprocess.run(["sudo", "apt", "install", "-y", "libgpiod2"], check=True)
         print("Python packages installed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error installing Python packages: {e}")

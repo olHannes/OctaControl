@@ -28,65 +28,99 @@ function preloadImages(imageArray) {
     showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
 
-function preloadConfig() {
-    fetch('http://127.0.0.1:5000/system/config')
-        .then(response => {
-            if (!response.ok) {
-                console.warn('Failed to load config, falling back to defaults.');
-                fallbackFunctions();
-                showErrorMessage("Failed while loading Config.", "response was not ok.");
-                return;
-            }
-            return response.json();
-        })
-        .then(json => {
+async function preloadConfig() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/system/config');
 
-            //set Volumelevel to the Volume Level of the RPi
-            setVolumeSlider(getVolume());
-            
-            //set BalanceLevel to the config-balance
-            setBalanceSlider(json.balanceValue);
+        if (!response.ok) {
+            console.warn('Failed to load config, falling back to defaults.');
+            fallbackFunctions();
+            showErrorMessage("Failed while loading Config.", "Response was not ok.");
+            return;
+        }
 
+        const json = await response.json();
+        console.log(json);
+
+        setVolumeSlider(getVolume());
+        setBalanceSlider(getBalance());
+        setVersion();
+
+        if (json.isBluetoothEnabled !== undefined) {
             if (json.isBluetoothEnabled) {
                 enableBt();
+            } else {
+                disableBt();
             }
-            if(json.isPairingmodeEnabled){
-                enablePairingMode();
-            }
-            //set Value for Color Slider
-            document.getElementById('colorSlider').value = json.colorSliderValue;
-            updateBackgroundColor();
-            
-            //setting Version of System
-            setVersion();
+        } else {
+            enableBt();
+        }
 
+        if (json.isPairingmodeEnabled !== undefined) {
+            if(json.isPairingmodeEnabled) {
+                enablePairingMode();
+            } else {
+                disablePairingMode();
+            }
+        } else {
+            disablePairingMode();
+        }
+
+        document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
+        updateBackgroundColor();
+
+        document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
+
+        if (json.isTrunkPowerEnabled !== undefined) {
             if (json.isTrunkPowerEnabled) {
                 toggleTrunkPower();
             }
+        }
+
+        if (json.isAdaptiveBrightnessEnabled !== undefined) {
             if (json.isAdaptiveBrightnessEnabled) {
                 toggleAdaptiveBrightness();
             }
+        }
+
+        if (json.isClimateDataEnabled !== undefined) {
             if (json.isClimateDataEnabled) {
                 toggleClimateData();
             }
-            if (json.isSongDisplayEnabled) {
-                toggleSongDisplay();
-            }
-            if (json.isPosDisplayEnabled){
+        }
+
+        if (json.isPosDisplayEnabled !== undefined) {
+            if (json.isPosDisplayEnabled) {
                 togglePosDisplay();
             }
-        })
-        .catch(error => {
-            console.error('Error fetching config:', error);
-            fallbackFunctions();
-        });
+        }
+
+        if (json.isTouchSoundEnabled !== undefined) {
+            if (json.isTouchSoundEnabled) {
+                togglePlayClickSound();
+            }
+        }
+
+        if (json.touchSoundValue !== undefined) {
+            lastClickVolume = json.touchSoundValue;
+            audio.volume = lastClickVolume;
+            updateVolumeDisplay(json.touchSoundValue);
+        }
+        
+    } catch (error) {
+        showErrorMessage('Error fetching config:', error);
+        fallbackFunctions();
+    }
 }
+
 
 function fallbackFunctions() {
     setVolumeSlider(getVolume());
     setBalanceSlider(getBalance());
     enableBt();  
     document.getElementById('colorSlider').value = 39;
+    document.getElementById('brightnessSlider').value = 100;
+    updateBrightness();
     updateBackgroundColor();
     setVersion();
     toggleTrunkPower();
@@ -272,6 +306,7 @@ function addSwipeToRemove(element) {
 
 /*this function controlls the toggle mechanism of the logging status*/
 function toggleLogging() {
+    playClickSound();
     var loggingDiv = document.getElementById('logging-toggle');
     var button = document.getElementById('toggleButton');
 
@@ -291,6 +326,7 @@ function toggleLogging() {
 /**function to customize fullscreen status */
 const fScreenBtn = document.getElementById('toggleFullscreen');
 function toggleFullscreen() {
+    playClickSound();
     if (!document.fullscreenElement) {
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen();
@@ -329,6 +365,7 @@ function enableSystemSettings(){
 }
 
 async function shutdown(){
+    playClickSound();
     disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/powerOptions/shutdown", {
@@ -350,6 +387,7 @@ async function shutdown(){
 }
 
 async function reboot(){
+    playClickSound();
     disableSystemSettings();
     try {
         const response = await fetch("http://127.0.0.1:5000/powerOptions/reboot", {
@@ -371,6 +409,7 @@ async function reboot(){
 }
 
 async function update() {
+    playClickSound();
     try {
         showMessage("Update", "Versuche, das System zu aktualisieren...");
 
@@ -439,6 +478,7 @@ async function setVersion() {
 }
 
 async function openGitLog() {
+    playClickSound();
     try {
         let response = await fetch('http://127.0.0.1:5000/system/version/log');
         let logs = await response.json();
@@ -518,6 +558,7 @@ function updateButtonIcon() {
 }
 
 async function enableTrunkPower() {
+    playClickSound();
     try {
         const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/enable", {
             method: "POST",
@@ -536,6 +577,7 @@ async function enableTrunkPower() {
 }
 
 async function disableTrunkPower() {
+    playClickSound();
     try {
         const response = await fetch("http://127.0.0.1:5000/system/powerOptions/trunkPower/disable", {
             method: "POST",
@@ -610,6 +652,7 @@ brightnessSlider.addEventListener('input', updateBrightness);
 /**Function to switch between pages/sections */
 
 function switchToSection(section){
+    playClickSound();
     switch (section){
         case 'home':
             document.getElementById('settings').style.display = 'none';
@@ -654,6 +697,7 @@ function switchToSection(section){
 }
 
 function closePanel(panel) {
+    playClickSound();
     switch (panel){
         case 'connPanel':
             document.getElementById('connPanel').classList.remove('show');
@@ -801,6 +845,7 @@ balanceSlider.addEventListener('input', debounce(() => setBalance(balanceSlider.
 /**audio music - Control: play, pause, skip, previous */
 
 async function pauseAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
 
@@ -824,6 +869,7 @@ async function pauseAudio(){
 }
 
 async function playAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
     
@@ -847,6 +893,7 @@ async function playAudio(){
 }
 
 async function skipAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
 
@@ -870,6 +917,7 @@ async function skipAudio(){
 }
 
 async function prevAudio(){
+    playClickSound();
     const buttons = document.querySelectorAll('#musicControl button');
     buttons.forEach(button => button.disabled = true);
 
@@ -1030,6 +1078,7 @@ let isWlanOn = false;
 
 const bluetoothHeader = document.querySelector('#bluetooth-container');
 bluetoothToggle.addEventListener('click', async () => {
+    playClickSound();
     bluetoothToggle.style.pointerEvents = 'none';
     pairingToggle.style.pointerEvents = 'none';
     bluetoothHeader.style.opacity="0.3";
@@ -1048,6 +1097,7 @@ bluetoothToggle.addEventListener('click', async () => {
 
 const pairingHeader = document.querySelector('#pairing-container');
 pairingToggle.addEventListener('click', async () => {
+    playClickSound();
     bluetoothToggle.style.pointerEvents = 'none';
     pairingToggle.style.pointerEvents = 'none';
     bluetoothHeader.style.opacity="0.3";
@@ -1066,6 +1116,7 @@ pairingToggle.addEventListener('click', async () => {
 
 const wlanHeader = document.querySelector('#wlan-container');
 wlanHeader.addEventListener('click', async () => {
+    playClickSound();
     wlanToggle.style.pointerEvents = 'none';
     wlanHeader.style.opacity="0.3";
 
@@ -1093,6 +1144,7 @@ async function enableBt() {
             console.log("turned Bluetooth on");
             bluetoothToggle.src = '../static/media/turnOn.png';
             isBluetoothOn = !isBluetoothOn;
+            updateConfig("isBluetoothEnabled", true);
         } else {
             bluetoothToggle.src = '../static/media/turnOff.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Einschalten von Bluetooth: " + data.message);        }
@@ -1117,6 +1169,8 @@ async function disableBt() {
             console.log("turned Bluetooth off");
             bluetoothToggle.src = '../static/media/turnOff.png';
             isBluetoothOn = !isBluetoothOn;
+            updateConfig("isBluetoothEnabled", false);
+
         } else {
             bluetoothToggle.src = '../static/media/turnOn.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Ausschalten von Bluetooth: " + data.message);        }
@@ -1141,6 +1195,7 @@ async function enablePairingMode() {
             console.log("turned pairing mode on");
             isPairingOn = !isPairingOn;
             pairingToggle.src = '../static/media/BTPairingOn.png';
+            updateConfig("isPairingmodeEnabled", true);
         } else {
             pairingToggle.src = '../static/media/BTPairingOff.png';
              showErrorMessage("Bluetooth Fehler", "Fehler beim Aktivieren des Pairing-Modus: " + data.message);
@@ -1164,6 +1219,7 @@ async function disablePairingMode() {
             console.log("turned pairing mode off");
             isPairingOn = !isPairingOn;
             pairingToggle.src = '../static/media/BTPairingOff.png';
+            updateConfig("isPairingmodeEnabled", false);
         } else {
             pairingToggle.src = '../static/media/BTPairingOn.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + data.message);
@@ -1191,6 +1247,7 @@ async function enableWlan() {
             console.log("Wlan wurde erfolgreich eingeschaltet.");
             wlanToggle.src = '../static/media/wlanOn.png';
             isWlanOn = true;
+            updateConfig("isWlanEnabled", true);
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + data.message);
         }
@@ -1218,6 +1275,7 @@ async function disableWlan() {
             console.log("Wlan wurde erfolgreich ausgeschaltet.");
             wlanToggle.src = '../static/media/wlanOff.png';
             isWlanOn = false;
+            updateConfig("isWlanEnabled", false);
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + data.message);
         }
@@ -1254,6 +1312,7 @@ async function fetchBrightness() {
 }
 
 function toggleAdaptiveBrightness() {
+    playClickSound();
     adaptiveBrightnessEnabled = !adaptiveBrightnessEnabled;
     
     if (adaptiveBrightnessEnabled) {
@@ -1277,7 +1336,7 @@ let climateIntervalId = null;
 
 async function fetchClimateData() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/features/climateData");
+        const response = await fetch("http://127.0.0.1:5000/climate/get");
         if (!response.ok) {
             throw new Error('Fehler beim Abrufen der Klimadaten');
         }
@@ -1295,6 +1354,7 @@ async function fetchClimateData() {
 }
 
 function toggleClimateData() {
+    playClickSound();
     climateDataEnabled = !climateDataEnabled;
     
     if (climateDataEnabled) {
@@ -1314,6 +1374,7 @@ function toggleClimateData() {
 
 let songDisplay = false;
 function toggleSongDisplay() {
+    playClickSound();
     songDisplay = !songDisplay;
 
     if(songDisplay){
@@ -1332,19 +1393,38 @@ function toggleSongDisplay() {
 
 
 
-function updatePosition(directionDeg, speed, altitude, altitudeChange) {
+async function fetchPosition() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/gps/DisplayData");
+        if (!response.ok) {
+            throw new Error('Fehler beim Abrufen der GPS-Display-Daten');
+        }
+        const data = await response.json();
+
+        if (data && data.direction !== undefined && data.speed !== undefined && data.height !== undefined && data.satellit !== undefined) {
+            console.log(`Richtung: ${data.direction}°, Geschwindigkeit: ${data.speed} km/h, Höhe: ${data.height} m, numOf Satellit: ${data.satellit}}`);
+            updatePosition(data.direction, data.speed, data.height, data.satellit);
+        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Abrufen der GPS-Display-Daten", error);
+    }
+}
+
+function updatePosition(directionDeg, speed, altitude, numSatellit) {
     const directionText = getDirectionText(directionDeg);
     const compass = document.getElementById("compass");
     const speedElement = document.getElementById("speed");
     const altitudeElement = document.getElementById("altitude");
     const altArrow = document.getElementById("altArrow");
+    const satellitElement = document.getElementById('numSatellit');
 
     document.getElementById("direction").textContent = directionText;
     compass.style.transform = `rotate(${directionDeg}deg)`;
-    
-    speedElement.textContent = speed;
-    altitudeElement.textContent = altitude;
-    altArrow.textContent = altitudeChange > 0 ? "⬆" : altitudeChange < 0 ? "⬇" : "⏤";
+
+    speedElement.textContent = `${Math.floor(speed)}`;
+    altitudeElement.textContent = `${Math.round(altitude)}`;
+    altArrow.textContent = altitude > 0 ? "⬆" : altitude < 0 ? "⬇" : "⏤";
+    satellitElement.textContent= numSatellit;
 }
 
 function getDirectionText(deg) {
@@ -1352,21 +1432,86 @@ function getDirectionText(deg) {
     const index = Math.round(deg / 45);
     return directions[index];
 }
-updatePosition(135, 75, 1200, -5);
-
 
 let posDisplay = false;
+let posIntervall = null;
 function togglePosDisplay() {
+    playClickSound();
     posDisplay = !posDisplay;
 
-    if(posDisplay){
-        document.getElementById('positionDisplay').style.display="flex"
-        document.getElementById('showPos').innerText="GPS Daten: An";
-        document.getElementById('showPos').style.color="green";
+    if (posDisplay) {
+        document.getElementById('positionDisplay').style.display = "flex";
+        document.getElementById('showPos').innerText = "GPS Daten: An";
+        document.getElementById('showPos').style.color = "green";
+        posIntervall = setInterval(fetchPosition, 5000);
     } else {
-        document.getElementById('positionDisplay').style.display="none";
-        document.getElementById('showPos').innerText="GPS Daten: Aus";
-        document.getElementById('showPos').style.color="red";
+        document.getElementById('positionDisplay').style.display = "none";
+        document.getElementById('showPos').innerText = "GPS Daten: Aus";
+        document.getElementById('showPos').style.color = "red";
+        clearInterval(posIntervall);
     }
-    updateConfig("isPosDisplayEnabled", songDisplay);
+    updateConfig("isPosDisplayEnabled", posDisplay);
 }
+
+
+
+
+const clickSoundPath = '../static/media/sounds/clickSound.mp3';
+let isPlayClickSound = true;
+let lastClickVolume = 1;
+const audio = new Audio(clickSoundPath);
+audio.volume = lastClickVolume;
+
+function playClickSound() {
+    if (isPlayClickSound && audio.volume > 0) {
+        audio.currentTime = 0;
+        audio.play().catch(error => {
+            console.error('Error playing sound:', error);
+        });
+    }
+}
+
+function togglePlayClickSound() {
+    isPlayClickSound = !isPlayClickSound;
+    
+    if (isPlayClickSound) {
+        audio.volume = lastClickVolume;
+        playClickSound();
+        document.getElementById('clickSoundToggle').innerText = "Touch Sound: An";
+        document.getElementById('clickSoundToggle').style.color = "green";
+    } else {
+        lastClickVolume = audio.volume;
+        audio.volume = 0;
+        document.getElementById('clickSoundToggle').innerText = "Touch Sound: Aus";
+        document.getElementById('clickSoundToggle').style.color = "red";
+    }
+    updateVolumeDisplay(audio.volume);
+    updateConfig("isTouchSoundEnabled", isPlayClickSound);
+}
+
+function updateVolumeDisplay(volume) {
+    const bars = document.querySelectorAll('.volumeBar');
+    bars.forEach((bar, index) => {
+        bar.classList.toggle('active', index < volume / 0.25);
+    });
+}
+
+function setClickSoundVolume(louder) {
+    let newVolume = louder ? Math.min(audio.volume + 0.25, 1) : Math.max(audio.volume - 0.25, 0);
+    
+    if (!isPlayClickSound && newVolume > 0) {
+        isPlayClickSound = true;
+        document.getElementById('clickSoundToggle').innerText = "Touch Sound: An";
+        document.getElementById('clickSoundToggle').style.color = "green";
+    }
+    
+    audio.volume = newVolume;
+    playClickSound();
+    lastClickVolume = newVolume;
+    updateVolumeDisplay(newVolume);
+    updateConfig("touchSoundValue", newVolume);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateVolumeDisplay(audio.volume);
+});

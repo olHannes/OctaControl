@@ -274,6 +274,16 @@ def updateConfig():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app_routes.route("/climate/get", methods=["GET"])
+def requestClimateData():
+    try:
+        data = getClimate()
+        print(data)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+    
+
 @app_routes.route("/features/adaptiveBrightness", methods=["GET"])
 def requestadaptiveBrightness():
     try:
@@ -282,10 +292,16 @@ def requestadaptiveBrightness():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app_routes.route("/features/climate", methods=["GET"])
-def requestClimateData():
-    try:
-        result = getClimate()
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app_routes.route('/gps/DisplayData', methods=['GET'])
+def get_gps_data():
+    data = load_gps_data()
+    filtered_data = {
+        "direction": data.get("track"),
+        "altitude": data.get("altitude"),
+        "speed": round(data.get("speed")),
+        "satellites": data.get("satellites")
+    }
+    return jsonify(filtered_data)
+
+

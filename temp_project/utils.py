@@ -3,11 +3,55 @@ import alsaaudio
 import os
 import json
 import RPi.GPIO as GPIO
-import Adafruit_DHT
+import adafruit_dht
+import board
+import threading
+import time
+import serial
+import gps
+import pytz
 
 trunkPowerPin = 23
-climatePin = 4
-climateSensor = Adafruit_DHT.DHT11
+climatePin = 25
+dht_device = adafruit_dht.DHT11(board.D25)
+
+FILE_PATH = "climateData.txt"
+climateLock = threading.Lock()
+
+GPS_FILE_PATH = "gpsData.txt"
+gpsLock = threading.Lock()
+
+def save_climate_data(temperature, humidity):
+    data = {"temperature": temperature, "humidity": humidity}
+    with climateLock:
+        with open(FILE_PATH, "w") as file:
+            json.dump(data, file)
+
+def load_climate_data():
+    try:
+        with climateLock:
+            with open(FILE_PATH, "r") as file:
+                return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"temperature": 0, "humidity": 0}
+
+
+def save_gps_data(key, value):
+    data = {key: value}
+    with gpsLock:
+        with open(GPS_FILE_PATH, "w") as file:
+            json.dump(data, file)
+
+def load_gps_data():
+    try:
+        with gpsLock:
+            with open(GPS_FILE_PATH, "r") as file:
+                return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"value": 0}
+
+
+
 
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
@@ -96,7 +140,6 @@ def set_balance(balance):
     try:
         mixer = alsaaudio.Mixer()
         balance = max(-100, min(100, balance))
-        update_config("balanceValue", balance)
 
         if balance < 0:
             left = master_volume
@@ -134,7 +177,6 @@ def enable_pairing_mode():
     try:
         subprocess.run(["bluetoothctl", "discoverable", "on"], check=True)
         subprocess.run(["bluetoothctl", "pairable", "on"], check=True)
-        update_config("isPairingmodeEnabled", True)
         return {"status": "success", "message": "Pairing mode enabled. Raspberry Pi is now discoverable and pairable."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -143,7 +185,6 @@ def disable_pairing_mode():
     try:
         subprocess.run(["bluetoothctl", "discoverable", "off"], check=True)
         subprocess.run(["bluetoothctl", "pairable", "off"], check=True)
-        update_config("isPairingmodeEnabled", False)
         return {"status": "success", "message": "Pairing mode disabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -151,7 +192,6 @@ def disable_pairing_mode():
 def enable_bluetooth():
     try:
         subprocess.run(["rfkill", "unblock", "bluetooth"], check=True)
-        update_config("isBluetoothEnabled", True)
         return {"status": "success", "message": "Bluetooth enabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -159,7 +199,6 @@ def enable_bluetooth():
 def disable_bluetooth():
     try:
         subprocess.run(["rfkill", "block", "bluetooth"], check=True)
-        update_config("isBluetoothEnabled", False)
         return {"status": "success", "message": "Bluetooth disabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -226,7 +265,6 @@ def getGitLog():
 def enable_wlan():
     try:
         subprocess.run(["rfkill", "unblock", "wifi"], check=True)
-        update_config("isWlanEnabled", True)
         return {"status": "success", "message": "WLAN wurde eingeschaltet."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -234,7 +272,6 @@ def enable_wlan():
 def disable_wlan():
     try:
         subprocess.run(["rfkill", "block", "wifi"], check=True)
-        update_config("isWlanEnabled", False)
         return {"status": "success", "message": "WLAN wurde ausgeschaltet."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
@@ -264,12 +301,10 @@ def initializeGPIO():
 def enableTrunkPower():
     initializeGPIO()
     GPIO.output(trunkPowerPin, GPIO.HIGH)
-    update_config("isTrunkPowerEnabled", True)
 
 def disableTrunkPower():
     initializeGPIO()
     GPIO.output(trunkPowerPin, GPIO.LOW)
-    update_config("isTrunkPowerEnabled", False)
 
 
 def getBrightness():
@@ -277,13 +312,68 @@ def getBrightness():
         "brightness": 0
     }
 
+
+
+
+def updateClimateData():
+    try:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
+
+        if temperature is not None and humidity is not None:
+            save_climate_data(temperature, humidity)
+    except Exception as e:
+        print(f"Fehler beim Lesen der Klimadaten: {e}")
+
 def getClimate():
-    humidity, temperature = Adafruit_DHT.read_retry(climateSensor, climatePin)
-    if humidity is not None and temperature is not None:
-        return {
-            "temperature": temperature,
-            "humidity": humidity
-        }
-    else:
-        return {
-            "error": "Failed to read from DHT sensor"}
+    return load_climate_data()
+
+
+
+
+
+def updateGPSData():
+    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+    try:
+        report = session.next()
+        if report['class'] == 'TPV':
+            latitude = round(getattr(report, 'lat', 0.0), 5)
+            longitude = round(getattr(report, 'lon', 0.0), 5)
+
+            altitude = getattr(report, 'alt', 0.0)
+
+            speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
+
+            track = getattr(report, 'track', 0.0)
+
+            satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
+
+            gps_data = {
+                "latitude": latitude,
+                "longitude": longitude,
+                "altitude": altitude,
+                "speed": speed,
+                "track": track,
+                "satellites": satellites
+            }
+            save_gps_data("gpsData", gps_data)
+
+    except Exception as e:
+        print(f"Fehler beim Aktualisieren der GPS-Daten: {e}")
+
+
+
+
+
+
+
+
+def dataPolling():
+    while True:
+        updateClimateData()
+        updateGPSData()
+        time.sleep(5)
+
+
+dataThread = threading.Thread(target=dataPolling, daemon=True)
+dataThread.start()

@@ -246,7 +246,7 @@ input[type=range]::-webkit-slider-thumb {
     background: rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 8px;
-    display: block;
+    display: none;
 }
 #climateDisplay h2 {
     font-size: 1rem;
@@ -285,9 +285,8 @@ input[type=range]::-webkit-slider-thumb {
     position: absolute;
     top: 5px;
     left: 10px;
-    border-radius: 80px;
-    width: 22%;
-    background-color: black;
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     overflow: hidden;
     text-align: center;
@@ -295,9 +294,17 @@ input[type=range]::-webkit-slider-thumb {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    display: none;
 }
 
-#compassContainer {
+#positionDisplay:hover {
+    background-color: rgba(0, 0, 0, 1);
+}
+
+#compassContainer,
+#satellitContainer {
     width: 40px;
     height: 40px;
     position: relative;
@@ -310,12 +317,22 @@ input[type=range]::-webkit-slider-thumb {
     transition: transform 0.5s ease;
 }
 
-#posDisplayText {
-    flex-grow: 1;
-    font-size: 18px;
-    font-weight: bold;
+#satellit {
+    width: 20px;
+    height: auto;
 }
 
+#posDisplayText {
+    flex-grow: 1;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+#numSatellit {
+    font-size: 16px;
+    margin-top: 5px;
+}
 
 
 
@@ -764,6 +781,43 @@ input:checked + .genre-color-slider::before {
     font-size: 1.5rem;
     margin: 0;
 }
+
+/*STyle for clickVolume settings*/
+.clickVol {
+    width: 51px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.clickVol img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Style for Volume Indicator */
+.volumeIndicator {
+    display: flex;
+    gap: 5px;
+}
+
+.volumeBar {
+    width: 10px;
+    height: 20px;
+    background-color: lightgray;
+    border-radius: 3px;
+}
+
+.volumeBar.active {
+    background-color: green;
+}
+
 
 
 /*style for audio-control-section*/
