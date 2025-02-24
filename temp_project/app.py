@@ -7,7 +7,6 @@ from utils import gps_reader, metadata_reader
 eventlet.monkey_patch()
 
 app = Flask(__name__)
-CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 app.register_blueprint(app_routes)

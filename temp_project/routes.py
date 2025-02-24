@@ -1,13 +1,13 @@
 from flask import Blueprint, jsonify, request
 from flask_socketio import emit
 import eventlet
+import os
+import subprocess
+import json
 
 from BluetoothController import *
 from AudioMetadata import *
 from utils import *
-import os
-import subprocess
-import json
 
 
 app_routes = Blueprint('app_routes', __name__)

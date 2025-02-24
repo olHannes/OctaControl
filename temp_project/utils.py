@@ -1,18 +1,21 @@
 import os
 import subprocess
-import RPi.GPIO as GPIO
-import board
 import time
 import datetime
-import serial
-import threading
 import json
-import alsaaudio
-import adafruit_dht
+import threading
 import pytz
-from flask_socketio import emit
 import gps
 import eventlet
+
+import RPi.GPIO as GPIO
+import board
+import serial
+import alsaaudio
+import adafruit_dht
+
+from flask_socketio import emit
+from flask import jsonify
 
 trunkPowerPin = 23
 climatePin = 25
