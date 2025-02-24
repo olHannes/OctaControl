@@ -1,6 +1,5 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
-from flask_cors import CORS
 from routes import app_routes
 import eventlet
 from utils import gps_reader, metadata_reader
