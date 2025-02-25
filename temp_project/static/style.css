@@ -851,7 +851,19 @@ input:checked + .genre-color-slider::before {
 
 
 
+#map {
+    width: 90%;
+    height: 65%;
+    position: absolute;
+    left: 5%;
+    bottom: 10%;
+    background-color: white;
+    border-radius: 10px;
+}
 
+.leaflet-bottom {
+    display: none;
+}
 
 
 

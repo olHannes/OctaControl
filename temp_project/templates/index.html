@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infotainment System</title>
     <link rel="stylesheet" href="../static/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+
+
 </head>
 <body>
     <div class="background"></div>
@@ -65,7 +73,7 @@
         </div>
         <button onclick="switchToSection('home')" class="homeButton"></button>
 
-        <div id="map" style="height: 500px;"></div>
+        <div id="map"></div>
 
     </div>
 

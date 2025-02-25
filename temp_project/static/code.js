@@ -1551,3 +1551,52 @@ function setClickSoundVolume(louder) {
 document.addEventListener("DOMContentLoaded", () => {
     updateVolumeDisplay(audio.volume);
 });
+
+
+// here comes the functionality for the map
+
+const map = L.map('map').setView([51.1657, 10.4515], 13);
+
+
+L.tileLayer('../../../germanTiles/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 18
+}).addTo(map);
+
+let marker = null;
+let accuracyCircle = null;
+
+socket.on("gps_update", (data) => {
+    const { latitude, longitude, speed, direction, satellites, local_time } = data;
+
+    if (!marker) {
+        marker = L.marker([latitude, longitude], {
+            icon: L.icon({
+                iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41]
+            })
+        }).addTo(map);
+        
+        accuracyCircle = L.circle([latitude, longitude], {
+            radius: 10,
+            color: 'blue',
+            fillOpacity: 0.2
+        }).addTo(map);
+    } else {
+        marker.setLatLng([latitude, longitude]);
+        accuracyCircle.setLatLng([latitude, longitude]);
+    }
+
+    map.flyTo([latitude, longitude], map.getZoom(), { duration: 1.5 });
+
+    marker.bindPopup(`
+        <b>GPS-Position</b><br>
+        Latitude: ${latitude}<br>
+        Longitude: ${longitude}<br>
+        Geschwindigkeit: ${speed} km/h<br>
+        Richtung: ${direction}°<br>
+        Satelliten: ${satellites}<br>
+        Zeit: ${local_time}
+    `).openPopup();
+});
