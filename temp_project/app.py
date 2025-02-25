@@ -7,7 +7,7 @@ from flask_socketio import SocketIO
 import threading
 
 from routes import app_routes
-from utils import gps_reader, metadata_reader, set_system_time_from_gps, climateDataPolling
+from utils import gps_reader, metadata_reader, setSystemTime, climateDataPolling
 
 
 
