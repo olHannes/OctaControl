@@ -1391,23 +1391,10 @@ const humidityDisplay = document.getElementById('humidityValue');
 let climateDataEnabled = false;
 let climateIntervalId = null;
 
-async function fetchClimateData() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/climate/get");
-        if (!response.ok) {
-            throw new Error('Fehler beim Abrufen der Klimadaten');
-        }
-        const data = await response.json();
-        if (data && data.temperature !== undefined && data.humidity !== undefined) {
-            console.log("getClimateData: " + `${data.temperature}°C`+ " " + `${data.humidity}%`);
-            tempDisplay.innerText=`${data.temperature}°C`;
-            humidityDisplay.innerText = `${data.humidity}%`;
-        }
-    } catch (error) {
-        tempDisplay.innerText=`x°C`;
-        humidityDisplay.innerText = `x%`;
-        showErrorMessage("Fehler beim Abrufen der Klimadaten", error);
-    }
+function updateClimateData(temp, hum){
+    console.log("getClimateData: " + `${data.temperature}°C`+ " " + `${data.humidity}%`);
+    tempDisplay.innerText=`${data.temperature}°C`;
+    humidityDisplay.innerText = `${data.humidity}%`;
 }
 
 function toggleClimateData() {
@@ -1415,16 +1402,19 @@ function toggleClimateData() {
     climateDataEnabled = !climateDataEnabled;
     
     if (climateDataEnabled) {
-        fetchClimateData();
         climateToggle.innerHTML = "Raumklima: An";
         climateToggle.style.color = "green";
         document.getElementById('climateDisplay').style.display="block";
-        climateIntervalId = setInterval(fetchClimateData, 10000);
+
+        socket.on("climate_update", function (data) {
+            updateClimateData(data.temperature, data.humidity);
+        });
     } else {
         clearInterval(climateIntervalId);
         climateToggle.innerHTML = "Raumklima: Aus";
         climateToggle.style.color = "red";
         document.getElementById('climateDisplay').style.display="none";
+        socket.off("climate_update");
     }
     updateConfig("isClimateDataEnabled", climateDataEnabled);
 }

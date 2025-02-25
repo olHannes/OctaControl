@@ -317,18 +317,23 @@ def getBrightness():
 
 
 
-def updateClimateData():
-    try:
-        temperature = dht_device.temperature
-        humidity = dht_device.humidity
+def climatedata_reader():
+    while True:
+        try:
+            temperature = dht_device.temperature
+            humidity = dht_device.humidity
+            data = {
+                "temperature": temperature,
+                "humidity": humidity
+            }
 
-        if temperature is not None and humidity is not None:
-            save_climate_data(temperature, humidity)
-    except Exception as e:
-        print(f"Fehler beim Lesen der Klimadaten: {e}")
-
-def getClimate():
-    return load_climate_data()
+            if temperature is not None and humidity is not None:
+                print(f"temp: {temperature}, hum: {humidity}")
+                #save_climate_data(temperature, humidity)
+                socketio.emit("climatedata_update", data)
+        except Exception as e:
+            print(f"Fehler beim Lesen der Klimadaten: {e}")
+        eventlet.sleep(5)
 
 
 from AudioMetadata import *
@@ -413,9 +418,3 @@ def setSystemTime():
         except Exception as e:
             print(f"Fehler beim Lesen der GPS-Zeit: {e}")
             time.sleep(5)
-
-
-def climateDataPolling():
-    while True:
-        updateClimateData()
-        time.sleep(5)
