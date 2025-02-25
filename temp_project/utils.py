@@ -17,6 +17,8 @@ import adafruit_dht
 from flask_socketio import emit
 from flask import jsonify
 
+from app import socketio
+
 trunkPowerPin = 23
 climatePin = 25
 dht_device = adafruit_dht.DHT11(board.D25)
@@ -63,6 +65,19 @@ def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings
     except Exception as e:
         print(f"Error updating config: {e}")
         return False
+
+
+
+
+@socketio.on("connect")
+def handle_connect():
+    print("Client verbunden")
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("Client getrennt")
+
+
 
 
 def run_bluetoothctl_command(command):
@@ -319,8 +334,6 @@ def getClimate():
 from AudioMetadata import *
 
 def metadata_reader():
-    from app import socketio
-
     while True:
         try:
             metadata = getMeta()
@@ -330,7 +343,6 @@ def metadata_reader():
         eventlet.sleep(1)
 
 def gps_reader():
-    from app import socketio
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
     
     while True:
@@ -367,12 +379,13 @@ def gps_reader():
                     "local_time": local_time,
                 }
                 
-                socketio.emit("gps_update", gps_data, namespace="/", room="broadcast")
+                socketio.emit("gps_update", gps_data)
 
             eventlet.sleep(1)
 
         except Exception as e:
             print(f"Error while reading gps Data: {e}")
+            time.sleep(5)
 
 def dataPolling():
     while True:
