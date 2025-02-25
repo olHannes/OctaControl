@@ -387,11 +387,35 @@ def gps_reader():
             print(f"Error while reading gps Data: {e}")
             time.sleep(5)
 
-def dataPolling():
+
+def setSystemTime():
+    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+    print("Warte auf gültige GPS-Zeit...")
+    
+    while True:
+        try:
+            report = session.next()
+            
+            if report['class'] == 'TPV':
+                utc_time = getattr(report, 'time', None)
+                
+                if utc_time:
+                    utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    
+                    formatted_time = utc_dt.strftime("%Y-%m-%d %H:%M:%S")
+                    subprocess.run(["sudo", "timedatectl", "set-time", formatted_time])
+                    
+                    print(f"Systemzeit auf {formatted_time} gesetzt.")
+                    break
+            
+            time.sleep(1)
+            
+        except Exception as e:
+            print(f"Fehler beim Lesen der GPS-Zeit: {e}")
+            time.sleep(5)
+
+
+def climateDataPolling():
     while True:
         updateClimateData()
         time.sleep(5)
-
-
-dataThread = threading.Thread(target=dataPolling, daemon=True)
-dataThread.start()
