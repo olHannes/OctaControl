@@ -330,7 +330,7 @@ def climatedata_reader():
             if temperature is not None and humidity is not None:
                 print(f"temp: {temperature}, hum: {humidity}")
                 #save_climate_data(temperature, humidity)
-                socketio.emit("climatedata_update", data)
+                socketio.emit("climate_update", data)
         except Exception as e:
             print(f"Fehler beim Lesen der Klimadaten: {e}")
         eventlet.sleep(5)
