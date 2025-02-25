@@ -166,6 +166,23 @@ function updateConfig(key, value) {
 }
 
 
+function updateClock() {
+    const now = new Date();
+    const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+    const dateString = now.toLocaleDateString('de-DE', options);
+    const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    document.getElementById('date').textContent = dateString;
+    document.getElementById('time').textContent = timeString;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+
+
+
+
 /**function for sleepTimer*/
 let sleepTimerTime = 0;
 const sleepTimerDiv = document.getElementById('sleepTimer');
