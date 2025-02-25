@@ -188,6 +188,7 @@ setInterval(updateClock, 1000);
 
 let showClock = false;
 function toggleClock() {
+    playClickSound();
     showClock = !showClock;
 
     if(showClock){
