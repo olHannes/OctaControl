@@ -309,7 +309,7 @@ input[type=range]::-webkit-slider-thumb {
     top: 5px;
     left: 10px;
     border-radius: 15px;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgb(24 24 24 / 33%);
     color: white;
     overflow: hidden;
     text-align: center;
