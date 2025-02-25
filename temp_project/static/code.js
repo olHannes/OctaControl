@@ -116,6 +116,12 @@ async function preloadConfig() {
                 togglePlayClickSound();
             }
         }
+
+        if (json.isClockEnabled !== undefined) {
+            if (json.isClockEnabled) {
+                toggleClock();
+            }
+        }
         
     } catch (error) {
         showErrorMessage('Error fetching config:', error);
@@ -138,6 +144,7 @@ function fallbackFunctions() {
     toggleClimateData();
     toggleSongDisplay();
     togglePosDisplay();
+    toggleClock();
 }
 
 
@@ -179,7 +186,21 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
+let showClock = false;
+function toggleClock() {
+    showClock = !showClock;
 
+    if(showClock){
+        document.getElementById('clockToggle').innerText = "Uhr: An";
+        document.getElementById('clockToggle').style.color = "green";
+        document.getElementById('clock-container').style.display="block";
+    } else {
+        document.getElementById('clockToggle').innerText = "Uhr: Aus";
+        document.getElementById('clockToggle').style.color = "red";
+        document.getElementById('clock-container').style.display="none";
+    }
+    updateConfig('isClockEnabled', showClock);
+}
 
 
 

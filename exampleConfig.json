@@ -10,5 +10,6 @@
     "isSongDisplayEnabled": true,
     "isPosDisplayEnabled": true,
     "isTouchSoundEnabled": true,
-    "touchSoundValue": 1
+    "touchSoundValue": 1,
+    "isClockEnabled": true
 }

@@ -24,7 +24,7 @@
             <h1>Home</h1>
         </div>
 
-        <div class="clock-container">
+        <div id="clock-container">
             <div id="date" class="date"></div>
             <div id="time" class="time"></div>
         </div>
@@ -182,6 +182,9 @@
                 </button>
             </div>
             
+            <div class="featureBtn" onclick="toggleClock();">
+                <h5 id="clockToggle" style="color: green;">Uhr: An</h5>
+            </div>
 
             <div class="featureBtn" onclick="toggleTrunkPower();">
                 <h5 id="trunkPowerToggle" style="color: green;">Anlage / Sternenhimmel: An</h5>
