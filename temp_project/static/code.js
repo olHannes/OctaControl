@@ -29,7 +29,14 @@ socket.on("disconnect", function () {
 });
 
 
-/**Function to load images*/
+
+
+// initial config-settings
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
+
+//preload images
 function preloadImages(imageArray) {
     imageArray.forEach((src) => {
         const img = new Image();
@@ -38,6 +45,7 @@ function preloadImages(imageArray) {
     showMessage("Bild Daten geladen", "Alle Bilddateien wurden erfolgreich geladen.");
 }
 
+// load and apply the config data
 async function preloadConfig() {
     try {
         const response = await fetch('http://127.0.0.1:5000/system/config');
@@ -78,7 +86,6 @@ async function preloadConfig() {
 
         document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
         updateBackgroundColor();
-
         document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
 
         if (json.isTrunkPowerEnabled !== undefined) {
@@ -123,12 +130,10 @@ async function preloadConfig() {
             }
         }
 
-
         if (json.sleepTimerIndex !== undefined) {
             lastSleepTimerIndex = currentSleepTimerIndex = json.sleepTimerIndex;
             updateTimeIndicator();
         }
-        
         if (json.sleepTimerActive !== undefined) {
             sleepTimerActive = json.sleepTimerActive;
         
@@ -141,9 +146,7 @@ async function preloadConfig() {
                 sleepTimerToggle.style.color = "red";
                 clearTimeout(sleepTimerTimeout);
             }
-        }
-        
-        
+        }       
     } catch (error) {
         showErrorMessage('Error fetching config:', error);
         fallbackFunctions();
@@ -202,126 +205,15 @@ function updateConfig(key, value) {
 }
 
 
-function updateClock() {
-    const now = new Date();
-    const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
-    const dateString = now.toLocaleDateString('de-DE', options);
-    const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-    document.getElementById('date').textContent = dateString;
-    document.getElementById('time').textContent = timeString;
-    
-    const hours = now.getHours() % 12;
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-
-    const hourAngle = (hours * 30) + (minutes * 0.5);
-    const minuteAngle = (minutes * 6) + (seconds * 0.1);
-    const secondAngle = seconds * 6;
-
-    document.getElementById("widgetHour").style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
-    document.getElementById("widgetMinute").style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
-    document.getElementById("widgetSecond").style.transform = `translateX(-50%) rotate(${secondAngle}deg)`;
-}
 
 
-
-updateClock();
-setInterval(updateClock, 1000);
-
-let showClock = false;
-function toggleClock() {
-    playClickSound();
-    showClock = !showClock;
-
-    if(showClock){
-        document.getElementById('clockToggle').innerText = "Uhr: An";
-        document.getElementById('clockToggle').style.color = "green";
-        document.getElementById('clock-container').style.display="block";
-    } else {
-        document.getElementById('clockToggle').innerText = "Uhr: Aus";
-        document.getElementById('clockToggle').style.color = "red";
-        document.getElementById('clock-container').style.display="none";
-    }
-    updateConfig('isClockEnabled', showClock);
-}
+// global functions
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
 
 
-
-let sleepTimerActive = false;
-let sleepTimerTimeout;
-
-const sleepTimerToggle = document.getElementById('sleepTImerToggle');
-const sleepTimerDiv = document.getElementById('sleepTimer');
-const timeIndicator = document.getElementById('timeIndicator');
-
-const timeOptions = [60000, 300000, 600000, 3600000, 10800000, 0];
-const timeTexts = ["1 Min.", "5 Min.", "10 Min.", "1 Std.", "3 Std.", "Nie"];
-let currentSleepTimerIndex = 0;
-let lastSleepTimerIndex = currentSleepTimerIndex;
-
-function startSleepTimer() {
-    clearTimeout(sleepTimerTimeout);
-    if (sleepTimerActive && timeOptions[currentSleepTimerIndex] > 0) {
-        sleepTimerTimeout = setTimeout(() => {
-            sleepTimerDiv.style.display = 'block';
-        }, timeOptions[currentSleepTimerIndex]);
-    }
-}
-
-function toggleSleepTimer() {
-    sleepTimerActive = !sleepTimerActive;
-
-    if (sleepTimerActive) {
-        currentSleepTimerIndex = lastSleepTimerIndex;
-        sleepTimerToggle.textContent = "SleepTimer: An";
-        sleepTimerToggle.style.color = "green";
-        startSleepTimer();
-    } else {
-        lastSleepTimerIndex = currentSleepTimerIndex;
-        currentSleepTimerIndex = 5;
-        clearTimeout(sleepTimerTimeout);
-        sleepTimerDiv.style.display = 'none';
-        sleepTimerToggle.textContent = "SleepTimer: Aus";
-        sleepTimerToggle.style.color = "red";
-        updateConfig("sleepTimerActive", false);
-    }
-    updateTimeIndicator();
-    updateConfig("sleepTimerActive", sleepTimerActive);
-}
-
-function changeSleepTimer(increase) {
-    if (!sleepTimerActive) {
-        toggleSleepTimer();
-    }
-
-    if (increase) {
-        currentSleepTimerIndex = Math.min(currentSleepTimerIndex + 1, timeOptions.length - 1);
-    } else {
-        currentSleepTimerIndex = Math.max(currentSleepTimerIndex - 1, 0);
-    }
-    
-    if (currentSleepTimerIndex === 5) {
-        sleepTimerActive = false;
-        toggleSleepTimer();
-    } else {
-        startSleepTimer();
-    }
-    updateTimeIndicator();
-    updateConfig("sleepTimerIndex", currentSleepTimerIndex);
-}
-function updateTimeIndicator() {
-    timeIndicator.textContent = timeTexts[currentSleepTimerIndex];
-}
-sleepTimerDiv.addEventListener("pointerdown", function () {
-    if (sleepTimerActive) {
-        sleepTimerDiv.style.display = "none";
-        startSleepTimer();
-    }
-});
-
-
-
+// Codeblock to handle Error Messages
 var logging = false;
 
 function showErrorMessage(title, message) {
@@ -379,8 +271,7 @@ function addSwipeToRemove(element) {
 }
 
 
-/*function to show message on the page*/
-
+// Codeblock to handle Messages
 const container = document.getElementById("messageContainer");
 function showMessage(title, message) {
     var msgDiv = document.createElement("div");
@@ -436,7 +327,6 @@ function addSwipeToRemove(element) {
 }
 
 
-
 /*this function controlls the toggle mechanism of the logging status*/
 function toggleLogging() {
     playClickSound();
@@ -484,7 +374,505 @@ function toggleFullscreen() {
 }
 
 
-/**function to use power and system Settings*/
+// Codeblock for backgoundcolor adjustments
+const colorSlider = document.getElementById('colorSlider');
+const colorValue = document.getElementById('colorValue');
+const background = document.querySelector('.background');
+
+const colorGradient = [
+    'rgb(48, 48, 48)',
+    'rgb(79, 48, 79)',
+    'rgb(48, 48, 79)',
+    'rgb(48, 79, 48)',
+    'rgb(79, 79, 48)',
+    'rgb(79, 58, 48)',
+    'rgb(79, 48, 48)',
+    'rgb(48, 48, 48)'
+];
+
+
+function interpolateColor(value, colors) {
+    const index = Math.floor(value / (100 / (colors.length - 1)));
+    const remainder = (value % (100 / (colors.length - 1))) / (100 / (colors.length - 1));
+    
+    const startColor = colors[index];
+    const endColor = colors[index + 1];
+    
+    const [r1, g1, b1] = startColor.match(/\d+/g).map(Number);
+    const [r2, g2, b2] = endColor.match(/\d+/g).map(Number);
+    
+    const r = Math.round(r1 + remainder * (r2 - r1));
+    const g = Math.round(g1 + remainder * (g2 - g1));
+    const b = Math.round(b1 + remainder * (b2 - b1));
+    
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+function updateBackgroundColor() {
+    const sliderValue = colorSlider.value;
+    const newColor = interpolateColor(sliderValue, colorGradient);
+    background.style.setProperty('--main-color', newColor);
+    updateConfig("colorSliderValue", colorSlider.value);
+}
+
+colorSlider.addEventListener('input', updateBackgroundColor);
+
+// Code for Brightness Adjustments
+function updateBrightness() {
+    const sliderValue = brightnessSlider.value;
+    const brightness = sliderValue / 100;
+    document.body.style.filter = `brightness(${brightness})`;
+    updateConfig("brightnessSliderValue", sliderValue);
+}
+
+brightnessSlider.addEventListener('input', updateBrightness);
+
+
+
+
+// Codeblock to switch between pages
+function switchToSection(section){
+    playClickSound();
+    switch (section){
+        case 'home':
+            document.getElementById('settings').style.display = 'none';
+            document.getElementById('audioControl').style.display = 'none';
+            document.getElementById('mapSection').style.display="none";
+            document.getElementById('home').style.display = 'block';
+            break;
+        case 'settings':
+            document.getElementById('audioControl').style.display = 'none';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('mapSection').style.display="none";
+            document.getElementById('settings').style.display = 'block';
+            break;
+        case 'audioControl':
+            document.getElementById('settings').style.display = 'none';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('mapSection').style.display="none";
+            document.getElementById('audioControl').style.display = 'block';
+            break;
+        case 'mapSection':
+            document.getElementById('settings').style.display = 'none';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('audioControl').style.display = 'none';
+            document.getElementById('mapSection').style.display="block";
+            break;
+        case 'connections':
+            document.getElementById('connPanel').style.display='block';
+            setTimeout(() => {
+                document.getElementById('connPanel').classList.add('show');
+            }, 10);
+            break;
+        case 'expert':
+            document.getElementById('expPanel').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('expPanel').classList.add('show');
+            }, 10);
+            break;
+        case 'feature':
+            document.getElementById('featurePanel').style.display='block';
+            setTimeout(() => {
+                document.getElementById('featurePanel').classList.add('show');
+            }, 10);
+            break;
+        case 'soundSettings':
+            document.getElementById('soundSettingsPanel').style.display='block';
+            setTimeout(() => {
+                document.getElementById('soundSettingsPanel').classList.add('show');
+            }, 10);
+            break;
+    }
+}
+
+function closePanel(panel) {
+    playClickSound();
+    switch (panel){
+        case 'connPanel':
+            document.getElementById('connPanel').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('connPanel').style.display = 'none';
+            }, 500);
+            break;
+        case 'expPanel':
+            document.getElementById('expPanel').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('expPanel').style.display = 'none';
+            }, 500);
+            break;
+        case 'gitLog':
+            document.getElementById('git-log-container').style.display="none";
+            break;
+        case 'soundSettingsPanel':
+            document.getElementById('soundSettingsPanel').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('soundSettingsPanel').style.display = 'none';
+            }, 500);
+            break;
+        case 'featurePanel':
+        document.getElementById('featurePanel').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('featurePanel').style.display = 'none';
+        }, 500);
+        break;
+    }
+}
+
+
+
+// Audio Control
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
+
+// Debounce-Funktion 
+const volumeSlider = document.getElementById('volumeSlider');
+const balanceSlider = document.getElementById('balanceSlider');
+
+function debounce(func, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+
+// set / get Volume from Route
+async function getVolume() {
+    try {
+        const response = await fetch("/volume/get");
+        const data = await response.json();
+
+        if (data.status === "success") {
+            return data.volume;
+        } else {
+            showErrorMessage("Volumen Fehler", data.message);
+            return null;
+        }
+    } catch (error) {
+        showErrorMessage("Volumen Fehler", error.message);
+        return null;
+    }
+}
+
+async function setVolume(volume) {
+    try {
+        const response = await fetch("/volume/set", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ volume })
+        });
+
+        const data = await response.json();
+        if (data.status === "success") {
+            const metaData = document.getElementById('metaData');
+            metaData.style.borderColor = volume > 80 ? 'red' : 'white';
+        } else {
+            showErrorMessage("Volumen Fehler", data.message);
+        }
+    } catch (error) {
+        showErrorMessage("Volumen Fehler", error.message);
+    }
+}
+
+
+// set / get Balance from Route
+async function getBalance() {
+    try {
+        const response = await fetch("/balance/get");
+        const data = await response.json();
+
+        if (data.status === "success") {
+            return data.balance;
+        } else {
+            showErrorMessage("Balance Fehler", data.message);
+            return null;
+        }
+    } catch (error) {
+        showErrorMessage("Balance Fehler", error.message);
+        return null;
+    }
+}
+
+async function setBalance(balance) {
+    try {
+        const response = await fetch("/balance/set", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ balance })
+        });
+
+        const data = await response.json();
+        if (data.status !== "success") {
+            showErrorMessage("Balance Fehler", data.message);
+        }
+    } catch (error) {
+        showErrorMessage("Balance Fehler", error.message);
+    }
+}
+
+
+// Function to set Slider Value (Volume | Balance)
+function setVolumeSlider(promise) {
+    promise.then(value => {
+        if (value !== null) {
+            volumeSlider.value = value;
+        }
+    }).catch(console.error);
+}
+
+function setBalanceSlider(promise) {
+    promise.then(value => {
+        if (value !== null) {
+            balanceSlider.value = value;
+        }
+    }).catch(console.error);
+}
+
+volumeSlider.addEventListener('input', debounce(() => setVolume(volumeSlider.value), 200));
+balanceSlider.addEventListener('input', debounce(() => setBalance(balanceSlider.value), 200));
+
+
+
+
+// Codeblock for Audio Control functions
+async function pauseAudio(){
+    playClickSound();
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+
+    console.log("pause Audio.");
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/pause", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("paused Audio");
+            buttons.forEach(button => button.disabled = false);
+        } else {
+            showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + data.message);        }
+    } catch (error) {
+        showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + error);    }
+}
+
+async function playAudio(){
+    playClickSound();
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+    
+    console.log("pause Audio.");
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/play", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("running Audio");
+            buttons.forEach(button => button.disabled = false);
+        } else {
+            showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + data.message);        }
+    } catch (error) {
+        showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + error);    }
+}
+
+async function skipAudio(){
+    playClickSound();
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+
+    console.log("skip Audio.");
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/skip", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("skipped Audio");
+            buttons.forEach(button => button.disabled = false);
+        } else {
+            showErrorMessage("Fehler beim Überspringen des Titels", data.message);        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Überspringen des Titels", error);    }
+}
+
+async function prevAudio(){
+    playClickSound();
+    const buttons = document.querySelectorAll('#musicControl button');
+    buttons.forEach(button => button.disabled = true);
+
+    console.log("previous Audio.");
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/previous", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("previous Audio");
+            buttons.forEach(button => button.disabled = false);
+        } else {
+            showErrorMessage("Fehler beim Zurückspulen", data.message);        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Zurückspulen", error);    }
+}
+
+// Route for Audio-metadata
+async function getInfoAudio() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/getinformation");
+        const data = await response.json();
+        if (data.status === "success") {
+            console.log("Info Audio:", data.information);
+            return data.information;
+        } else {
+            console.error("Error Info audio:", data.message);
+            showErrorMessage("Fehler beim abrufen der Metadaten", data.message);
+            return null;
+        }
+    } catch (error) {
+        console.log(error);
+        showErrorMessage("Fehler bei den Metadaten", error);
+        return null;
+    }
+}
+
+// Function to get Device-name
+const DeviceName = document.getElementById('DeviceName');
+async function getPlayerDevice() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/audio/player");
+        const data = await response.json();
+        if(data.status === "success"){
+            console.log("PlayerDevice:", data.player);
+            DeviceName.innerHTML=data.player;
+            return data.player;
+        }
+        else {
+            showErrorMessage("Fehler beim abrufen des Player-Device", data.message);
+            DeviceName.innerHTML="";
+            return null;
+        }
+    } catch (error) {
+        console.log(error);
+        showErrorMessage("Fehler beim Player-Device", error);
+        return null;
+    }
+}
+
+
+// Codeblock for set metadata
+function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + "...";
+    }
+    return text;
+}
+
+let pTitle = "default";
+let pArtist = "default";
+async function setMetaData(message) {
+    const title = document.getElementById('songTitle');
+    const artist = document.getElementById('artist');
+    const album = document.getElementById('album');
+    const genre = document.getElementById('genre');
+    const maxLength=30;
+
+    try {
+        //const message = await getInfoAudio();
+        if (message) {
+            title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
+            artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
+            album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
+            genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
+            
+            if (pTitle != message.title){
+                pTitle = message.title || "Unknown Title";
+                pArtist = message.artist || "Unknown Artist";
+                document.getElementById('songDisplayText').innerText = pTitle + " | " + pArtist;
+            }
+        } else {
+            console.error("Metadata konnte nicht geladen werden.");
+        }
+    } catch (error) {
+        console.error("Error beim Setzen der Metadaten:", error);
+    }
+}
+socket.on("metadata_update", function (data) {
+    setMetaData(data);
+});
+
+
+// Progress update function
+const playBtn = document.getElementById('playBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+let lastProgress = 0;
+
+async function updateProgress() {
+    try {
+        var response = await fetch("http://127.0.0.1:5000/audio/progress");
+        var progress = await response.json();
+
+        const percentage = Math.min(100, Math.max(0, progress.progress));
+        document.getElementById("progress-bar").style.width = percentage + "%";
+
+        
+        response = await fetch("http://127.0.0.1:5000/audio/isPlaying");
+        result = await response.json();
+
+        if(result.playStatus == true){
+            pauseBtn.style.opacity="1";
+            playBtn.style.opacity="0.1";
+        } else{
+            playBtn.style.opacity="1";
+            pauseBtn.style.opacity="0.1";
+        }
+
+        lastProgress = percentage;
+    } catch (error) {
+        showErrorMessage("Progress-Error", "Fehler beim Abrufen des Fortschritts: " + error);
+    }
+}
+
+// Progress and Device Polling
+setInterval(() => {
+    updateProgress();
+    getPlayerDevice();
+}, 1500);
+
+// Button Animation for audio control
+function animateButton(button) {
+    button.classList.remove("clicked"); 
+    void button.offsetWidth;
+    button.classList.add("clicked");
+
+    setTimeout(() => {
+        button.classList.remove("clicked");
+    }, 1000);
+}
+
+
+
+// Settings
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
+
+
+
+// System Settings for Update and Power Control
 const systemSettings = document.getElementById('powerOptions');
 
 function disableSystemSettings(){
@@ -589,11 +977,11 @@ async function update() {
 }
 
 
+// Codeblock for git version and log
 async function setVersion() {
     showMessage("Version", "try to set Version number");
     const versionLabel = document.getElementById('version');
     const label = versionLabel.querySelector('p');
-
     try {
         const response = await fetch("http://127.0.0.1:5000/system/version/current");
         if (!response.ok) {
@@ -650,8 +1038,7 @@ async function openGitLog() {
 }
 
 
-
-/* Script for trunkPower options */
+// Codeblock for toggle the relais for trunk-power
 let trunkPower = false;
 const trunkPowerBtn = document.getElementById('trunkPowerBtn');
 const trunkPowerToggle = document.getElementById('trunkPowerToggle');
@@ -729,487 +1116,9 @@ async function disableTrunkPower() {
 }
 
 
-/*Script for Color Settings*/
-const colorSlider = document.getElementById('colorSlider');
-const colorValue = document.getElementById('colorValue');
-const background = document.querySelector('.background');
 
-const colorGradient = [
-    'rgb(48, 48, 48)',
-    'rgb(79, 48, 79)',
-    'rgb(48, 48, 79)',
-    'rgb(48, 79, 48)',
-    'rgb(79, 79, 48)',
-    'rgb(79, 58, 48)',
-    'rgb(79, 48, 48)',
-    'rgb(48, 48, 48)'
-];
-
-
-function interpolateColor(value, colors) {
-    const index = Math.floor(value / (100 / (colors.length - 1)));
-    const remainder = (value % (100 / (colors.length - 1))) / (100 / (colors.length - 1));
-    
-    const startColor = colors[index];
-    const endColor = colors[index + 1];
-    
-    const [r1, g1, b1] = startColor.match(/\d+/g).map(Number);
-    const [r2, g2, b2] = endColor.match(/\d+/g).map(Number);
-    
-    const r = Math.round(r1 + remainder * (r2 - r1));
-    const g = Math.round(g1 + remainder * (g2 - g1));
-    const b = Math.round(b1 + remainder * (b2 - b1));
-    
-    return `rgb(${r}, ${g}, ${b})`;
-}
-
-function updateBackgroundColor() {
-    const sliderValue = colorSlider.value;
-    const newColor = interpolateColor(sliderValue, colorGradient);
-    background.style.setProperty('--main-color', newColor);
-    updateConfig("colorSliderValue", colorSlider.value);
-}
-
-colorSlider.addEventListener('input', updateBackgroundColor);
-
-/*Code for Brightness Adjustments*/
-
-function updateBrightness() {
-    const sliderValue = brightnessSlider.value;
-    const brightness = sliderValue / 100;
-    document.body.style.filter = `brightness(${brightness})`;
-    updateConfig("brightnessSliderValue", sliderValue);
-}
-
-brightnessSlider.addEventListener('input', updateBrightness);
-
-/**Function to switch between pages/sections */
-
-function switchToSection(section){
-    playClickSound();
-    switch (section){
-        case 'home':
-            document.getElementById('settings').style.display = 'none';
-            document.getElementById('audioControl').style.display = 'none';
-            document.getElementById('mapSection').style.display="none";
-            document.getElementById('home').style.display = 'block';
-            break;
-        case 'settings':
-            document.getElementById('audioControl').style.display = 'none';
-            document.getElementById('home').style.display = 'none';
-            document.getElementById('mapSection').style.display="none";
-            document.getElementById('settings').style.display = 'block';
-            break;
-        case 'audioControl':
-            document.getElementById('settings').style.display = 'none';
-            document.getElementById('home').style.display = 'none';
-            document.getElementById('mapSection').style.display="none";
-            document.getElementById('audioControl').style.display = 'block';
-            break;
-        case 'mapSection':
-            document.getElementById('settings').style.display = 'none';
-            document.getElementById('home').style.display = 'none';
-            document.getElementById('audioControl').style.display = 'none';
-            document.getElementById('mapSection').style.display="block";
-            break;
-        case 'connections':
-            document.getElementById('connPanel').style.display='block';
-            setTimeout(() => {
-                document.getElementById('connPanel').classList.add('show');
-            }, 10);
-            break;
-        case 'expert':
-            document.getElementById('expPanel').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('expPanel').classList.add('show');
-            }, 10);
-            break;
-        case 'feature':
-            document.getElementById('featurePanel').style.display='block';
-            setTimeout(() => {
-                document.getElementById('featurePanel').classList.add('show');
-            }, 10);
-            break;
-        case 'soundSettings':
-            document.getElementById('soundSettingsPanel').style.display='block';
-            setTimeout(() => {
-                document.getElementById('soundSettingsPanel').classList.add('show');
-            }, 10);
-            break;
-    }
-}
-
-function closePanel(panel) {
-    playClickSound();
-    switch (panel){
-        case 'connPanel':
-            document.getElementById('connPanel').classList.remove('show');
-            setTimeout(() => {
-                document.getElementById('connPanel').style.display = 'none';
-            }, 500);
-            break;
-        case 'expPanel':
-            document.getElementById('expPanel').classList.remove('show');
-            setTimeout(() => {
-                document.getElementById('expPanel').style.display = 'none';
-            }, 500);
-            break;
-        case 'gitLog':
-            document.getElementById('git-log-container').style.display="none";
-            break;
-        case 'soundSettingsPanel':
-            document.getElementById('soundSettingsPanel').classList.remove('show');
-            setTimeout(() => {
-                document.getElementById('soundSettingsPanel').style.display = 'none';
-            }, 500);
-            break;
-        case 'featurePanel':
-        document.getElementById('featurePanel').classList.remove('show');
-        setTimeout(() => {
-            document.getElementById('featurePanel').style.display = 'none';
-        }, 500);
-        break;
-    }
-}
-
-
-/**The following part represents the functions for the audio control */
-/**Volume Control -> Slider and RaspberryPI */
-const volumeSlider = document.getElementById('volumeSlider');
-const balanceSlider = document.getElementById('balanceSlider');
-
-// Debounce-Funktion, um API-Calls zu reduzieren
-function debounce(func, delay) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-// ---------------------- VOLUME ----------------------
-
-async function getVolume() {
-    try {
-        const response = await fetch("/volume/get");
-        const data = await response.json();
-
-        if (data.status === "success") {
-            return data.volume;
-        } else {
-            showErrorMessage("Volumen Fehler", data.message);
-            return null;
-        }
-    } catch (error) {
-        showErrorMessage("Volumen Fehler", error.message);
-        return null;
-    }
-}
-
-async function setVolume(volume) {
-    try {
-        const response = await fetch("/volume/set", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ volume })
-        });
-
-        const data = await response.json();
-        if (data.status === "success") {
-            const metaData = document.getElementById('metaData');
-            metaData.style.borderColor = volume > 80 ? 'red' : 'white';
-        } else {
-            showErrorMessage("Volumen Fehler", data.message);
-        }
-    } catch (error) {
-        showErrorMessage("Volumen Fehler", error.message);
-    }
-}
-
-// ---------------------- BALANCE ----------------------
-
-async function getBalance() {
-    try {
-        const response = await fetch("/balance/get");
-        const data = await response.json();
-
-        if (data.status === "success") {
-            return data.balance;
-        } else {
-            showErrorMessage("Balance Fehler", data.message);
-            return null;
-        }
-    } catch (error) {
-        showErrorMessage("Balance Fehler", error.message);
-        return null;
-    }
-}
-
-async function setBalance(balance) {
-    try {
-        const response = await fetch("/balance/set", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ balance })
-        });
-
-        const data = await response.json();
-        if (data.status !== "success") {
-            showErrorMessage("Balance Fehler", data.message);
-        }
-    } catch (error) {
-        showErrorMessage("Balance Fehler", error.message);
-    }
-}
-
-// ---------------------- SLIDER ----------------------
-
-function setVolumeSlider(promise) {
-    promise.then(value => {
-        if (value !== null) {
-            volumeSlider.value = value;
-        }
-    }).catch(console.error);
-}
-
-function setBalanceSlider(promise) {
-    promise.then(value => {
-        if (value !== null) {
-            balanceSlider.value = value;
-        }
-    }).catch(console.error);
-}
-
-volumeSlider.addEventListener('input', debounce(() => setVolume(volumeSlider.value), 200));
-balanceSlider.addEventListener('input', debounce(() => setBalance(balanceSlider.value), 200));
-
-
-
-/**audio music - Control: play, pause, skip, previous */
-
-async function pauseAudio(){
-    playClickSound();
-    const buttons = document.querySelectorAll('#musicControl button');
-    buttons.forEach(button => button.disabled = true);
-
-    console.log("pause Audio.");
-    try {
-        const response = await fetch("http://127.0.0.1:5000/audio/pause", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
-        const data = await response.json();
-        if (data.status === "success") {
-            console.log("paused Audio");
-            buttons.forEach(button => button.disabled = false);
-        } else {
-            showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + data.message);        }
-    } catch (error) {
-        showErrorMessage("Audio Fehler", "Fehler beim Pausieren des Audios: " + error);    }
-}
-
-async function playAudio(){
-    playClickSound();
-    const buttons = document.querySelectorAll('#musicControl button');
-    buttons.forEach(button => button.disabled = true);
-    
-    console.log("pause Audio.");
-    try {
-        const response = await fetch("http://127.0.0.1:5000/audio/play", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
-        const data = await response.json();
-        if (data.status === "success") {
-            console.log("running Audio");
-            buttons.forEach(button => button.disabled = false);
-        } else {
-            showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + data.message);        }
-    } catch (error) {
-        showErrorMessage("Audio Fehler", "Fehler beim Starten des Audios: " + error);    }
-}
-
-async function skipAudio(){
-    playClickSound();
-    const buttons = document.querySelectorAll('#musicControl button');
-    buttons.forEach(button => button.disabled = true);
-
-    console.log("skip Audio.");
-    try {
-        const response = await fetch("http://127.0.0.1:5000/audio/skip", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
-        const data = await response.json();
-        if (data.status === "success") {
-            console.log("skipped Audio");
-            buttons.forEach(button => button.disabled = false);
-        } else {
-            showErrorMessage("Fehler beim Überspringen des Titels", data.message);        }
-    } catch (error) {
-        showErrorMessage("Fehler beim Überspringen des Titels", error);    }
-}
-
-async function prevAudio(){
-    playClickSound();
-    const buttons = document.querySelectorAll('#musicControl button');
-    buttons.forEach(button => button.disabled = true);
-
-    console.log("previous Audio.");
-    try {
-        const response = await fetch("http://127.0.0.1:5000/audio/previous", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
-        const data = await response.json();
-        if (data.status === "success") {
-            console.log("previous Audio");
-            buttons.forEach(button => button.disabled = false);
-        } else {
-            showErrorMessage("Fehler beim Zurückspulen", data.message);        }
-    } catch (error) {
-        showErrorMessage("Fehler beim Zurückspulen", error);    }
-}
-
-async function getInfoAudio() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/audio/getinformation");
-        const data = await response.json();
-        if (data.status === "success") {
-            console.log("Info Audio:", data.information);
-            return data.information;
-        } else {
-            console.error("Error Info audio:", data.message);
-            showErrorMessage("Fehler beim abrufen der Metadaten", data.message);
-            return null;
-        }
-    } catch (error) {
-        console.log(error);
-        showErrorMessage("Fehler bei den Metadaten", error);
-        return null;
-    }
-}
-
-const DeviceName = document.getElementById('DeviceName');
-async function getPlayerDevice() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/audio/player");
-        const data = await response.json();
-        if(data.status === "success"){
-            console.log("PlayerDevice:", data.player);
-            DeviceName.innerHTML=data.player;
-            return data.player;
-        }
-        else {
-            showErrorMessage("Fehler beim abrufen des Player-Device", data.message);
-            DeviceName.innerHTML="";
-            return null;
-        }
-    } catch (error) {
-        console.log(error);
-        showErrorMessage("Fehler beim Player-Device", error);
-        return null;
-    }
-}
-
-
-function truncateText(text, maxLength) {
-    if (text.length > maxLength) {
-        return text.substring(0, maxLength) + "...";
-    }
-    return text;
-}
-
-let pTitle = "default";
-let pArtist = "default";
-async function setMetaData(message) {
-    const title = document.getElementById('songTitle');
-    const artist = document.getElementById('artist');
-    const album = document.getElementById('album');
-    const genre = document.getElementById('genre');
-    const maxLength=30;
-
-    try {
-        //const message = await getInfoAudio();
-        if (message) {
-            title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
-            artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
-            album.innerHTML = truncateText(message.album || "Unknown Album", maxLength);
-            genre.innerHTML = truncateText(message.genre || "Unknown Genre", maxLength);
-            
-            if (pTitle != message.title){
-                pTitle = message.title || "Unknown Title";
-                pArtist = message.artist || "Unknown Artist";
-                document.getElementById('songDisplayText').innerText = pTitle + " | " + pArtist;
-            }
-        } else {
-            console.error("Metadata konnte nicht geladen werden.");
-        }
-    } catch (error) {
-        console.error("Error beim Setzen der Metadaten:", error);
-    }
-}
-socket.on("metadata_update", function (data) {
-    setMetaData(data);
-});
-
-
-const playBtn = document.getElementById('playBtn');
-const pauseBtn = document.getElementById('pauseBtn');
-let lastProgress = 0;
-
-async function updateProgress() {
-    try {
-        var response = await fetch("http://127.0.0.1:5000/audio/progress");
-        var progress = await response.json();
-
-        const percentage = Math.min(100, Math.max(0, progress.progress));
-        document.getElementById("progress-bar").style.width = percentage + "%";
-
-        
-        response = await fetch("http://127.0.0.1:5000/audio/isPlaying");
-        result = await response.json();
-
-        if(result.playStatus == true){
-            pauseBtn.style.opacity="1";
-            playBtn.style.opacity="0.1";
-        } else{
-            playBtn.style.opacity="1";
-            pauseBtn.style.opacity="0.1";
-        }
-
-        lastProgress = percentage;
-    } catch (error) {
-        showErrorMessage("Progress-Error", "Fehler beim Abrufen des Fortschritts: " + error);
-    }
-}
-
-/*check for new metaData*/
-setInterval(() => {
-    updateProgress();
-    getPlayerDevice();
-}, 1500);
-
-function animateButton(button) {
-    button.classList.remove("clicked"); 
-    void button.offsetWidth;
-    button.classList.add("clicked");
-
-    setTimeout(() => {
-        button.classList.remove("clicked");
-    }, 1000);
-}
-
-
-/**The following part represents the functions for the bluetooth control and wlan functions*/
+// System Settings
+//#########################################################################################################################################
 const bluetoothToggle = document.getElementById('bluetoothToggle');
 const pairingToggle = document.getElementById('pairingToggle');
 const wlanToggle = document.getElementById('wlanToggle');
@@ -1218,6 +1127,7 @@ let isBluetoothOn = false;
 let isPairingOn = false;
 let isWlanOn = false;
 
+// click Events for Bluetooth and Wlan
 const bluetoothHeader = document.querySelector('#bluetooth-container');
 bluetoothToggle.addEventListener('click', async () => {
     playClickSound();
@@ -1270,6 +1180,8 @@ wlanHeader.addEventListener('click', async () => {
     wlanToggle.style.pointerEvents = 'auto';
     wlanHeader.style.opacity="1";
 });
+
+// Bluetooth control functions
 
 async function enableBt() {
     console.log("Bluetooth eingeschaltet.");
@@ -1372,6 +1284,7 @@ async function disablePairingMode() {
 }
 
 
+// Wlan control functions
 async function enableWlan() {
     console.log("Wlan eingeschaltet.");
     wlanToggle.style.pointerEvents = 'none';
@@ -1429,10 +1342,55 @@ async function disableWlan() {
 }
 
 
+// Feature Settings
+//#########################################################################################################################################
+
+// Codeblock for Clock
+function updateClock() {
+    const now = new Date();
+    const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+    const dateString = now.toLocaleDateString('de-DE', options);
+    const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    document.getElementById('date').textContent = dateString;
+    document.getElementById('time').textContent = timeString;
+    
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    const hourAngle = (hours * 30) + (minutes * 0.5);
+    const minuteAngle = (minutes * 6) + (seconds * 0.1);
+    const secondAngle = seconds * 6;
+
+    document.getElementById("widgetHour").style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+    document.getElementById("widgetMinute").style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+    document.getElementById("widgetSecond").style.transform = `translateX(-50%) rotate(${secondAngle}deg)`;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+let showClock = false;
+function toggleClock() {
+    playClickSound();
+    showClock = !showClock;
+
+    if(showClock){
+        document.getElementById('clockToggle').innerText = "Uhr: An";
+        document.getElementById('clockToggle').style.color = "green";
+        document.getElementById('clock-container').style.display="block";
+    } else {
+        document.getElementById('clockToggle').innerText = "Uhr: Aus";
+        document.getElementById('clockToggle').style.color = "red";
+        document.getElementById('clock-container').style.display="none";
+    }
+    updateConfig('isClockEnabled', showClock);
+}
 
 
 
-//Functions for special Features -not tested-
+// Codeblock for Adaptive Brightness
 const adaptiveBrightnessToggle = document.getElementById('adaptiveBrightness');
 let adaptiveBrightnessEnabled = true;
 let intervalId = null;
@@ -1470,6 +1428,8 @@ function toggleAdaptiveBrightness() {
     updateConfig("isAdaptiveBrightnessEnabled", adaptiveBrightnessEnabled);
 }
 
+
+// Codeblock for climate data
 const climateToggle = document.getElementById('climateData');
 const tempDisplay = document.getElementById('tempValue');
 const humidityDisplay = document.getElementById('humidityValue');
@@ -1504,6 +1464,8 @@ function toggleClimateData() {
     updateConfig("isClimateDataEnabled", climateDataEnabled);
 }
 
+
+// Codeblock to toggle Display of Song-Data
 let songDisplay = false;
 function toggleSongDisplay() {
     playClickSound();
@@ -1522,9 +1484,7 @@ function toggleSongDisplay() {
 }
 
 
-
-
-
+// Codeblock to toggle Position and GPS Data
 let posDisplay = false;
 
 function updatePosition(directionDeg, speed, altitude, numSatellit) {
@@ -1570,12 +1530,11 @@ function togglePosDisplay() {
 
         socket.off("gps_update");
     }
-
     updateConfig("isPosDisplayEnabled", posDisplay);
 }
 
 
-
+// Codeblock for touch-sound (toggle and Volume)
 const clickSoundPath = '../static/media/sounds/clickSound.mp3';
 let isPlayClickSound = true;
 let lastClickVolume = 1;
@@ -1624,7 +1583,6 @@ function setClickSoundVolume(louder) {
         document.getElementById('clickSoundToggle').innerText = "Touch Sound: An";
         document.getElementById('clickSoundToggle').style.color = "green";
     }
-    
     audio.volume = newVolume;
     playClickSound();
     lastClickVolume = newVolume;
@@ -1637,8 +1595,92 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// here comes the functionality for the map
+// Codeblock for sleepTimer (toggle and duration)
+let sleepTimerActive = false;
+let sleepTimerTimeout;
 
+const sleepTimerToggle = document.getElementById('sleepTImerToggle');
+const sleepTimerDiv = document.getElementById('sleepTimer');
+const timeIndicator = document.getElementById('timeIndicator');
+
+const timeOptions = [60000, 300000, 600000, 3600000, 10800000, 0];
+const timeTexts = ["1 Min.", "5 Min.", "10 Min.", "1 Std.", "3 Std.", "Nie"];
+let currentSleepTimerIndex = 0;
+let lastSleepTimerIndex = currentSleepTimerIndex;
+
+function startSleepTimer() {
+    clearTimeout(sleepTimerTimeout);
+    if (sleepTimerActive && timeOptions[currentSleepTimerIndex] > 0) {
+        sleepTimerTimeout = setTimeout(() => {
+            sleepTimerDiv.style.display = 'block';
+        }, timeOptions[currentSleepTimerIndex]);
+    }
+}
+
+function toggleSleepTimer() {
+    sleepTimerActive = !sleepTimerActive;
+
+    if (sleepTimerActive) {
+        currentSleepTimerIndex = lastSleepTimerIndex;
+        sleepTimerToggle.textContent = "SleepTimer: An";
+        sleepTimerToggle.style.color = "green";
+        startSleepTimer();
+    } else {
+        lastSleepTimerIndex = currentSleepTimerIndex;
+        currentSleepTimerIndex = 5;
+        clearTimeout(sleepTimerTimeout);
+        sleepTimerDiv.style.display = 'none';
+        sleepTimerToggle.textContent = "SleepTimer: Aus";
+        sleepTimerToggle.style.color = "red";
+        updateConfig("sleepTimerActive", false);
+    }
+    updateTimeIndicator();
+    updateConfig("sleepTimerActive", sleepTimerActive);
+}
+
+function changeSleepTimer(increase) {
+    if (!sleepTimerActive) {
+        toggleSleepTimer();
+    }
+
+    if (increase) {
+        currentSleepTimerIndex = Math.min(currentSleepTimerIndex + 1, timeOptions.length - 1);
+    } else {
+        currentSleepTimerIndex = Math.max(currentSleepTimerIndex - 1, 0);
+    }
+    
+    if (currentSleepTimerIndex === 5) {
+        sleepTimerActive = false;
+        toggleSleepTimer();
+    } else {
+        startSleepTimer();
+    }
+    updateTimeIndicator();
+    updateConfig("sleepTimerIndex", currentSleepTimerIndex);
+}
+function updateTimeIndicator() {
+    timeIndicator.textContent = timeTexts[currentSleepTimerIndex];
+}
+sleepTimerDiv.addEventListener("pointerdown", function () {
+    if (sleepTimerActive) {
+        sleepTimerDiv.style.display = "none";
+        startSleepTimer();
+    }
+});
+
+
+
+
+
+
+
+
+
+
+// MAP
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
 const map = L.map('map').setView([51.1657, 10.4515], 13);
 
 
