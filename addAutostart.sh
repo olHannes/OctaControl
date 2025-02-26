@@ -14,12 +14,14 @@ BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --incognito"
 UNCLUTTER_COMMAND="unclutter -idle 0"
 SCREEN_BLANKING_COMMAND="xset s off && xset s noblank && xset -dpms"
+MBTILES_COMMAND="mbtiles-server --port 3000 --tiles /home/hannes/Documents/ &"
 
 AUTOSTART_DIR="$HOME/.config/autostart"
 DESKTOP_FILE="$AUTOSTART_DIR/octacontrol-app.desktop"
 CHROMIUM_AUTOSTART_FILE="$AUTOSTART_DIR/chromium-browser.desktop"
 UNCLUTTER_AUTOSTART_FILE="$AUTOSTART_DIR/unclutter.desktop"
 SCREEN_BLANKING_AUTOSTART_FILE="$AUTOSTART_DIR/disable-screen-blanking.desktop"
+MBTILES_AUTOSTART_FILE="$AUTOSTART_DIR/mbtiles-server.desktop"
 
 # Sicherstellen, dass das Verzeichnis existiert
 if [ ! -d "$AUTOSTART_DIR" ]; then
@@ -31,7 +33,6 @@ fi
 
 add_python_to_autostart() {
     echo "Füge Python-Programm zum Autostart hinzu..."
-    # Setze das Arbeitsverzeichnis vor dem Starten des Python-Skripts
     echo -e "[Desktop Entry]\nName=OctaControl App\nComment=Start OctaControl App on startup\nExec=bash -c 'cd $PROJECT_DIR && $PYTHON_COMMAND'\nIcon=utilities-terminal\nTerminal=true\nType=Application\nX-GNOME-Autostart-enabled=true" > "$DESKTOP_FILE"
 }
 
@@ -50,10 +51,16 @@ add_screen_blanking_to_autostart() {
     echo -e "[Desktop Entry]\nName=Disable Screen Blanking\nComment=Prevent screen from turning off\nExec=bash -c '$SCREEN_BLANKING_COMMAND'\nIcon=display\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$SCREEN_BLANKING_AUTOSTART_FILE"
 }
 
+add_mbtiles_server_to_autostart() {
+    echo "Füge mbtiles-server zum Autostart hinzu..."
+    echo -e "[Desktop Entry]\nName=MBTiles Server\nComment=Start mbtiles-server on boot\nExec=bash -c '$MBTILES_COMMAND'\nIcon=utilities-terminal\nTerminal=false\nType=Application\nX-GNOME-Autostart-enabled=true" > "$MBTILES_AUTOSTART_FILE"
+}
+
 # Einträge zum Autostart hinzufügen
 add_python_to_autostart
 add_chromium_to_autostart
 add_unclutter_to_autostart
 add_screen_blanking_to_autostart
+add_mbtiles_server_to_autostart
 
 echo "Autostart-Einträge wurden überprüft, geleert und hinzugefügt."
