@@ -10,7 +10,8 @@ def install_apt_packages():
         "libportaudio2", "libasound2-dev",
         "ffmpeg", "playerctl", "alsa-utils",
         "unclutter", "i2c-tools", "python3-bluez",
-        "gpsd", "gpsd-clients", "python3-gps"
+        "gpsd", "gpsd-clients", "python3-gps",
+        "nodejs", "npm"
     ]
     try:
         subprocess.run(["sudo", "apt", "update"], check=True)
@@ -39,6 +40,15 @@ def install_pip_packages():
         print(f"Error installing Python packages: {e}")
         exit(1)
 
+def install_node_packages():
+    print("Installing necessary Node.js packages...")
+    try:
+        subprocess.run(["npm", "install", "-g", "mbtiles-server"], check=True)
+        print("Node.js packages installed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error installing Node.js packages: {e}")
+        exit(1)
+
 def setup_pulseaudio():
     print("Setting up PulseAudio for Bluetooth...")
     try:
@@ -53,5 +63,6 @@ if __name__ == "__main__":
     print("Starting installation process...")
     install_apt_packages()
     install_pip_packages()
+    install_node_packages()
     setup_pulseaudio()
     print("All dependencies installed and configured successfully!")
