@@ -56,6 +56,12 @@ async function preloadConfig() {
         setBalanceSlider(getBalance());
         setVersion();
 
+        if (json.isTouchSoundEnabled !== undefined) {
+            if (json.isTouchSoundEnabled) {
+                togglePlayClickSound();
+            }
+        }
+
         if (json.isBluetoothEnabled !== undefined) {
             if (json.isBluetoothEnabled) {
                 enableBt();
@@ -110,12 +116,6 @@ async function preloadConfig() {
             updateVolumeDisplay(json.touchSoundValue);
         }
 
-        if (json.isTouchSoundEnabled !== undefined) {
-            if (json.isTouchSoundEnabled) {
-                togglePlayClickSound();
-            }
-        }
-
         if (json.isClockEnabled !== undefined) {
             if (json.isClockEnabled) {
                 toggleClock();
@@ -149,6 +149,7 @@ async function preloadConfig() {
 function fallbackFunctions() {
     setVolumeSlider(getVolume());
     setBalanceSlider(getBalance());
+    togglePlayClickSound();
     enableBt();  
     document.getElementById('colorSlider').value = 39;
     document.getElementById('brightnessSlider').value = 100;
