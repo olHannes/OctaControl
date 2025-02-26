@@ -1,11 +1,8 @@
 import os
 import subprocess
-import time
-import datetime
+
 import json
 import threading
-import pytz
-import gps
 
 import RPi.GPIO as GPIO
 import board
@@ -13,7 +10,6 @@ import serial
 import alsaaudio
 import adafruit_dht
 
-from flask_socketio import emit
 from flask import jsonify
 
 trunkPowerPin = 23
@@ -299,110 +295,3 @@ def getBrightness():
         "brightness": 0
     }
 
-
-
-
-def climatedata_reader():
-    from app import socketio
-    while True:
-        try:
-            temperature = dht_device.temperature
-            humidity = dht_device.humidity
-            data = {
-                "temperature": temperature,
-                "humidity": humidity
-            }
-
-            if temperature is not None and humidity is not None:
-                print(f"temp: {temperature}, hum: {humidity}")
-                #save_climate_data(temperature, humidity)
-                socketio.emit("climate_update", data)
-        except Exception as e:
-            print(f"Fehler beim Lesen der Klimadaten: {e}")
-        time.sleep(5)
-
-
-from AudioMetadata import *
-
-def metadata_reader():
-    from app import socketio
-    while True:
-        try:
-            metadata = getMeta()
-            socketio.emit("metadata_update", metadata)
-        except Exception as e:
-            print(f"Metadata Fehler: {e}")
-        time.sleep(2)
-
-def gps_reader():
-    from app import socketio
-    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-    
-    while True:
-        try:
-            report = session.next()
-
-            if report['class'] == 'TPV':  
-                latitude = round(getattr(report, 'lat', 0.0), 5)
-                longitude = round(getattr(report, 'lon', 0.0), 5)
-
-                altitude = getattr(report, 'alt', 0.0)
-
-                speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
-
-                track = getattr(report, 'track', 0.0)
-
-                satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
-
-                utc_time = getattr(report, 'time', None)
-                local_time = "N/A"
-                if utc_time:
-                    utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                    utc_dt = utc_dt.replace(tzinfo=pytz.utc)
-                    local_tz = pytz.timezone("Europe/Berlin")
-                    local_time = utc_dt.astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-                gps_data = {
-                    "latitude": latitude,
-                    "longitude": longitude,
-                    "altitude": altitude,
-                    "speed": speed,
-                    "direction": track,
-                    "satellites": satellites,
-                    "local_time": local_time,
-                }
-                
-                socketio.emit("gps_update", gps_data)
-
-            time.sleep(1)
-
-        except Exception as e:
-            print(f"Error while reading gps Data: {e}")
-            time.sleep(5)
-
-
-def setSystemTime():
-    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-    print("Warte auf gültige GPS-Zeit...")
-    
-    while True:
-        try:
-            report = session.next()
-            
-            if report['class'] == 'TPV':
-                utc_time = getattr(report, 'time', None)
-                
-                if utc_time:
-                    utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                    
-                    formatted_time = utc_dt.strftime("%Y-%m-%d %H:%M:%S")
-                    subprocess.run(["sudo", "timedatectl", "set-time", formatted_time])
-                    
-                    print(f"Systemzeit auf {formatted_time} gesetzt.")
-                    break
-            
-            time.sleep(1)
-            
-        except Exception as e:
-            print(f"Fehler beim Lesen der GPS-Zeit: {e}")
-            time.sleep(5)
