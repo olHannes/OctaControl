@@ -175,7 +175,11 @@
             </div>
             <h2 style="color: white; text-align: center; text-decoration: underline;">Feature Settings</h2>
         
-        
+            <div class="SectionTitle">
+                <h3>Audio</h3>
+                <div></div>
+            </div>
+
             <div class="featureBtn" onclick=" switchToSection('soundSettings'); closePanel('featurePanel');">
                 <h5>Audio Einstellungen</h5>
             </div>
@@ -197,12 +201,13 @@
                 </button>
             </div>
             
-            <div class="featureBtn" onclick="toggleClock();">
-                <h5 id="clockToggle" style="color: green;">Uhr: An</h5>
+            <div class="SectionTitle">
+                <h3>Widgets</h3>
+                <div></div>
             </div>
 
-            <div class="featureBtn" onclick="toggleTrunkPower();">
-                <h5 id="trunkPowerToggle" style="color: green;">Anlage / Sternenhimmel: An</h5>
+            <div class="featureBtn" onclick="toggleClock();">
+                <h5 id="clockToggle" style="color: green;">Uhr: An</h5>
             </div>
 
             <div class="featureBtn" onclick="toggleAdaptiveBrightness();">
@@ -219,6 +224,15 @@
 
             <div class="featureBtn" onclick="togglePosDisplay();">
                 <h5 id="showPos" style="color: red;">GPS Daten: Aus</h5>
+            </div>
+
+            <div class="SectionTitle">
+                <h3>Weitere Features</h3>
+                <div></div>
+            </div>
+
+            <div class="featureBtn" onclick="toggleTrunkPower();">
+                <h5 id="trunkPowerToggle" style="color: green;">Anlage / Sternenhimmel: An</h5>
             </div>
         </div>
 

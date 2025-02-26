@@ -860,6 +860,26 @@ input:checked + .genre-color-slider::before {
     margin: 0;
 }
 
+
+.SectionTitle {
+    text-align: left;
+    width: 100%;
+    height: auto;
+    margin-top: 5px;
+}
+.SectionTitle h3 {
+    margin-bottom: 2px;
+    color: white;   
+}
+
+.SectionTitle div{
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    margin-top: 0;
+}
+
+
 /*STyle for clickVolume settings*/
 .clickVol {
     width: 51px;
