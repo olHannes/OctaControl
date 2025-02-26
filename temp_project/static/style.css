@@ -239,7 +239,7 @@ input[type=range]::-webkit-slider-thumb {
     padding: 1rem;
 }
 
-/*Style for clock*/
+/*Style for digital clock*/
 #clock-container {
     position: fixed;
     top: 20px;
@@ -724,6 +724,61 @@ input:checked + .genre-color-slider::before {
         opacity: 0.7;
     }
 }
+
+/*Style for analog clock*/
+#clockWidget {
+    width: 150px;
+    height: 150px;
+    border: 8px solid white;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1002;
+    background: #00000070;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 5px;
+}
+
+#widgetHour {
+    width: 6px;
+    height: 50px;
+    background: white;
+}
+
+#widgetMinute {
+    width: 4px;
+    height: 70px;
+    background: white;
+}
+
+#widgetSecond {
+    width: 2px;
+    height: 80px;
+    background: red;
+}
+
+#widgetCenter {
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
 
 
 /*style for system Options*/

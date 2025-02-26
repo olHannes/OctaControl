@@ -181,7 +181,21 @@ function updateClock() {
 
     document.getElementById('date').textContent = dateString;
     document.getElementById('time').textContent = timeString;
+    
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    const hourAngle = (hours * 30) + (minutes * 0.5);
+    const minuteAngle = (minutes * 6) + (seconds * 0.1);
+    const secondAngle = seconds * 6;
+
+    document.getElementById("widgetHour").style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+    document.getElementById("widgetMinute").style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+    document.getElementById("widgetSecond").style.transform = `translateX(-50%) rotate(${secondAngle}deg)`;
 }
+
+
 
 updateClock();
 setInterval(updateClock, 1000);
