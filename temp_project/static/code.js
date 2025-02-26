@@ -20,6 +20,7 @@ document.addEventListener ("DOMContentLoaded", () => {
 
 const socket = io.connect("http://127.0.0.1:5000");
 
+const climateSocket = new WebSocket('ws://127.0.0.1:5000/climate_data');
 
 
 
@@ -1443,19 +1444,30 @@ function toggleClimateData() {
         climateToggle.innerHTML = "Raumklima: An";
         climateToggle.style.color = "green";
         document.getElementById('climateDisplay').style.display="block";
-
-        socket.on("climate_update", function (data) {
-            updateClimateData(data.temperature, data.humidity);
-        });
     } else {
         clearInterval(climateIntervalId);
         climateToggle.innerHTML = "Raumklima: Aus";
         climateToggle.style.color = "red";
         document.getElementById('climateDisplay').style.display="none";
-        socket.off("climate_update");
     }
     updateConfig("isClimateDataEnabled", climateDataEnabled);
 }
+
+climateSocket.onopen = function() {
+    console.log('Verbindung zum Klima-WebSocket hergestellt!');
+};
+climateSocket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    updateClimateData(data.temperature, data.humidity);
+};
+climateSocket.onerror = function(error) {
+    console.error('Klima-WebSocket-Fehler:', error);
+};
+
+climateSocket.onclose = function() {
+    console.log('Klima-WebSocket-Verbindung geschlossen.');
+};
+
 
 
 // Codeblock to toggle Display of Song-Data
