@@ -854,6 +854,9 @@ input:checked + .genre-color-slider::before {
     padding: 5%;
     border: 1px green;
 }
+.featureBtn:hover {
+    cursor: pointer;
+}
 
 .featureBtn h5 {
     font-size: 1.5rem;
@@ -891,12 +894,17 @@ input:checked + .genre-color-slider::before {
     background: none;
     cursor: pointer;
     overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .clickVol img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+.clickVol:hover {
+    transform: scale(1.2, 1.2);
 }
 
 /* Style for Volume Indicator */
@@ -915,6 +923,16 @@ input:checked + .genre-color-slider::before {
 .volumeBar.active {
     background-color: green;
 }
+
+
+
+/*Style for sleepTimer Settings*/
+
+#timeIndicator {
+    color: black;
+    font-size: 1.3rem;
+}
+
 
 
 /*Styles for map Section*/

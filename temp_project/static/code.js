@@ -122,6 +122,27 @@ async function preloadConfig() {
                 toggleClock();
             }
         }
+
+
+        if (json.sleepTimerIndex !== undefined) {
+            lastSleepTimerIndex = currentSleepTimerIndex = json.sleepTimerIndex;
+            updateTimeIndicator();
+        }
+        
+        if (json.sleepTimerActive !== undefined) {
+            sleepTimerActive = json.sleepTimerActive;
+        
+            if (sleepTimerActive) {
+                sleepTimerToggle.textContent = "SleepTimer: An";
+                sleepTimerToggle.style.color = "green";
+                startSleepTimer();
+            } else {
+                sleepTimerToggle.textContent = "SleepTimer: Aus";
+                sleepTimerToggle.style.color = "red";
+                clearTimeout(sleepTimerTimeout);
+            }
+        }
+        
         
     } catch (error) {
         showErrorMessage('Error fetching config:', error);
@@ -145,6 +166,14 @@ function fallbackFunctions() {
     toggleSongDisplay();
     togglePosDisplay();
     toggleClock();
+
+    sleepTimerActive = true;
+    currentSleepTimerIndex = 0;
+    lastSleepTimerIndex = currentSleepTimerIndex;
+    updateTimeIndicator();
+    sleepTimerToggle.textContent = "SleepTimer: An";
+    sleepTimerToggle.style.color = "green";
+    startSleepTimer();
 }
 
 
@@ -219,37 +248,78 @@ function toggleClock() {
 
 
 
-/**function for sleepTimer*/
-let sleepTimerTime = 0;
-const sleepTimerDiv = document.getElementById('sleepTimer');
-const sleepTimerSelect = document.getElementById('sleepTimerSelect');
+let sleepTimerActive = false;
+let sleepTimerTimeout;
 
-function showSleepTimer() {
-    if (sleepTimerTime > 0) {
-        setTimeout(() => {
+const sleepTimerToggle = document.getElementById('sleepTImerToggle');
+const sleepTimerDiv = document.getElementById('sleepTimer');
+const timeIndicator = document.getElementById('timeIndicator');
+
+const timeOptions = [60000, 300000, 600000, 3600000, 10800000, 0];
+const timeTexts = ["1 Min.", "5 Min.", "10 Min.", "1 Std.", "3 Std.", "Nie"];
+let currentSleepTimerIndex = 0;
+let lastSleepTimerIndex = currentSleepTimerIndex;
+
+function startSleepTimer() {
+    clearTimeout(sleepTimerTimeout);
+    if (sleepTimerActive && timeOptions[currentSleepTimerIndex] > 0) {
+        sleepTimerTimeout = setTimeout(() => {
             sleepTimerDiv.style.display = 'block';
-            sleepTimerDiv.addEventListener('pointerdown', hideSleepTimer);
-        }, sleepTimerTime);
+        }, timeOptions[currentSleepTimerIndex]);
     }
 }
 
-function hideSleepTimer() {
-    sleepTimerDiv.style.display = 'none';
-    showSleepTimer();
-}
-document.getElementById('sleepTimer').addEventListener('pointerdown', hideSleepTimer);
-showSleepTimer();
+function toggleSleepTimer() {
+    sleepTimerActive = !sleepTimerActive;
 
-sleepTimerSelect.addEventListener('change', function () {
-    sleepTimerTime = parseInt(sleepTimerSelect.value);
-
-    if (sleepTimerTime === 0) {
-        sleepTimerDiv.style.display = 'none';
-        clearTimeout();
+    if (sleepTimerActive) {
+        currentSleepTimerIndex = lastSleepTimerIndex;
+        sleepTimerToggle.textContent = "SleepTimer: An";
+        sleepTimerToggle.style.color = "green";
+        startSleepTimer();
     } else {
-        showSleepTimer();
+        lastSleepTimerIndex = currentSleepTimerIndex;
+        currentSleepTimerIndex = 5;
+        clearTimeout(sleepTimerTimeout);
+        sleepTimerDiv.style.display = 'none';
+        sleepTimerToggle.textContent = "SleepTimer: Aus";
+        sleepTimerToggle.style.color = "red";
+        updateConfig("sleepTimerActive", false);
+    }
+    updateTimeIndicator();
+    updateConfig("sleepTimerActive", sleepTimerActive);
+}
+
+function changeSleepTimer(increase) {
+    if (!sleepTimerActive) {
+        toggleSleepTimer();
+    }
+
+    if (increase) {
+        currentSleepTimerIndex = Math.min(currentSleepTimerIndex + 1, timeOptions.length - 1);
+    } else {
+        currentSleepTimerIndex = Math.max(currentSleepTimerIndex - 1, 0);
+    }
+    
+    if (currentSleepTimerIndex === 5) {
+        sleepTimerActive = false;
+        toggleSleepTimer();
+    } else {
+        startSleepTimer();
+    }
+    updateTimeIndicator();
+    updateConfig("sleepTimerIndex", currentSleepTimerIndex);
+}
+function updateTimeIndicator() {
+    timeIndicator.textContent = timeTexts[currentSleepTimerIndex];
+}
+sleepTimerDiv.addEventListener("pointerdown", function () {
+    if (sleepTimerActive) {
+        sleepTimerDiv.style.display = "none";
+        startSleepTimer();
     }
 });
+
 
 
 var logging = false;

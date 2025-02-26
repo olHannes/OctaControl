@@ -152,14 +152,6 @@
                 <button id="toggleFullscreen" onclick="toggleFullscreen()"><s>fScreen</s></button>
             </div>
 
-            <label style="padding-top: 12px; text-align: center;">SleepTimer:</label>
-            <select id="sleepTimerSelect">
-                <option value="0">Kein Timer</option>
-                <option value="60000">1 Minute</option>
-                <option value="300000">5 Minuten</option>
-                <option value="600000">10 Minuten</option>
-            </select>
-
             <div id="powerOptions">
                 <p>System Options</p>
                 <button onclick="shutdown()" id="shutdownBtn">Shutdown</button>
@@ -233,6 +225,18 @@
 
             <div class="featureBtn" onclick="toggleTrunkPower();">
                 <h5 id="trunkPowerToggle" style="color: green;">Anlage / Sternenhimmel: An</h5>
+            </div>
+
+            <div class="featureBtn">
+                <h5 id="sleepTImerToggle" style="color: red;" onclick="toggleSleepTimer();">SleepTimer: Aus</h5>
+
+                <button class="clickVol" onclick="changeSleepTimer(false)">
+                    <img src="../static/media/arrow_img.png" style="transform: rotate(180deg);"  alt="min">
+                </button>
+                <p id="timeIndicator">1 Min.</p>
+                <button class="clickVol" onclick="changeSleepTimer(true)">
+                    <img src="../static/media/arrow_img.png" alt="max">
+                </button>
             </div>
         </div>
 

@@ -11,5 +11,7 @@
     "isPosDisplayEnabled": true,
     "isTouchSoundEnabled": true,
     "touchSoundValue": 1,
-    "isClockEnabled": true
+    "isClockEnabled": true,
+    "sleepTimerIndex": 1,
+    "sleepTimerActive": true
 }
