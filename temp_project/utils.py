@@ -66,18 +66,6 @@ def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings
 
 
 
-
-@socketio.on("connect")
-def handle_connect():
-    print("Client verbunden")
-
-@socketio.on("disconnect")
-def handle_disconnect():
-    print("Client getrennt")
-
-
-
-
 def run_bluetoothctl_command(command):
     try:
         result = subprocess.run(

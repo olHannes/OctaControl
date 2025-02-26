@@ -20,14 +20,6 @@ document.addEventListener ("DOMContentLoaded", () => {
 
 const socket = io.connect("http://127.0.0.1:5000");
 
-socket.on("connect", function () {
-    console.log("Verbindung mit Socket.IO hergestellt!");
-});
-
-socket.on("disconnect", function () {
-    console.warn("Verbindung zum Server verloren!");
-});
-
 
 
 
