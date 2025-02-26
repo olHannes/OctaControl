@@ -288,7 +288,7 @@ def requestadaptiveBrightness():
 
 
 @app_routes.route("/climate/get", methods=["GET"])
-def get_audio_information():
+def getClimateData():
     """Flask route to get climate data."""
     try:
         data = load_climate_data()
@@ -301,7 +301,7 @@ def get_audio_information():
 
 
 @app_routes.route("/gps/get", methods=["GET"])
-def get_gps_data():
+def getGPSData():
     try:
         data = gps_reader()
         return jsonify({

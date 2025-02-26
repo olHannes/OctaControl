@@ -18,10 +18,6 @@ document.addEventListener ("DOMContentLoaded", () => {
     preloadConfig();
 });
 
-const socket = io.connect("http://127.0.0.1:5000");
-
-const climateSocket = new WebSocket('ws://127.0.0.1:5000/climate_data');
-
 
 
 // initial config-settings
@@ -777,7 +773,7 @@ function truncateText(text, maxLength) {
 
 let pTitle = "default";
 let pArtist = "default";
-async function setMetaData(message) {
+async function setMetaData() {
     const title = document.getElementById('songTitle');
     const artist = document.getElementById('artist');
     const album = document.getElementById('album');
@@ -785,7 +781,7 @@ async function setMetaData(message) {
     const maxLength=30;
 
     try {
-        //const message = await getInfoAudio();
+        const message = await getInfoAudio();
         if (message) {
             title.innerHTML = truncateText(message.title || "Unknown Title", maxLength);
             artist.innerHTML = truncateText(message.artist || "Unknown Artist", maxLength);
@@ -804,10 +800,6 @@ async function setMetaData(message) {
         console.error("Error beim Setzen der Metadaten:", error);
     }
 }
-socket.on("metadata_update", function (data) {
-    setMetaData(data);
-});
-
 
 // Progress update function
 const playBtn = document.getElementById('playBtn');
@@ -844,7 +836,8 @@ async function updateProgress() {
 setInterval(() => {
     updateProgress();
     getPlayerDevice();
-}, 1500);
+    setMetaData();
+}, 1000);
 
 // Button Animation for audio control
 function animateButton(button) {
@@ -1453,22 +1446,6 @@ function toggleClimateData() {
     updateConfig("isClimateDataEnabled", climateDataEnabled);
 }
 
-climateSocket.onopen = function() {
-    console.log('Verbindung zum Klima-WebSocket hergestellt!');
-};
-climateSocket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    updateClimateData(data.temperature, data.humidity);
-};
-climateSocket.onerror = function(error) {
-    console.error('Klima-WebSocket-Fehler:', error);
-};
-
-climateSocket.onclose = function() {
-    console.log('Klima-WebSocket-Verbindung geschlossen.');
-};
-
-
 
 // Codeblock to toggle Display of Song-Data
 let songDisplay = false;
@@ -1491,6 +1468,7 @@ function toggleSongDisplay() {
 
 // Codeblock to toggle Position and GPS Data
 let posDisplay = false;
+let posDisplayTimeout;
 
 function updatePosition(directionDeg, speed, altitude, numSatellit) {
     const directionText = getDirectionText(directionDeg);
@@ -1524,16 +1502,26 @@ function togglePosDisplay() {
         document.getElementById('showPos').innerText = "GPS Daten: An";
         document.getElementById('showPos').style.color = "green";
 
-        socket.on("gps_update", function (data) {
-            updatePosition(data.direction, data.speed, data.altitude, data.satellites);
-        });
+        posDisplayTimeout = setInterval(() => {
+            fetch("/gps/get")
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === "success" && result.data) {
+                        const { latitude, longitude, altitude, speed, direction, satellites, local_time } = result.data;
+                        updatePosition(direction, speed, altitude, satellites);
+                    } else {
+                        console.error("Fehler beim Abrufen der GPS-Daten:", result.message);
+                    }
+                })
+                .catch(error => console.error("Fetch-Fehler:", error));
+        }, 1000);
 
     } else {
         document.getElementById('positionDisplay').style.display = "none";
         document.getElementById('showPos').innerText = "GPS Daten: Aus";
         document.getElementById('showPos').style.color = "red";
 
-        socket.off("gps_update");
+        clearInterval(posDisplayTimeout);
     }
     updateConfig("isPosDisplayEnabled", posDisplay);
 }
