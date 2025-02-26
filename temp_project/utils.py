@@ -17,8 +17,6 @@ import adafruit_dht
 from flask_socketio import emit
 from flask import jsonify
 
-from app import socketio
-
 trunkPowerPin = 23
 climatePin = 25
 dht_device = adafruit_dht.DHT11(board.D25)
@@ -318,6 +316,7 @@ def getBrightness():
 
 
 def climatedata_reader():
+    from app import socketio
     while True:
         try:
             temperature = dht_device.temperature
@@ -339,6 +338,7 @@ def climatedata_reader():
 from AudioMetadata import *
 
 def metadata_reader():
+    from app import socketio
     while True:
         try:
             metadata = getMeta()
@@ -348,6 +348,7 @@ def metadata_reader():
         eventlet.sleep(1)
 
 def gps_reader():
+    from app import socketio
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
     
     while True:

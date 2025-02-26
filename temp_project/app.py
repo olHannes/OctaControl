@@ -21,14 +21,9 @@ def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
-
-    gpsTimeThread = threading.Thread(target=setSystemTime, daemon=True)
-    
-    gpsTimeThread.start()
-
+    eventlet.spawn(setSystemTime)
     socketio.start_background_task(target=climatedata_reader)
     socketio.start_background_task(target=gps_reader)
     socketio.start_background_task(target=metadata_reader)
 
-    
     socketio.run(app, debug=True, host="0.0.0.0", port=5000)
