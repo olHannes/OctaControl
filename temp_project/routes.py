@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from flask_socketio import emit
-import eventlet
 import os
 import subprocess
 import json

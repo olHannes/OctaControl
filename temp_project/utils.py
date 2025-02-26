@@ -6,7 +6,6 @@ import json
 import threading
 import pytz
 import gps
-import eventlet
 
 import RPi.GPIO as GPIO
 import board
@@ -320,7 +319,7 @@ def climatedata_reader():
                 socketio.emit("climate_update", data)
         except Exception as e:
             print(f"Fehler beim Lesen der Klimadaten: {e}")
-        eventlet.sleep(5)
+        time.sleep(5)
 
 
 from AudioMetadata import *
@@ -333,7 +332,7 @@ def metadata_reader():
             socketio.emit("metadata_update", metadata)
         except Exception as e:
             print(f"Metadata Fehler: {e}")
-        eventlet.sleep(1)
+        time.sleep(2)
 
 def gps_reader():
     from app import socketio
@@ -375,7 +374,7 @@ def gps_reader():
                 
                 socketio.emit("gps_update", gps_data)
 
-            eventlet.sleep(1)
+            time.sleep(1)
 
         except Exception as e:
             print(f"Error while reading gps Data: {e}")

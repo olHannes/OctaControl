@@ -1,6 +1,3 @@
-import eventlet
-eventlet.monkey_patch()
-
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 
@@ -21,9 +18,9 @@ def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
-    eventlet.spawn(setSystemTime)
-    socketio.start_background_task(target=climatedata_reader)
-    socketio.start_background_task(target=gps_reader)
-    socketio.start_background_task(target=metadata_reader)
+    threading.Thread(target=setSystemTime, daemon=True).start()
+    threading.Thread(target=climatedata_reader, daemon=True).start()
+    threading.Thread(target=gps_reader, daemon=True).start()
+    threading.Thread(target=metadata_reader, daemon=True)
 
     socketio.run(app, debug=True, host="0.0.0.0", port=5000)
