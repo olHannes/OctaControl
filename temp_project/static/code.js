@@ -1676,9 +1676,9 @@ sleepTimerDiv.addEventListener("pointerdown", function () {
 const map = L.map('map').setView([51.1657, 10.4515], 13);
 
 
-L.tileLayer('../../../germanTiles/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-    maxZoom: 18
+L.tileLayer('http://localhost:3000/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Kartenquelle: OSM'
 }).addTo(map);
 
 let marker = null;
