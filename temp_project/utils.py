@@ -298,19 +298,22 @@ def readBrightness():
     return 30 # hier muss der i2C-Sensor ausgelesen werden
 
 brightnessValues = []
+brightness_lock = threading.Lock()
 
 def updateBrightnessData():
     global brightnessValues
     while True:
         currBrightness = readBrightness()
-        if len(brightnessValues >=5):
-            brightnessValues.pop()
-        brightnessValues.append(currBrightness)
+        with brightness_lock:
+            if len(brightnessValues >=5):
+                brightnessValues.pop()
+            brightnessValues.append(currBrightness)
         time.sleep(5)
     
 def getBrightnessValues():
     global brightnessValues
-    return brightnessValues
+    with brightness_lock:
+        return brightnessValues
 
 # polling climate Data and write them into a file
 def updateClimateData():
