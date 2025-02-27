@@ -1427,9 +1427,9 @@ let climateDataEnabled = false;
 let climateIntervalId = null;
 
 function updateClimateData(temp, hum){
-    console.log("getClimateData: " + `${data.temperature}°C`+ " " + `${data.humidity}%`);
-    tempDisplay.innerText=`${data.temperature}°C`;
-    humidityDisplay.innerText = `${data.humidity}%`;
+    console.log("getClimateData: " + `${temp}°C`+ " " + `${hum}%`);
+    tempDisplay.innerText=`${temp}°C`;
+    humidityDisplay.innerText = `${hum}%`;
 }
 
 function toggleClimateData() {

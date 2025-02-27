@@ -318,7 +318,7 @@ def updateBrightnessData():
     while True:
         currBrightness = readBrightness()
         with brightness_lock:
-            if len(brightnessValues >=5):
+            if len(brightnessValues) >=5:
                 brightnessValues.pop()
             brightnessValues.append(currBrightness)
         time.sleep(5)
