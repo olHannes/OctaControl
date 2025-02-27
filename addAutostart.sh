@@ -33,7 +33,7 @@ fi
 
 add_python_to_autostart() {
     echo "Füge Python-Programm zum Autostart hinzu..."
-    echo -e "[Desktop Entry]\nName=OctaControl App\nComment=Start OctaControl App on startup\nExec=$PYTHON_COMMAND/app.py\nIcon=utilities-terminal\nTerminal=true\nType=Application\nX-GNOME-Autostart-enabled=true" > "$DESKTOP_FILE"
+    echo -e "[Desktop Entry]\nName=OctaControl App\nComment=Start OctaControl App on startup\nExec=$PYTHON_COMMAND\nIcon=utilities-terminal\nTerminal=true\nType=Application\nX-GNOME-Autostart-enabled=true" > "$DESKTOP_FILE"
 }
 
 add_chromium_to_autostart() {
