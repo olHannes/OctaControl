@@ -13,6 +13,7 @@ import datetime
 import gps
 import pytz
 
+# define global fields
 trunkPowerPin = 23
 climatePin = 25
 dht_device = adafruit_dht.DHT11(board.D25)
@@ -20,6 +21,65 @@ dht_device = adafruit_dht.DHT11(board.D25)
 FILE_PATH = "climateData.txt"
 climateLock = threading.Lock()
 
+brightnessValues = []
+brightness_lock = threading.Lock()
+
+
+
+
+
+#General Helper-Functions
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+#Functions to get Version and log                                                                                                                               Verison
+def getVersion():
+    project_dir = "/home/hannes/Documents/OctaControl/temp_project"
+    try:
+        commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=project_dir).decode("utf-8").strip()
+        commit_date = subprocess.check_output(["git", "log", "-1", "--format=%cd", "--date=short"], cwd=project_dir).decode("utf-8").strip()
+        return {"commit": commit_hash, "date": commit_date}
+    except subprocess.CalledProcessError:
+        return {"commit": "unknown", "date": "unknown"}
+
+def getGitLog():
+    project_dir = "/home/hannes/Documents/OctaControl/temp_project"
+    try:
+        log_output = subprocess.check_output(
+            ["git", "log", "-10", "--format=%cd|%h|%s", "--date=short"], cwd=project_dir
+        ).decode("utf-8").strip()
+        
+        commits = []
+        for line in log_output.split("\n"):
+            date, commit_hash, message = line.split("|", 2)
+            commits.append({"date": date, "commit": commit_hash, "message": message})
+        
+        return commits
+    except subprocess.CalledProcessError:
+        return []
+    
+
+#Functions to toggle the Relais for Trunk-Power                                                                                                                 Trunk Power
+def initializeGPIO():
+    if not GPIO.getmode():
+        GPIO.setmode(GPIO.BCM)
+    try:
+        GPIO.cleanup(trunkPowerPin)
+        GPIO.setup(trunkPowerPin, GPIO.OUT)
+    except RuntimeError:
+        pass
+    print(f"GPIO trunkPowerPin '{trunkPowerPin}' wurde aktualisiert")
+
+def enableTrunkPower():
+    initializeGPIO()
+    GPIO.output(trunkPowerPin, GPIO.HIGH)
+
+def disableTrunkPower():
+    initializeGPIO()
+    GPIO.output(trunkPowerPin, GPIO.LOW)
+
+
+# Methods to safe and load climate data to a file                                                                                                               Climate-Data-File
 def save_climate_data(temperature, humidity):
     data = {"temperature": temperature, "humidity": humidity}
     with climateLock:
@@ -35,7 +95,7 @@ def load_climate_data():
         return {"temperature": 0, "humidity": 0}
 
 
-
+# Edid config-data in the settings.json file                                                                                                                     Config-File
 def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings.json")):
     try:
         if not os.path.exists(file_path):
@@ -62,41 +122,11 @@ def update_config(key, value, file_path=os.path.expanduser("~/Documents/settings
 
 
 
-def run_bluetoothctl_command(command):
-    try:
-        result = subprocess.run(
-            ["bluetoothctl"] + command.split(),
-            text=True,
-            capture_output=True
-        )
-        return result.stdout.strip()
-    except Exception as e:
-        return str(e)
-
-def run_playerctl_command(command):
-    try:
-        result = subprocess.run(
-            ["playerctl"] + command.split(),
-            text=True,
-            capture_output=True
-        )
-        return result.stdout.strip()
-    except Exception as e:
-        return str(e)
-
-def run_amixer_command(command):
-    try:
-        result = subprocess.run(
-            ["amixer"] + command.split(),
-            text=True,
-            capture_output=True
-        )
-        return result.stdout.strip()
-    except Exception as e:
-        return str(e)
-
-
-# ---------------------- ALSA HELPER ----------------------
+#Audio-Control Helper-Functions
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+#Functions for Volume                                                                                                                                               Volume
 master_volume = 100 
 
 def set_volume_with_alsa(volume):
@@ -119,6 +149,7 @@ def get_volume_with_alsa():
         raise Exception(f"ALSA Error: {str(e)}")
 
 
+#Functions for Balance                                                                                                                                              Balance
 def set_balance(balance):
     global master_volume
     try:
@@ -157,6 +188,28 @@ def get_balance():
 
 
 
+
+
+#Bluetooth Helper-Functions
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+#Functions for Bluetooth                                                                                                                                            Bluetooth
+def enable_bluetooth():
+    try:
+        subprocess.run(["rfkill", "unblock", "bluetooth"], check=True)
+        return {"status": "success", "message": "Bluetooth enabled."}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": str(e)}
+
+def disable_bluetooth():
+    try:
+        subprocess.run(["rfkill", "block", "bluetooth"], check=True)
+        return {"status": "success", "message": "Bluetooth disabled."}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": str(e)}
+
+#Functions for Pairing-Mode                                                                                                                                         Pairingmode
 def enable_pairing_mode():
     try:
         subprocess.run(["bluetoothctl", "discoverable", "on"], check=True)
@@ -172,80 +225,16 @@ def disable_pairing_mode():
         return {"status": "success", "message": "Pairing mode disabled."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
-    
-def enable_bluetooth():
-    try:
-        subprocess.run(["rfkill", "unblock", "bluetooth"], check=True)
-        return {"status": "success", "message": "Bluetooth enabled."}
-    except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": str(e)}
 
-def disable_bluetooth():
-    try:
-        subprocess.run(["rfkill", "block", "bluetooth"], check=True)
-        return {"status": "success", "message": "Bluetooth disabled."}
-    except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": str(e)}
     
 
 
-def reboot_system():
-    try:
-        subprocess.run(["sudo", "reboot"], check=True)
-        return {"status": "success", "message": "Reboot initiated successfully"}
-    except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": f"Reboot command failed: {str(e)}"}
-    except Exception as e:
-        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
-def shutdown_system():
-    try:
-        subprocess.run(["sudo", "shutdown", "now"], check=True)
-        return {"status": "success", "message": "Shutdown initiated successfully"}
-    except subprocess.CalledProcessError as e:
-        return {"status": "error", "message": f"Shutdown command failed: {str(e)}"}
-    except Exception as e:
-        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
-
-
-def update_system():
-    script_absolute_path = "/home/hannes/Documents/OctaControl/updateOctaControl.sh"
-
-    try:
-        subprocess.run(["bash", script_absolute_path], check=True)
-        print(f"{script_absolute_path} erfolgreich ausgeführt.")
-    except subprocess.CalledProcessError as e:
-        print(f"Fehler beim Ausführen des Skripts: {e}")
-    except FileNotFoundError:
-        print("Das angegebene .sh-Skript wurde nicht gefunden.")
-
-def getVersion():
-    project_dir = "/home/hannes/Documents/OctaControl/temp_project"
-    try:
-        commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=project_dir).decode("utf-8").strip()
-        commit_date = subprocess.check_output(["git", "log", "-1", "--format=%cd", "--date=short"], cwd=project_dir).decode("utf-8").strip()
-        return {"commit": commit_hash, "date": commit_date}
-    except subprocess.CalledProcessError:
-        return {"commit": "unknown", "date": "unknown"}
-
-
-def getGitLog():
-    project_dir = "/home/hannes/Documents/OctaControl/temp_project"
-    try:
-        log_output = subprocess.check_output(
-            ["git", "log", "-10", "--format=%cd|%h|%s", "--date=short"], cwd=project_dir
-        ).decode("utf-8").strip()
-        
-        commits = []
-        for line in log_output.split("\n"):
-            date, commit_hash, message = line.split("|", 2)
-            commits.append({"date": date, "commit": commit_hash, "message": message})
-        
-        return commits
-    except subprocess.CalledProcessError:
-        return []
-    
-
+#Wlan Helper-Functions
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+#Functions to control Wlan                                                                                                                                          Wlan
 def enable_wlan():
     try:
         subprocess.run(["rfkill", "unblock", "wifi"], check=True)
@@ -271,34 +260,58 @@ def getWlanStatus():
             return {"status": "enabled", "message": "WLAN ist aktiviert."}
     except subprocess.CalledProcessError as e:
         return {"status": "error", "message": str(e)}
+    
 
-def initializeGPIO():
-    if not GPIO.getmode():
-        GPIO.setmode(GPIO.BCM)
+
+
+
+#System Helper-Functions
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+#Functions to control PowerStatus                                                                                                                                   Power-Control
+def reboot_system():
     try:
-        GPIO.cleanup(trunkPowerPin)
-        GPIO.setup(trunkPowerPin, GPIO.OUT)
-    except RuntimeError:
-        pass
-    print(f"GPIO trunkPowerPin '{trunkPowerPin}' wurde aktualisiert")
+        subprocess.run(["sudo", "reboot"], check=True)
+        return {"status": "success", "message": "Reboot initiated successfully"}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": f"Reboot command failed: {str(e)}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
-def enableTrunkPower():
-    initializeGPIO()
-    GPIO.output(trunkPowerPin, GPIO.HIGH)
+def shutdown_system():
+    try:
+        subprocess.run(["sudo", "shutdown", "now"], check=True)
+        return {"status": "success", "message": "Shutdown initiated successfully"}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "message": f"Shutdown command failed: {str(e)}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
-def disableTrunkPower():
-    initializeGPIO()
-    GPIO.output(trunkPowerPin, GPIO.LOW)
+
+#Function to update the system                                                                                                                                      Update
+def update_system():
+    script_absolute_path = "/home/hannes/Documents/OctaControl/updateOctaControl.sh"
+
+    try:
+        subprocess.run(["bash", script_absolute_path], check=True)
+        print(f"{script_absolute_path} erfolgreich ausgeführt.")
+    except subprocess.CalledProcessError as e:
+        print(f"Fehler beim Ausführen des Skripts: {e}")
+    except FileNotFoundError:
+        print("Das angegebene .sh-Skript wurde nicht gefunden.")
 
 
 
 
-# Codeblock for polling Brightness
+
+#Thread-polling Helper-Functions
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+# Codeblock Brightness                                                                                                                                              Brightness
 def readBrightness():
     return 30 # hier muss der i2C-Sensor ausgelesen werden
-
-brightnessValues = []
-brightness_lock = threading.Lock()
 
 def updateBrightnessData():
     global brightnessValues
@@ -315,7 +328,6 @@ def getBrightnessValues():
     with brightness_lock:
         return brightnessValues
 
-# polling climate Data and write them into a file
 def updateClimateData():
     while True:
         try:
@@ -331,12 +343,12 @@ def updateClimateData():
                 save_climate_data(temperature, humidity)
 
         except Exception as e:
-            #print(f"Fehler beim Lesen der Klimadaten: {e}")
             pass
+            #print(f"Fehler beim Lesen der Klimadaten: {e}")
         time.sleep(5)
 
 
-# Method to set Systemtime depending on the time from the gps-module
+#Function to set initial System-Time                                                                                                                                System-Time
 def setSystemTime():
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
     print("Warte auf gültige GPS-Zeit...")
@@ -347,27 +359,24 @@ def setSystemTime():
             
             if report['class'] == 'TPV':
                 utc_time = getattr(report, 'time', None)
-                
+
                 if utc_time:
                     utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                    
                     formatted_time = utc_dt.strftime("%Y-%m-%d %H:%M:%S")
 
                     if utc_dt.year > 2000:
                         subprocess.run(["sudo", "timedatectl", "set-time", formatted_time])        
                         print(f"Systemzeit auf {formatted_time} gesetzt.")
                         return
-            
             time.sleep(1)
             
         except Exception as e:
             print(f"Fehler beim Lesen der GPS-Zeit: {e}")
             time.sleep(5)
 
-
+#Function to get GPS-Data                                                                                                                                           GPS-Data
 def gps_reader():
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-
     try:
         report = session.next()
 
@@ -376,15 +385,12 @@ def gps_reader():
             longitude = round(getattr(report, 'lon', 0.0), 5)
 
             altitude = getattr(report, 'alt', 0.0)
-
             speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
-
             track = getattr(report, 'track', 0.0)
-
             satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
-
             utc_time = getattr(report, 'time', None)
             local_time = "N/A"
+
             if utc_time:
                 utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
                 utc_dt = utc_dt.replace(tzinfo=pytz.utc)
