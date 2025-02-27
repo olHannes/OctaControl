@@ -1,20 +1,94 @@
 from flask import Blueprint, jsonify, request
-from flask_socketio import emit
 import os
-import subprocess
 import json
 
 from BluetoothController import *
 from AudioMetadata import *
 from utils import *
 
-
+#define global Fields
 app_routes = Blueprint('app_routes', __name__)
 
 
 
 
-# Audio Routes
+
+#General Routes
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################  
+  
+@app_routes.route("/system/version/current", methods=["GET"])
+def requestVersion():
+    result = getVersion()
+    return jsonify(result)
+
+
+@app_routes.route("/system/version/log", methods=["GET"])
+def requestGitLog():
+    result = getGitLog()
+    return jsonify(result)
+
+
+@app_routes.route("/system/powerOptions/trunkPower/enable", methods=["POST"])
+def requestTrunkPowerOn():
+    try:
+        enableTrunkPower()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+@app_routes.route("/system/powerOptions/trunkPower/disable", methods=["POST"])
+def requestTrunkPowerOff():
+    try:
+        disableTrunkPower()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+@app_routes.route("/system/config", methods=["GET"])
+def requestConfig():
+    try:
+        json_file_path = os.path.expanduser("~/Documents/settings.json")
+        
+        if not os.path.exists(json_file_path):
+            return jsonify({"status": "error", "message": "JSON file not found"}), 404
+        
+        with open(json_file_path, 'r') as json_file:
+            data = json.load(json_file)
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app_routes.route("/system/config", methods=["POST"])
+def updateConfig():
+    try:
+        data = request.get_json()
+        if "key" not in data or "value" not in data:
+            return jsonify({"status": "error", "message": "Missing 'key' or 'value' in request"}), 400
+
+        key = data["key"]
+        value = data["value"]
+        if update_config(key, value):
+            return jsonify({"status": "success", "message": f"Updated {key} to {value}"}), 200
+        else:
+            return jsonify({"status": "error", "message": "Failed to update config"}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+
+
+
+#Audio Routes
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+
 @app_routes.route("/audio/play", methods=["POST"])
 def play_audio():
     try:
@@ -23,6 +97,7 @@ def play_audio():
         return jsonify({"status": "success", "message": "Playback started"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app_routes.route("/audio/pause", methods=["POST"])
 def pause_audio():
@@ -33,6 +108,7 @@ def pause_audio():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
 @app_routes.route("/audio/skip", methods=["POST"])
 def skip_audio():
     try:
@@ -41,6 +117,7 @@ def skip_audio():
         return jsonify({"status": "success", "message": "Skipped to the next track"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app_routes.route("/audio/previous", methods=["POST"])
 def previous_audio():
@@ -54,7 +131,6 @@ def previous_audio():
 
 @app_routes.route("/audio/getinformation", methods=["GET"])
 def get_audio_information():
-    """Flask route to get audio information."""
     try:
         metadata = getMeta()
         return jsonify({
@@ -75,7 +151,7 @@ def getPlayer():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-"""Route to get Song-Process"""
+
 @app_routes.route("/audio/progress", methods=["GET"])
 def requestProgress():
     try:
@@ -99,46 +175,6 @@ def requestSongPlaying():
         return jsonify({"status": "error", "message": str(e)})
 
 
-# Bluetooth routes
-@app_routes.route("/bluetooth/on", methods=["POST"])
-def bluetooth_on():
-    result = enable_bluetooth()
-    return jsonify(result)
-
-@app_routes.route("/bluetooth/off", methods=["POST"])
-def bluetooth_off():
-    result = disable_bluetooth()
-    return jsonify(result)
-
-@app_routes.route("/pairingmode/on", methods=["POST"])
-def pairing_mode_on():
-    result = enable_pairing_mode()
-    return jsonify(result)
-
-@app_routes.route("/pairingmode/off", methods=["POST"])
-def pairing_mode_off():
-    result = disable_pairing_mode()
-    return jsonify(result)
-
-
-# Wlan routes
-@app_routes.route("/wlan/on", methods=["POST"])
-def wlan_on():
-    result = enable_wlan()
-    return jsonify(result)
-
-@app_routes.route("/wlan/off", methods=["POST"])
-def wlan_off():
-    result = disable_wlan()
-    return jsonify(result)
-
-@app_routes.route("/wlan/status", methods=["GET"])
-def requestWlanStatus():
-    result = getWlanStatus()
-    return jsonify(result)
-
-
-# Volume-Routen
 @app_routes.route("/volume/get", methods=["GET"])
 def get_volume_route():
     try:
@@ -153,7 +189,6 @@ def set_volume_route():
     data = request.json
     if not data or "volume" not in data:
         return jsonify({"status": "error", "message": "Please provide a volume level."}), 400
-
     try:
         volume = int(data["volume"])
         if 0 <= volume <= 100:
@@ -181,7 +216,6 @@ def set_balance_route():
     data = request.json
     if not data or "balance" not in data:
         return jsonify({"status": "error", "message": "Please provide a balance value."}), 400
-
     try:
         balance = int(data["balance"])
         if -100 <= balance <= 100:
@@ -194,7 +228,72 @@ def set_balance_route():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# system and power routes
+
+
+
+
+#Bluetooth Routes
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+
+@app_routes.route("/bluetooth/on", methods=["POST"])
+def bluetooth_on():
+    result = enable_bluetooth()
+    return jsonify(result)
+
+
+@app_routes.route("/bluetooth/off", methods=["POST"])
+def bluetooth_off():
+    result = disable_bluetooth()
+    return jsonify(result)
+
+
+@app_routes.route("/pairingmode/on", methods=["POST"])
+def pairing_mode_on():
+    result = enable_pairing_mode()
+    return jsonify(result)
+
+
+@app_routes.route("/pairingmode/off", methods=["POST"])
+def pairing_mode_off():
+    result = disable_pairing_mode()
+    return jsonify(result)
+
+
+
+
+
+#Wlan Routes
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
+
+@app_routes.route("/wlan/on", methods=["POST"])
+def wlan_on():
+    result = enable_wlan()
+    return jsonify(result)
+
+
+@app_routes.route("/wlan/off", methods=["POST"])
+def wlan_off():
+    result = disable_wlan()
+    return jsonify(result)
+
+
+@app_routes.route("/wlan/status", methods=["GET"])
+def requestWlanStatus():
+    result = getWlanStatus()
+    return jsonify(result)
+
+
+
+
+
+#System Routes
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
 
 @app_routes.route("/powerOptions/reboot", methods=["POST"])
 def reboot():
@@ -204,6 +303,7 @@ def reboot():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
     
+
 @app_routes.route("/powerOptions/shutdown", methods=["POST"])
 def shutdown():
     try:
@@ -212,6 +312,7 @@ def shutdown():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
     
+
 @app_routes.route("/system/update", methods=["POST"])
 def update():
     try:
@@ -220,64 +321,14 @@ def update():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
     
-@app_routes.route("/system/version/current", methods=["GET"])
-def requestVersion():
-    result = getVersion()
-    return jsonify(result)
-@app_routes.route("/system/version/log", methods=["GET"])
-def requestGitLog():
-    result = getGitLog()
-    return jsonify(result)
-
-@app_routes.route("/system/powerOptions/trunkPower/enable", methods=["POST"])
-def requestTrunkPowerOn():
-    try:
-        enableTrunkPower()
-        return jsonify({"status": "success"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-    
-@app_routes.route("/system/powerOptions/trunkPower/disable", methods=["POST"])
-def requestTrunkPowerOff():
-    try:
-        disableTrunkPower()
-        return jsonify({"status": "success"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-    
-@app_routes.route("/system/config", methods=["GET"])
-def requestConfig():
-    try:
-        json_file_path = os.path.expanduser("~/Documents/settings.json")
-        
-        if not os.path.exists(json_file_path):
-            return jsonify({"status": "error", "message": "JSON file not found"}), 404
-        
-        with open(json_file_path, 'r') as json_file:
-            data = json.load(json_file)
-        return jsonify(data)
-
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@app_routes.route("/system/config", methods=["POST"])
-def updateConfig():
-    try:
-        data = request.get_json()
-        if "key" not in data or "value" not in data:
-            return jsonify({"status": "error", "message": "Missing 'key' or 'value' in request"}), 400
-
-        key = data["key"]
-        value = data["value"]
-        if update_config(key, value):
-            return jsonify({"status": "success", "message": f"Updated {key} to {value}"}), 200
-        else:
-            return jsonify({"status": "error", "message": "Failed to update config"}), 500
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-    
 
 
+
+
+#Feature Routes
+####################################################################################################################################
+####################################################################################################################################
+####################################################################################################################################
 
 @app_routes.route("/adaptiveBrightness/get", methods=["GET"])
 def requestadaptiveBrightness():
@@ -291,7 +342,6 @@ def requestadaptiveBrightness():
 
 @app_routes.route("/climate/get", methods=["GET"])
 def getClimateData():
-    """Flask route to get climate data."""
     try:
         data = load_climate_data()
         return jsonify({
@@ -310,7 +360,6 @@ def getGPSData():
             "status": "success",
             "data": data
         })
-
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
