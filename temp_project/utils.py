@@ -133,7 +133,7 @@ master_volume = 100
 def set_volume_with_alsa(volume):
     global master_volume
     try:
-        mixer = alsaaudio.Mixer()
+        mixer = alsaaudio.Mixer('Master')
         master_volume = max(0, min(100, int(volume)))
         mixer.setvolume(master_volume)
         print(f"Master-Volume set to {master_volume}%")
@@ -142,7 +142,7 @@ def set_volume_with_alsa(volume):
 
 def get_volume_with_alsa():
     try:
-        mixer = alsaaudio.Mixer()
+        mixer = alsaaudio.Mixer('Master')
         volume = mixer.getvolume()[0]
         is_muted = mixer.getmute()[0] == 1
         return volume, is_muted
@@ -154,7 +154,7 @@ def get_volume_with_alsa():
 def set_balance(balance):
     global master_volume
     try:
-        mixer = alsaaudio.Mixer()
+        mixer = alsaaudio.Mixer('Master')
         balance = max(-100, min(100, balance))
 
         if balance < 0:
@@ -175,7 +175,7 @@ def set_balance(balance):
 
 def get_balance():
     try:
-        mixer = alsaaudio.Mixer()
+        mixer = alsaaudio.Mixer('Master')
         left, right = mixer.getvolume()
 
         if left == right:
