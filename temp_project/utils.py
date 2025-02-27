@@ -291,10 +291,26 @@ def disableTrunkPower():
     GPIO.output(trunkPowerPin, GPIO.LOW)
 
 
-def getBrightness():
-    return {
-        "brightness": 0
-    }
+
+
+# Codeblock for polling Brightness
+def readBrightness():
+    return 30 # hier muss der i2C-Sensor ausgelesen werden
+
+brightnessValues = []
+
+def updateBrightnessData():
+    global brightnessValues
+    while True:
+        currBrightness = readBrightness()
+        if len(brightnessValues >=5):
+            brightnessValues.pop()
+        brightnessValues.append(currBrightness)
+        time.sleep(5)
+    
+def getBrightnessValues():
+    global brightnessValues
+    return brightnessValues
 
 # polling climate Data and write them into a file
 def updateClimateData():

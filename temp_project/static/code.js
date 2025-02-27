@@ -1380,11 +1380,11 @@ function toggleClock() {
 // Codeblock for Adaptive Brightness
 const adaptiveBrightnessToggle = document.getElementById('adaptiveBrightness');
 let adaptiveBrightnessEnabled = true;
-let intervalId = null;
+let adaptBrightnessInvervalId = null;
 
 async function fetchBrightness() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/features/adaptiveBrightness");
+        const response = await fetch("http://127.0.0.1:5000/adaptiveBrightness/get");
         if (!response.ok) {
             throw new Error('Fehler beim Abrufen der Helligkeit');
         }
@@ -1406,9 +1406,12 @@ function toggleAdaptiveBrightness() {
         fetchBrightness();
         adaptiveBrightnessToggle.innerHTML="Adaptive Helligkeit: An";
         adaptiveBrightnessToggle.style.color = "green";
-        intervalId = setInterval(fetchBrightness, 3000);
+        if (!adaptBrightnessIntervalId) {
+            adaptBrightnessIntervalId = setInterval(fetchBrightness, 5000);
+        }
     } else {
-        clearInterval(intervalId);
+        clearInterval(adaptBrightnessInvervalId);
+        adaptBrightnessIntervalId = null;
         adaptiveBrightnessToggle.innerHTML="Adaptive Helligkeit: Aus";
         adaptiveBrightnessToggle.style.color = "red";
     }
@@ -1437,6 +1440,19 @@ function toggleClimateData() {
         climateToggle.innerHTML = "Raumklima: An";
         climateToggle.style.color = "green";
         document.getElementById('climateDisplay').style.display="block";
+        climateIntervalId = setInterval(() => {
+            fetch("/climate/get")
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === "success" && result.data) {
+                        const { temperature, humidity } = result.data;
+                        updateClimateData(temperature, humidity);
+                    } else {
+                        console.error("Fehler beim Abrufen der GPS-Daten:", result.message);
+                    }
+                })
+                .catch(error => console.error("Fetch-Fehler:", error));
+        }, 1000);
     } else {
         clearInterval(climateIntervalId);
         climateToggle.innerHTML = "Raumklima: Aus";

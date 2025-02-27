@@ -277,14 +277,16 @@ def updateConfig():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
-@app_routes.route("/features/adaptiveBrightness", methods=["GET"])
-def requestadaptiveBrightness():
-    try:
-        result = getBrightness()
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
 
+
+@app_routes.route("/adaptiveBrightness/get", methods=["GET"])
+def requestadaptiveBrightness():
+    pBrightnessValues = getBrightnessValues()
+    if not pBrightnessValues:
+        return jsonify({"status": "error", "message": "No data available"}), 500
+    
+    avg_brightness = sum(pBrightnessValues) / len(pBrightnessValues)
+    return jsonify({"brightness": avg_brightness})
 
 
 @app_routes.route("/climate/get", methods=["GET"])
