@@ -355,7 +355,7 @@ def getClimateData():
 @app_routes.route("/gps/get", methods=["GET"])
 def getGPSData():
     try:
-        data = gps_reader()
+        data = get_gps_data()
         return jsonify({
             "status": "success",
             "data": data

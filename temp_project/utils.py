@@ -375,6 +375,10 @@ def setSystemTime():
             time.sleep(5)
 
 
+
+gps_data = {}
+gps_lock = threading.LOCK()
+
 def pollingGPSData():
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
@@ -397,6 +401,15 @@ def pollingGPSData():
                     local_tz = pytz.timezone("Europe/Berlin")
                     local_time = utc_dt.astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
                 
+                with gps_lock:
+                    gps_data['latitude'] = latitude
+                    gps_data['longitude'] = longitude
+                    gps_data['altitude'] = altitude
+                    gps_data['speed'] = speed
+                    gps_data['track'] = track
+                    gps_data['satellites'] = satellites
+                    gps_data['local_time'] = local_time
+                
                 print(f"Satellites: {satellites}")
                 print(f"Position: {latitude}, {longitude}")
                 print(f"Hoehe: {altitude}m")
@@ -406,6 +419,10 @@ def pollingGPSData():
             time.sleep(1)
         except Exception as e:
             print(f"GPS Error: {e}")
+
+def get_gps_data():
+    with gps_lock:
+        return gps_data.copy()
 
 #Function to get GPS-Data                                                                                                                                           GPS-Data
 def gps_reader():
