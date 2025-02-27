@@ -2,7 +2,7 @@
 
 # Arbeitsverzeichnis auf das Projektverzeichnis setzen
 PROJECT_DIR="/home/hannes/Documents/OctaControl/temp_project"
-PYTHON_COMMAND="sudo python3 $PROJECT_DIR/app.py"
+PYTHON_COMMAND="sudo -E python3 $PROJECT_DIR/app.py"
 BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --start-fullscreen \
                  --disable-session-crashed-bubble \
@@ -33,7 +33,7 @@ fi
 
 add_python_to_autostart() {
     echo "Füge Python-Programm zum Autostart hinzu..."
-    echo -e "[Desktop Entry]\nName=OctaControl App\nComment=Start OctaControl App on startup\nExec=bash -c 'cd $PROJECT_DIR && $PYTHON_COMMAND'\nIcon=utilities-terminal\nTerminal=true\nType=Application\nX-GNOME-Autostart-enabled=true" > "$DESKTOP_FILE"
+    echo -e "[Desktop Entry]\nName=OctaControl App\nComment=Start OctaControl App on startup\nExec=$PYTHON_COMMAND/app.py\nIcon=utilities-terminal\nTerminal=true\nType=Application\nX-GNOME-Autostart-enabled=true" > "$DESKTOP_FILE"
 }
 
 add_chromium_to_autostart() {
