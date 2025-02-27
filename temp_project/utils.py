@@ -24,7 +24,8 @@ climateLock = threading.Lock()
 brightnessValues = []
 brightness_lock = threading.Lock()
 
-
+gps_data = {}
+gps_lock = threading.Lock()
 
 
 
@@ -375,10 +376,7 @@ def setSystemTime():
             time.sleep(5)
 
 
-
-gps_data = {}
-gps_lock = threading.LOCK()
-
+# Function to poll GPS Data
 def pollingGPSData():
     session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
@@ -423,40 +421,3 @@ def pollingGPSData():
 def get_gps_data():
     with gps_lock:
         return gps_data.copy()
-
-#Function to get GPS-Data                                                                                                                                           GPS-Data
-def gps_reader():
-    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-    try:
-        report = session.next()
-
-        if report['class'] == 'TPV':  
-            latitude = round(getattr(report, 'lat', 0.0), 5)
-            longitude = round(getattr(report, 'lon', 0.0), 5)
-
-            altitude = getattr(report, 'alt', 0.0)
-            speed = round(getattr(report, 'speed', 0.0) * 3.6, 2)
-            track = getattr(report, 'track', 0.0)
-            satellites = session.satellites_used if hasattr(session, 'satellites_used') else "N/A"
-            utc_time = getattr(report, 'time', None)
-            local_time = "N/A"
-
-            if utc_time:
-                utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                utc_dt = utc_dt.replace(tzinfo=pytz.utc)
-                local_tz = pytz.timezone("Europe/Berlin")
-                local_time = utc_dt.astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-            gps_data = {
-                "latitude": latitude,
-                "longitude": longitude,
-                "altitude": altitude,
-                "speed": speed,
-                "direction": track,
-                "satellites": satellites,
-                "local_time": local_time,
-            }            
-            return gps_data
-
-    except Exception as e:
-        print(f"Error while reading gps Data: {e}")
