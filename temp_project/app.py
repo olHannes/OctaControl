@@ -4,16 +4,18 @@ import threading
 from routes import app_routes
 from utils import setSystemTime, updateClimateData, updateBrightnessData
 
+# define global fields
 app = Flask(__name__)
-
 app.register_blueprint(app_routes)
 
-
+# default route to get to the webpage
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
+####################################################################################################################################
+# Start Method
 if __name__ == "__main__":
     threading.Thread(target=setSystemTime, daemon=True).start()
     threading.Thread(target=updateClimateData, daemon=True).start()
