@@ -2,7 +2,7 @@
 
 # Arbeitsverzeichnis auf das Projektverzeichnis setzen
 PROJECT_DIR="/home/hannes/Documents/OctaControl/temp_project"
-PYTHON_COMMAND="sudo -E python3 $PROJECT_DIR/app.py"
+PYTHON_COMMAND="python3 $PROJECT_DIR/app.py"
 BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --start-fullscreen \
                  --disable-session-crashed-bubble \
@@ -14,7 +14,6 @@ BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --incognito"
 UNCLUTTER_COMMAND="unclutter -idle 0"
 SCREEN_BLANKING_COMMAND="xset s off && xset s noblank && xset -dpms"
-MBTILES_COMMAND="mbtiles-server --port 3000 --tiles /home/hannes/Documents/ &"
 
 AUTOSTART_DIR="$HOME/.config/autostart"
 DESKTOP_FILE="$AUTOSTART_DIR/octacontrol-app.desktop"
