@@ -1448,7 +1448,7 @@ function toggleClimateData() {
                         const { temperature, humidity } = result.data;
                         updateClimateData(temperature, humidity);
                     } else {
-                        console.error("Fehler beim Abrufen der GPS-Daten:", result.message);
+                        showErrorMessage("Fehler beim Abrufen der Klima", result.message);
                     }
                 })
                 .catch(error => console.error("Fetch-Fehler:", error));
@@ -1485,6 +1485,23 @@ function toggleSongDisplay() {
 // Codeblock to toggle Position and GPS Data
 let posDisplay = false;
 let posDisplayTimeout;
+
+async function fetchGPSData(){
+    try {
+        const response = await fetch("http://127.0.0.1:5000/volume/get");
+        const data = await response.json();
+
+        if (data.status === "success") {
+            return data.volume;
+        } else {
+            showErrorMessage("GPS Fehler", data.message);
+            return;
+        }
+    } catch (error) {
+        showErrorMessage("GPS Fehler", error.message);
+        return null;
+    }
+}
 
 function updatePosition(directionDeg, speed, altitude, numSatellit) {
     const directionText = getDirectionText(directionDeg);
@@ -1690,48 +1707,3 @@ sleepTimerDiv.addEventListener("pointerdown", function () {
 //#########################################################################################################################################
 //#########################################################################################################################################
 //#########################################################################################################################################
-const map = L.map('map').setView([51.1657, 10.4515], 13);
-
-
-L.tileLayer('http://localhost:3000/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: 'Kartenquelle: OSM'
-}).addTo(map);
-
-let marker = null;
-let accuracyCircle = null;
-
-socket.on("gps_update", (data) => {
-    const { latitude, longitude, speed, direction, satellites, local_time } = data;
-
-    if (!marker) {
-        marker = L.marker([latitude, longitude], {
-            icon: L.icon({
-                iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41]
-            })
-        }).addTo(map);
-        
-        accuracyCircle = L.circle([latitude, longitude], {
-            radius: 10,
-            color: 'blue',
-            fillOpacity: 0.2
-        }).addTo(map);
-    } else {
-        marker.setLatLng([latitude, longitude]);
-        accuracyCircle.setLatLng([latitude, longitude]);
-    }
-
-    map.flyTo([latitude, longitude], map.getZoom(), { duration: 1.5 });
-
-    marker.bindPopup(`
-        <b>GPS-Position</b><br>
-        Latitude: ${latitude}<br>
-        Longitude: ${longitude}<br>
-        Geschwindigkeit: ${speed} km/h<br>
-        Richtung: ${direction}°<br>
-        Satelliten: ${satellites}<br>
-        Zeit: ${local_time}
-    `).openPopup();
-});
