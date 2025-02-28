@@ -1490,12 +1490,12 @@ async function fetchGPSData(){
         const result = await response.json();
 
         if (result.status === "success" && result.data) {
-            const { latitude, longitude, altitude, speed, direction, satellites, local_time } = result.data;
+            const { latitude, longitude, altitude, speed, track, satellites, local_time } = result.data;
             
             if(posDisplay){
-                updatePosition(direction, speed, altitude, satellites);
+                updatePosition(track, speed, altitude, satellites);
             }
-            updateMapPage(latitude, logging, altitude, speed, direction, satellites);
+            updateMapPage(latitude, longitude, altitude, speed, track, satellites);
         } else {
             showErrorMessage("GPS Fehler", result.message);
             return;
