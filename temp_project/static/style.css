@@ -944,7 +944,7 @@ input:checked + .genre-color-slider::before {
 }
 
 
-
+#offlineMessage,
 #map {
     width: 90%;
     height: 65%;
@@ -953,6 +953,15 @@ input:checked + .genre-color-slider::before {
     bottom: 10%;
     background-color: white;
     border-radius: 10px;
+}
+
+#offlineMessage {
+    display: none;
+    color: black;
+    font-size: 25px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .leaflet-bottom {
