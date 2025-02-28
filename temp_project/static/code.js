@@ -937,6 +937,11 @@ async function update() {
             return;
         }
         
+        if (!checkInternet()) {
+            showErrorMessage("Netzwerkfehler", "Die Internetverbindung ist noch nicht vorhanden. Bitte in den verbindungseinstellungen aktivieren, oder einen Moment warten!");
+            return;
+        }
+
         disableSystemSettings();
 
         try {
@@ -1327,6 +1332,16 @@ async function disableWlan() {
         showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + error);
     } finally {
         wlanToggle.style.pointerEvents = 'auto';
+    }
+}
+
+
+async function checkInternet() {
+    try {
+        const response = await fetch("https://www.google.com/favicon.ico", { method: "HEAD", mode: "no-cors" });
+        return true;
+    } catch (error) {
+        return false;
     }
 }
 
@@ -1735,9 +1750,15 @@ function updateMap(lat, lon) {
         
         lastLat = lat;
         lastLong = lon;
-
-        marker.setLatLng([lat, lon]);
-        map.setView([lat, lon], 13);
+        
+        if (!checkInternet()){
+            document.getElementById("map").style.display = "flex";
+            marker.setLatLng([lat, lon]);
+            map.setView([lat, lon], 13);
+        } else {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("offlineMessage").style.display = "flex";
+        }
     }
 }
 
@@ -1774,7 +1795,7 @@ function setMetaDataSafely() {
     });
 }
 
-setInterval(updateClock(), 1000);
+setInterval(updateClock, 1000);
 
 fetchGPSDataSafely();
 getPlayerDeviceSafely();
