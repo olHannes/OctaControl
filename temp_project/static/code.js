@@ -1506,16 +1506,16 @@ async function fetchGPSData(){
     }
 }
 
-function updatePosition(directionDeg, speed, altitude, numSatellit) {
-    const directionText = getDirectionText(directionDeg);
+function updatePosition(trackDeg, speed, altitude, numSatellit) {
+    const trackText = getDirectionText(trackDeg);
     const compass = document.getElementById("compass");
     const speedElement = document.getElementById("speed");
     const altitudeElement = document.getElementById("altitude");
     const altArrow = document.getElementById("altArrow");
     const satellitElement = document.getElementById('numSatellit');
 
-    document.getElementById("direction").textContent = directionText;
-    compass.style.transform = `rotate(${directionDeg}deg)`;
+    document.getElementById("direction").textContent = trackText;
+    compass.style.transform = `rotate(${trackText}deg)`;
 
     speedElement.textContent = `${Math.floor(speed)}`;
     altitudeElement.textContent = `${Math.round(altitude)}`;
@@ -1698,8 +1698,8 @@ sleepTimerDiv.addEventListener("pointerdown", function () {
 //#########################################################################################################################################
 //#########################################################################################################################################
 
-function updateMapPage(latitude, longitude, altitude, speed, direction, satellites){
-    updateGPSView(latitude, longitude, altitude, speed, direction, satellites);
+function updateMapPage(latitude, longitude, altitude, speed, track, satellites){
+    updateGPSView(latitude, longitude, altitude, speed, track, satellites);
     updateMap(latitude, longitude);
 }
 
@@ -1709,12 +1709,12 @@ const altView = document.getElementById("altView");
 const speView = document.getElementById("speView");
 const traView = document.getElementById("traView");
 const satView = document.getElementById("satView");
-function updateGPSView(latitude, longitude, altitude, speed, direction, satellites){
-    latView.innerText = latitude;
-    lonView.innerText = longitude;
-    altView.innerText = altitude;
-    speView.innerText = speed;
-    traView.innerText = direction+"°";
+function updateGPSView(latitude, longitude, altitude, speed, track, satellites) {
+    latView.innerText = latitude.toFixed(2) + "°";
+    lonView.innerText = longitude.toFixed(2) + "°";
+    altView.innerText = altitude.toFixed(2) + " m";
+    speView.innerText = speed.toFixed(2) + " km/h";
+    traView.innerText = track.toFixed(2) + "°";
     satView.innerText = satellites;
 }
 
