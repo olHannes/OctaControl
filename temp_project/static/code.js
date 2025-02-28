@@ -1741,7 +1741,17 @@ var customIcon = L.icon({
 
 var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
+let lastLong = null;
+let lastLat = null;
+
 function updateMap(lat, lon) {
-    marker.setLatLng([lat, lon]);
-    map.setView([lat, lon], 13);
+    if (lastLat === null || lastLong === null || 
+        Math.abs(lastLat - lat) > 0.00001 || Math.abs(lastLong - lon) > 0.00001) {
+        
+        lastLat = lat;
+        lastLong = lon;
+
+        marker.setLatLng([lat, lon]);
+        map.setView([lat, lon], 13);
+    }
 }
