@@ -1481,25 +1481,28 @@ function toggleSongDisplay() {
     updateConfig("isSongDisplayEnabled", songDisplay);
 }
 
-
 // Codeblock to toggle Position and GPS Data
 let posDisplay = false;
-let posDisplayTimeout;
 
 async function fetchGPSData(){
     try {
-        const response = await fetch("http://127.0.0.1:5000/volume/get");
-        const data = await response.json();
+        const response = await fetch("http://127.0.0.1:5000/gps/get");
+        const result = await response.json();
 
-        if (data.status === "success") {
-            return data.volume;
+        if (result.status === "success" && result.data) {
+            const { latitude, longitude, altitude, speed, direction, satellites, local_time } = result.data;
+            
+            if(posDisplay){
+                updatePosition(direction, speed, altitude, satellites);
+            }
+            updateMap(latitude, logging, altitude, speed, direction, satellites);
         } else {
-            showErrorMessage("GPS Fehler", data.message);
+            showErrorMessage("GPS Fehler", result.message);
             return;
         }
     } catch (error) {
         showErrorMessage("GPS Fehler", error.message);
-        return null;
+        return;
     }
 }
 
@@ -1534,30 +1537,17 @@ function togglePosDisplay() {
         document.getElementById('positionDisplay').style.display = "flex";
         document.getElementById('showPos').innerText = "GPS Daten: An";
         document.getElementById('showPos').style.color = "green";
-
-        posDisplayTimeout = setInterval(() => {
-            fetch("/gps/get")
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status === "success" && result.data) {
-                        const { latitude, longitude, altitude, speed, direction, satellites, local_time } = result.data;
-                        updatePosition(direction, speed, altitude, satellites);
-                    } else {
-                        console.error("Fehler beim Abrufen der GPS-Daten:", result.message);
-                    }
-                })
-                .catch(error => console.error("Fetch-Fehler:", error));
-        }, 1000);
-
     } else {
         document.getElementById('positionDisplay').style.display = "none";
         document.getElementById('showPos').innerText = "GPS Daten: Aus";
         document.getElementById('showPos').style.color = "red";
-
-        clearInterval(posDisplayTimeout);
     }
     updateConfig("isPosDisplayEnabled", posDisplay);
 }
+
+setTimeout(() => {
+    fetchGPSData();
+}, 1000);
 
 
 // Codeblock for touch-sound (toggle and Volume)
@@ -1707,3 +1697,7 @@ sleepTimerDiv.addEventListener("pointerdown", function () {
 //#########################################################################################################################################
 //#########################################################################################################################################
 //#########################################################################################################################################
+
+function updateMap(latitude, logging, altitude, speed, direction, satellites){
+    //set the new Position in the Map
+}
