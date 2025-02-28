@@ -937,7 +937,7 @@ async function update() {
             return;
         }
         
-        if (!checkInternet()) {
+        if (! await checkInternet()) {
             showErrorMessage("Netzwerkfehler", "Die Internetverbindung ist noch nicht vorhanden. Bitte in den verbindungseinstellungen aktivieren, oder einen Moment warten!");
             return;
         }
@@ -1344,13 +1344,7 @@ async function disableWlan() {
 
 async function checkInternet() {
     if (!navigator.onLine) return false;
-
-    try {
-        const response = await fetch("https://www.google.com/favicon.ico?nocache=" + new Date().getTime(), { method: "HEAD", cache: "no-store" });
-        return true;
-    } catch (error) {
-        return false;
-    }
+    return true;
 }
 
 
@@ -1752,14 +1746,14 @@ var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 let lastLong = null;
 let lastLat = null;
 
-function updateMap(lat, lon) {
+async function updateMap(lat, lon) {
     if (lastLat === null || lastLong === null || 
         Math.abs(lastLat - lat) > 0.00001 || Math.abs(lastLong - lon) > 0.00001) {
         
         lastLat = lat;
         lastLong = lon;
         
-        if (checkInternet()){
+        if (await checkInternet()){
             document.getElementById("map").style.display = "flex";
             marker.setLatLng([lat, lon]);
             map.setView([lat, lon], 13);
