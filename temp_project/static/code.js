@@ -1726,6 +1726,22 @@ function updateGPSView(latitude, longitude, altitude, speed, track, satellites) 
     satView.innerText = satellites;
 }
 
-async function updateMap(lat, long) {
-    //set the new Position in the Map
+var map = L.map('map').setView([52.52, 13.405], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+var customIcon = L.icon({
+    iconUrl: '../static/media/posMarker.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+});
+
+var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
+
+function updateMap(lat, lon) {
+    marker.setLatLng([lat, lon]);
+    map.setView([lat, lon], 13);
 }

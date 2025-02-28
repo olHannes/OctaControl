@@ -13,27 +13,38 @@
 <body>
     <div id="map"></div>
     <script>
-        var map = L.map('map').setView([52.52, 13.405], 13); // Startposition
+        var map = L.map('map').setView([52.52, 13.405], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        var marker = L.marker([52.52, 13.405]).addTo(map);
+        var customIcon = L.icon({
+            iconUrl: '../static/media/posMarker.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
 
-        function updateLocation() {
+        var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
+
+        function updateLocation(lat, lon) {
+            marker.setLatLng([lat, lon]);
+            map.setView([lat, lon], 13);
+        }
+
+        function updateLocationPolling() {
             fetch('http://0.0.0.0:5000/location')
                 .then(response => response.json())
                 .then(data => {
                     var lat = data.latitude;
                     var lon = data.longitude;
-                    marker.setLatLng([lat, lon]);
-                    map.setView([lat, lon], 13);
+                    updateLocation(lat, lon);
                 })
                 .catch(error => console.error('Fehler:', error));
         }
 
-        setInterval(updateLocation, 5000); // Alle 5 Sekunden aktualisieren
+        setInterval(updateLocationPolling, 2000);
     </script>
 </body>
 </html>
