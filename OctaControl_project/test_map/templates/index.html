@@ -25,8 +25,8 @@
             fetch('http://0.0.0.0:5000/location')
                 .then(response => response.json())
                 .then(data => {
-                    var lat = data.lat;
-                    var lon = data.lon;
+                    var lat = data.latitude;
+                    var lon = data.longitude;
                     marker.setLatLng([lat, lon]);
                     map.setView([lat, lon], 13);
                 })
