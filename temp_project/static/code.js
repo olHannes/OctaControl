@@ -1,3 +1,8 @@
+//global mapData
+var map=null;
+var customIcon=null;
+var maker=null;
+
 /**function executed when the page is loaded -> initial loadings */
 document.addEventListener ("DOMContentLoaded", () => {
 	    
@@ -19,20 +24,20 @@ document.addEventListener ("DOMContentLoaded", () => {
     updateVolumeDisplay(audio.volume);
 
 
-    var map = L.map('map').setView([52.52, 13.405], 15);
+    map = L.map('map').setView([52.52, 13.405], 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    var customIcon = L.icon({
+    customIcon = L.icon({
         iconUrl: '../static/media/posMarker.png',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
 
-    var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
+    marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
     setTimeout(map.invalidateSize(), 1000);
 });
