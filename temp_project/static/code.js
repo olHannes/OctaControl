@@ -1337,18 +1337,10 @@ async function disableWlan() {
 
 
 async function checkInternet() {
-    try {
-        const response = await fetch("https://www.google.com/favicon.ico", { method: "HEAD", mode: "no-cors" });
-        return true;
-    } catch (error) {
-        return false;
-    }
-}
+    if (!navigator.onLine) return false;
 
-
-async function checkInternet() {
     try {
-        const response = await fetch("https://www.google.com/favicon.ico", { method: "HEAD", mode: "no-cors" });
+        const response = await fetch("https://www.google.com/favicon.ico?nocache=" + new Date().getTime(), { method: "HEAD", cache: "no-store" });
         return true;
     } catch (error) {
         return false;
