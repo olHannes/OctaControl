@@ -927,7 +927,7 @@ async function update() {
         }
 
         const wlanStatus = await wlanResponse.json();
-        showErrorMessage("Wlan", "WLAN-Status: " + wlanStatus.status);
+        showErrorMessage("Wlan", "WLAN-Status: " + wlanStatus.status + "\n: ->bitte warte auf Verbindung");
 
         if (wlanStatus.status !== "enabled") {
             showErrorMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
