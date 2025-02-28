@@ -16,6 +16,7 @@ document.addEventListener ("DOMContentLoaded", () => {
         ,'../static/media/featureSettings.png'
     ]);
     preloadConfig();
+    updateVolumeDisplay(audio.volume);
 });
 
 
@@ -839,12 +840,6 @@ async function updateProgress() {
     }
 }
 
-// Progress and Device Polling
-setInterval(() => {
-    updateProgress();
-    getPlayerDevice();
-    setMetaData();
-}, 1000);
 
 // Button Animation for audio control
 function animateButton(button) {
@@ -1362,8 +1357,6 @@ function updateClock() {
     document.getElementById("widgetSecond").style.transform = `translateX(-50%) rotate(${secondAngle}deg)`;
 }
 
-updateClock();
-setInterval(updateClock, 1000);
 
 let showClock = false;
 function toggleClock() {
@@ -1500,7 +1493,9 @@ async function fetchGPSData(){
             const { latitude, longitude, altitude, speed, track, satellites, local_time } = result.data;
             
             updatePosition(track, speed, altitude, satellites);
-            updateMapPage(latitude, longitude, altitude, speed, track, satellites);
+            if (document.getElementById('mapSection').style.display != "none") {
+                updateMapPage(latitude, longitude, altitude, speed, track, satellites);
+            }
         } else {
             showErrorMessage("GPS Fehler", result.message);
             return;
@@ -1549,11 +1544,6 @@ function togglePosDisplay() {
     }
     updateConfig("isPosDisplayEnabled", posDisplay);
 }
-
-setTimeout(() => {
-    fetchGPSData();
-}, 1000);
-
 
 // Codeblock for touch-sound (toggle and Volume)
 const clickSoundPath = '../static/media/sounds/clickSound.mp3';
@@ -1610,10 +1600,6 @@ function setClickSoundVolume(louder) {
     updateVolumeDisplay(newVolume);
     updateConfig("touchSoundValue", newVolume);
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    updateVolumeDisplay(audio.volume);
-});
 
 
 // Codeblock for sleepTimer (toggle and duration)
@@ -1697,7 +1683,6 @@ sleepTimerDiv.addEventListener("pointerdown", function () {
 
 
 
-
 // MAP
 //#########################################################################################################################################
 //#########################################################################################################################################
@@ -1755,3 +1740,43 @@ function updateMap(lat, lon) {
         map.setView([lat, lon], 13);
     }
 }
+
+
+
+
+
+// global Interval
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
+
+function fetchGPSDataSafely() {
+    fetchGPSData().finally(() => {
+        setTimeout(fetchGPSDataSafely, 1500);
+    });
+}
+
+function getPlayerDeviceSafely() {
+    getPlayerDevice().finally(() => {
+        setTimeout(getPlayerDeviceSafely, 10000);
+    });
+}
+
+function updateProgressSafely() {
+    updateProgress().finally(() => {
+        setTimeout(updateProgressSafely, 1000);
+    });
+}
+
+function setMetaDataSafely() {
+    setMetaData().finally(() => {
+        setTimeout(setMetaDataSafely, 1000);
+    });
+}
+
+setInterval(updateClock(), 1000);
+
+fetchGPSDataSafely();
+getPlayerDeviceSafely();
+updateProgressSafely();
+setMetaDataSafely();
