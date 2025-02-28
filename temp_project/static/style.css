@@ -958,6 +958,32 @@ input:checked + .genre-color-slider::before {
     display: none;
 }
 
+/*Styles for GPS-Data Displays on the map-page*/
+#satellitView {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+
+#satellitView img {
+    width: 25px;
+    height: auto;
+    margin-right: 5px;
+}
+
+#satellitViewNum {
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+    transform: translateY(-3px);
+    text-align: right;
+}
+
 
 
 

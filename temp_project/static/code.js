@@ -1495,7 +1495,7 @@ async function fetchGPSData(){
             if(posDisplay){
                 updatePosition(direction, speed, altitude, satellites);
             }
-            updateMap(latitude, logging, altitude, speed, direction, satellites);
+            updateMapPage(latitude, logging, altitude, speed, direction, satellites);
         } else {
             showErrorMessage("GPS Fehler", result.message);
             return;
@@ -1698,6 +1698,26 @@ sleepTimerDiv.addEventListener("pointerdown", function () {
 //#########################################################################################################################################
 //#########################################################################################################################################
 
-function updateMap(latitude, logging, altitude, speed, direction, satellites){
+function updateMapPage(latitude, longitude, altitude, speed, direction, satellites){
+    updateGPSView(latitude, longitude, altitude, speed, direction, satellites);
+    updateMap(latitude, longitude);
+}
+
+const latView = document.getElementById();
+const lonView = document.getElementById();
+const altView = document.getElementById();
+const speView = document.getElementById();
+const traView = document.getElementById();
+const satView = document.getElementById("satellitViewNum");
+function updateGPSView(latitude, longitude, altitude, speed, direction, satellites){
+    latView.innerText = latitude;
+    lonView.innerText = longitude;
+    altView.innerText = altitude;
+    speView.innerText = speed;
+    traView.innerText = direction;
+    satView.innerText = satellites;
+}
+
+async function updateMap(lat, long) {
     //set the new Position in the Map
 }
