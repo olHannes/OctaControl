@@ -366,8 +366,13 @@ def setSystemTime():
                     formatted_time = utc_dt.strftime("%Y-%m-%d %H:%M:%S")
 
                     if utc_dt.year > 2000:
-                        subprocess.run(["sudo", "timedatectl", "set-time", formatted_time])        
+                        subprocess.run(["sudo", "systemctl", "stop", "systemd-timesyncd"])
+                        time.sleep(1)
+                        
+                        subprocess.run(["sudo", "timedatectl", "set-time", formatted_time])
                         print(f"Systemzeit auf {formatted_time} gesetzt.")
+
+                        subprocess.run(["sudo", "systemctl", "start", "systemd-timesyncd"])
                         return
             time.sleep(1)
             
