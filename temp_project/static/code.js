@@ -17,6 +17,23 @@ document.addEventListener ("DOMContentLoaded", () => {
     ]);
     preloadConfig();
     updateVolumeDisplay(audio.volume);
+
+
+    var map = L.map('map').setView([52.52, 13.405], 1);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    var customIcon = L.icon({
+        iconUrl: '../static/media/posMarker.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+    });
+
+    var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
+
 });
 
 
@@ -1727,21 +1744,6 @@ function updateGPSView(latitude, longitude, altitude, speed, track, satellites) 
     traView.innerText = track.toFixed(1) + "°";
     satView.innerText = satellites;
 }
-
-var map = L.map('map').setView([52.52, 13.405], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
-
-var customIcon = L.icon({
-    iconUrl: '../static/media/posMarker.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32]
-});
-
-var marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
 let lastLong = null;
 let lastLat = null;
