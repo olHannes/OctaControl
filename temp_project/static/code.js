@@ -115,6 +115,7 @@ async function preloadConfig() {
 
         if (json.isTouchSoundEnabled !== undefined) {
             if (json.isTouchSoundEnabled) {
+                isPlayClickSound=false;
                 togglePlayClickSound();
             }
         }
@@ -1510,13 +1511,14 @@ async function fetchGPSData(){
     }
 }
 
-const trackText = getDirectionText(trackDeg);
 const compass = document.getElementById("compass");
 const speedElement = document.getElementById("speed");
 const altitudeElement = document.getElementById("altitude");
 const altArrow = document.getElementById("altArrow");
 const satellitElement = document.getElementById('numSatellit');
+
 function updatePosition(trackDeg, speed, altitude, numSatellit) {
+    const trackText = getDirectionText(trackDeg);
     document.getElementById("direction").textContent = trackText;
     compass.style.transform = `rotate(${trackText}deg)`;
 
