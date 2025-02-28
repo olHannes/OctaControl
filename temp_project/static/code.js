@@ -929,11 +929,11 @@ async function update() {
 
         const wlanResponse = await fetch("http://127.0.0.1:5000/wlan/status");
         if (!wlanResponse.ok) {
-            throw new Error("WLAN-Status konnte nicht abgerufen werden");
+            showErrorMessage("Wlan-Status", "Wlan-Status konnte nicht abgerufen werden");
+            return;
         }
 
         const wlanStatus = await wlanResponse.json();
-        showErrorMessage("Wlan", "WLAN-Status: " + wlanStatus.status + "\n: ->bitte warte auf Verbindung");
 
         if (wlanStatus.status !== "enabled") {
             showErrorMessage('Netzwerkfehler', 'WLAN nicht verfügbar. Bitte in den Verbindungseinstellungen aktivieren!');
@@ -965,7 +965,7 @@ async function update() {
         }
 
     } catch (error) {
-        showErrorMessage("Fehler", "Fehler beim Abrufen des WLAN-Status: " + error.message);
+        showErrorMessage("Fehler", "Fehler beim Update: " + error.message);
     }
 }
 
