@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([52.52, 13.405], 13); // Startposition
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker = L.marker([52.52, 13.405]).addTo(map);
+
+        function updateLocation() {
+            fetch('http://127.0.0.1:5000/location')
+                .then(response => response.json())
+                .then(data => {
+                    var lat = data.lat;
+                    var lon = data.lon;
+                    marker.setLatLng([lat, lon]);
+                    map.setView([lat, lon], 13);
+                })
+                .catch(error => console.error('Fehler:', error));
+        }
+
+        setInterval(updateLocation, 5000); // Alle 5 Sekunden aktualisieren
+    </script>
+</body>
+</html>
