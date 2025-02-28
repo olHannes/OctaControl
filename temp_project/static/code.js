@@ -1703,18 +1703,18 @@ function updateMapPage(latitude, longitude, altitude, speed, direction, satellit
     updateMap(latitude, longitude);
 }
 
-const latView = document.getElementById();
-const lonView = document.getElementById();
-const altView = document.getElementById();
-const speView = document.getElementById();
-const traView = document.getElementById();
-const satView = document.getElementById("satellitViewNum");
+const latView = document.getElementById("latView");
+const lonView = document.getElementById("lonView");
+const altView = document.getElementById("altView");
+const speView = document.getElementById("speView");
+const traView = document.getElementById("traView");
+const satView = document.getElementById("satView");
 function updateGPSView(latitude, longitude, altitude, speed, direction, satellites){
     latView.innerText = latitude;
     lonView.innerText = longitude;
     altView.innerText = altitude;
     speView.innerText = speed;
-    traView.innerText = direction;
+    traView.innerText = direction+"°";
     satView.innerText = satellites;
 }
 

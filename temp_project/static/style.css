@@ -975,7 +975,7 @@ input:checked + .genre-color-slider::before {
     margin-right: 5px;
 }
 
-#satellitViewNum {
+#satView {
     font-size: 12px;
     font-weight: bold;
     color: white;
@@ -984,6 +984,44 @@ input:checked + .genre-color-slider::before {
     text-align: right;
 }
 
+
+#positionView {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 6px 24px;
+    border-radius: 10px;
+}
+
+#positionView span {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#movingStats {
+    position: absolute;
+    bottom: 10px;
+    left: 5%;
+    width: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+#movingStats span {
+    flex: 1;
+}
 
 
 
