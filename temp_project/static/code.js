@@ -107,6 +107,12 @@ async function preloadConfig() {
             }
         }
 
+        if (json.isSongDisplayEnabled !== undefined) {
+            if (json.isSongDisplayEnabled) {
+                toggleSongDisplay();
+            }
+        }
+
         if (json.touchSoundValue !== undefined) {
             lastClickVolume = json.touchSoundValue;
             audio.volume = lastClickVolume;
