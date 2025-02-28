@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import threading
 import gps
 import time
@@ -61,6 +61,10 @@ def pollingGPSData():
 def get_gps_data():
     with gps_lock:
         return gps_data.copy()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/location', methods=['GET'])
 def location():
