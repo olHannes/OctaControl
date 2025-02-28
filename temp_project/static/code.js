@@ -1709,12 +1709,15 @@ const altView = document.getElementById("altView");
 const speView = document.getElementById("speView");
 const traView = document.getElementById("traView");
 const satView = document.getElementById("satView");
+
 function updateGPSView(latitude, longitude, altitude, speed, track, satellites) {
+    let altitudeSymbol = altitude > 0 ? " ▲" : altitude < 0 ? " ▼" : " −";
+
     latView.innerText = latitude.toFixed(2) + "°";
     lonView.innerText = longitude.toFixed(2) + "°";
-    altView.innerText = altitude.toFixed(2) + " m";
-    speView.innerText = speed.toFixed(2) + " km/h";
-    traView.innerText = track.toFixed(2) + "°";
+    altView.innerText = altitude.toFixed(1) + " m" + altitudeSymbol;
+    speView.innerText = speed.toFixed(0) + " km/h";
+    traView.innerText = track.toFixed(1) + "°";
     satView.innerText = satellites;
 }
 
