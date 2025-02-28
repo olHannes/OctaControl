@@ -161,7 +161,7 @@ function fallbackFunctions() {
     toggleClock();
 
     sleepTimerActive = true;
-    currentSleepTimerIndex = 0;
+    currentSleepTimerIndex = 1;
     lastSleepTimerIndex = currentSleepTimerIndex;
     updateTimeIndicator();
     sleepTimerToggle.textContent = "SleepTimer: An";
@@ -1680,8 +1680,8 @@ function updateTimeIndicator() {
 sleepTimerDiv.addEventListener("pointerdown", function () {
     if (sleepTimerActive) {
         sleepTimerDiv.style.display = "none";
-        startSleepTimer();
     }
+    startSleepTimer();
 });
 
 
