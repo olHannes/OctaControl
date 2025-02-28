@@ -1498,9 +1498,7 @@ async function fetchGPSData(){
         if (result.status === "success" && result.data) {
             const { latitude, longitude, altitude, speed, track, satellites, local_time } = result.data;
             
-            if(posDisplay){
-                updatePosition(track, speed, altitude, satellites);
-            }
+            updatePosition(track, speed, altitude, satellites);
             updateMapPage(latitude, longitude, altitude, speed, track, satellites);
         } else {
             showErrorMessage("GPS Fehler", result.message);
@@ -1512,14 +1510,13 @@ async function fetchGPSData(){
     }
 }
 
+const trackText = getDirectionText(trackDeg);
+const compass = document.getElementById("compass");
+const speedElement = document.getElementById("speed");
+const altitudeElement = document.getElementById("altitude");
+const altArrow = document.getElementById("altArrow");
+const satellitElement = document.getElementById('numSatellit');
 function updatePosition(trackDeg, speed, altitude, numSatellit) {
-    const trackText = getDirectionText(trackDeg);
-    const compass = document.getElementById("compass");
-    const speedElement = document.getElementById("speed");
-    const altitudeElement = document.getElementById("altitude");
-    const altArrow = document.getElementById("altArrow");
-    const satellitElement = document.getElementById('numSatellit');
-
     document.getElementById("direction").textContent = trackText;
     compass.style.transform = `rotate(${trackText}deg)`;
 
