@@ -1193,6 +1193,7 @@ async function enableBt() {
             bluetoothToggle.src = '../static/media/turnOn.png';
             isBluetoothOn = !isBluetoothOn;
             updateConfig("isBluetoothEnabled", true);
+            showMessage("BT Connection", "Bluetooth wurde angeschaltet.");
         } else {
             bluetoothToggle.src = '../static/media/turnOff.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Einschalten von Bluetooth: " + data.message);        }
@@ -1218,6 +1219,7 @@ async function disableBt() {
             bluetoothToggle.src = '../static/media/turnOff.png';
             isBluetoothOn = !isBluetoothOn;
             updateConfig("isBluetoothEnabled", false);
+            showMessage("BT Connection", "Bluetooth wurde abgeschaltet.");
 
         } else {
             bluetoothToggle.src = '../static/media/turnOn.png';
@@ -1244,6 +1246,7 @@ async function enablePairingMode() {
             isPairingOn = !isPairingOn;
             pairingToggle.src = '../static/media/BTPairingOn.png';
             updateConfig("isPairingmodeEnabled", true);
+            showMessage("BT Connection", "Bluetooth-Pairing Mode wurde angeschaltet.");
         } else {
             pairingToggle.src = '../static/media/BTPairingOff.png';
              showErrorMessage("Bluetooth Fehler", "Fehler beim Aktivieren des Pairing-Modus: " + data.message);
@@ -1268,6 +1271,7 @@ async function disablePairingMode() {
             isPairingOn = !isPairingOn;
             pairingToggle.src = '../static/media/BTPairingOff.png';
             updateConfig("isPairingmodeEnabled", false);
+            showMessage("BT Connection", "Bluetooth-Pairing Mode wurde abgeschaltet.");
         } else {
             pairingToggle.src = '../static/media/BTPairingOn.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + data.message);
@@ -1297,6 +1301,7 @@ async function enableWlan() {
             wlanToggle.src = '../static/media/wlanOn.png';
             isWlanOn = true;
             updateConfig("isWlanEnabled", true);
+            showMessage("Online Modus", "Online Modus wurde gestartet: Internetverbindung wird vorbereitet");
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + data.message);
         }
@@ -1325,6 +1330,7 @@ async function disableWlan() {
             wlanToggle.src = '../static/media/wlanOff.png';
             isWlanOn = false;
             updateConfig("isWlanEnabled", false);
+            showMessage("Online Modus", "Online Modus wurde abgeschaltet: Internet-Features sind nicht mehr zugänglich.");
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + data.message);
         }
