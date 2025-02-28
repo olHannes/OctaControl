@@ -53,12 +53,6 @@ async function preloadConfig() {
         setBalanceSlider(getBalance());
         setVersion();
 
-        if (json.isTouchSoundEnabled !== undefined) {
-            if (json.isTouchSoundEnabled) {
-                togglePlayClickSound();
-            }
-        }
-
         if (json.isBluetoothEnabled !== undefined) {
             if (json.isBluetoothEnabled) {
                 enableBt();
@@ -117,6 +111,12 @@ async function preloadConfig() {
             lastClickVolume = json.touchSoundValue;
             audio.volume = lastClickVolume;
             updateVolumeDisplay(json.touchSoundValue);
+        }
+
+        if (json.isTouchSoundEnabled !== undefined) {
+            if (json.isTouchSoundEnabled) {
+                togglePlayClickSound();
+            }
         }
 
         if (json.isClockEnabled !== undefined) {
