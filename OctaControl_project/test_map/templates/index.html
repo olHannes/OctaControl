@@ -22,7 +22,7 @@
         var marker = L.marker([52.52, 13.405]).addTo(map);
 
         function updateLocation() {
-            fetch('http://127.0.0.1:5000/location')
+            fetch('http://0.0.0.0:5000/location')
                 .then(response => response.json())
                 .then(data => {
                     var lat = data.lat;
