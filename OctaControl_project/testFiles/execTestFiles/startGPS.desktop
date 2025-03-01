@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Mein Python Programm
+Exec=python3 ../GPSTest.py
+Icon=utilities-terminal
+Terminal=true
+Categories=Development;
