@@ -1268,6 +1268,7 @@ wlanHeader.addEventListener('click', async () => {
 });
 
 // Bluetooth control functions
+let bluetoothNameIntervall = null;
 
 async function enableBt() {
     console.log("Bluetooth eingeschaltet.");
@@ -1286,6 +1287,9 @@ async function enableBt() {
             isBluetoothOn = !isBluetoothOn;
             updateConfig("isBluetoothEnabled", true);
             showMessage("BT Connection", "Bluetooth wurde angeschaltet.");
+            bluetoothNameIntervall = setInterval(async => {
+                getBluetoothName();
+            }, 5000);
         } else {
             bluetoothToggle.src = '../static/media/turnOff.png';
             showErrorMessage("Bluetooth Fehler", "Fehler beim Einschalten von Bluetooth: " + data.message);        }
@@ -1297,6 +1301,7 @@ async function enableBt() {
 }
 
 async function disableBt() {
+    clearInterval(bluetoothNameIntervall);
     console.log("Bluetooth ausgeschaltet.");
     try {
         const response = await fetch("http://127.0.0.1:5000/bluetooth/off", {
@@ -1372,6 +1377,36 @@ async function disablePairingMode() {
         showErrorMessage("Bluetooth Fehler", "Fehler beim Deaktivieren des Pairing-Modus: " + error);
     }
 }
+
+
+const bluetoothName = document.getElementById('bluetoothName');
+async function getBluetoothName() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/bluetooth/connection/getName");
+        if (!response.ok) {
+            throw new Error('Zugriff auf getName-Route war nicht möglich!');
+        }
+        const data = await response.json();
+
+        if (data && data.name) {
+            if(data.name != "no connection"){
+                bluetoothName.innerText = data.name;
+                bluetoothName.style.color="green";
+                clearInterval(bluetoothNameIntervall);
+            } else {
+                bluetoothName.innerText="no connection";
+                bluetoothName.style.color="red";
+            }
+        } else {
+            bluetoothName.innerText="no connection";
+            bluetoothName.style.color="red";
+        }
+    } catch (error) {
+        showErrorMessage("Bluetooth Fehler:", e);
+    }
+}
+
+
 
 
 // Wlan control functions

@@ -260,7 +260,10 @@ def pairing_mode_off():
     result = disable_pairing_mode()
     return jsonify(result)
 
-
+@app_routes.route("/bluetooth/connection/getName", methods=["GET"])
+def requestBluetoothName():
+    result = getConnBluetoothName()
+    return jsonify({"name": result})
 
 
 

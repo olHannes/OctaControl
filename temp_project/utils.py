@@ -229,6 +229,16 @@ def disable_pairing_mode():
         return {"status": "error", "message": str(e)}
 
     
+def getConnBluetoothName():
+    try:
+        result = subprocess.check_output(['bluetoothctl', 'info']).decode('utf-8').strip()
+        if "Name" in result:
+            start_index = result.find("Name:") + 6
+            end_index = result.find("\n", start_index)
+            return result[start_index:end_index].strip()
+        return "no connection"
+    except subprocess.CalledProcessError:
+        return "no connection!"
 
 
 
