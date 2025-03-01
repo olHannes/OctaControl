@@ -295,7 +295,7 @@ def requestInternetAccess():
 @app_routes.route("/wlan/connection/getName", methods=["GET"])
 def requestWlanName():
     result = getConnWlanName()
-    return jsonify("name": result)
+    return jsonify({"name": result})
 
 
 #System Routes
