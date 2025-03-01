@@ -49,7 +49,7 @@ document.addEventListener ("DOMContentLoaded", () => {
             btn.style.cursor = 'pointer';
             
             btn.onclick = function(){
-                map.setView([lat, lon], 15);
+                map.setView([lastLat, lastLong], 15);
             };
             return btn;
         },
