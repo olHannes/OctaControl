@@ -149,6 +149,14 @@ async function preloadConfig() {
             disablePairingMode();
         }
 
+        if (json.isWlanEnabled !== undefined) {
+            if(json.isWlanEnabled) {
+                enableWlan();
+            } else {
+                disableWlan();
+            }
+        }
+
         document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
         updateBackgroundColor();
         document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
@@ -230,7 +238,8 @@ function fallbackFunctions() {
     setVolumeSlider(getVolume());
     setBalanceSlider(getBalance());
     togglePlayClickSound();
-    enableBt();  
+    enableBt();
+    disableWlan();  
     document.getElementById('colorSlider').value = 39;
     document.getElementById('brightnessSlider').value = 100;
     updateBrightness();
