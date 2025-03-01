@@ -1,66 +1,69 @@
-document.addEventListener("DOMContentLoaded", () => {
-    
+//global mapData
+var map=null;
+var customIcon=null;
+var mapDarkMode=false;
+
+// TILE-LAYER für helles und dunkles Design
+const lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+});
+const darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+/**function executed when the page is loaded -> initial loadings */
+document.addEventListener ("DOMContentLoaded", () => {
+	    
     preloadImages([
-        '../static/media/trunkPowerOn_img.png',
-        '../static/media/trunkPowerOff_img.png',
-        '../static/media/home_img.png',
-        '../static/media/audioControl_img.png',
-        '../static/media/settings_img.png',
-        '../static/media/turnOn.png',
-        '../static/media/turnOff.png',
-        '../static/media/BTPairingOn.png',
-        '../static/media/BTPairingOff.png',
-        '../static/media/wlanOn.png',
-        '../static/media/wlanOff.png',
-        '../static/media/featureSettings.png'
+        '../static/media/trunkPowerOn_img.png'
+        ,'../static/media/trunkPowerOff_img.png'
+        ,'../static/media/home_img.png'
+        ,'../static/media/audioControl_img.png'
+        ,'../static/media/settings_img.png'
+        ,'../static/media/turnOn.png'
+        ,'../static/media/turnOff.png'
+        ,'../static/media/BTPairingOn.png'
+        ,'../static/media/BTPairingOff.png'
+        ,'../static/media/wlanOn.png'
+        ,'../static/media/wlanOff.png'
+        ,'../static/media/featureSettings.png'
     ]);
-    
     preloadConfig();
     updateVolumeDisplay(audio.volume);
 
-    // TILE-LAYER für helles und dunkles Design
-    const lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    });
-    const darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-    });
 
-    // MAP Initialisation
-    const map = L.map('map').setView([52.52, 13.405], 15);
+    map = L.map('map').setView([52.52, 13.405], 15);
     lightTileLayer.addTo(map);
 
-    // MARKER setzen
-    const customIcon = L.icon({
+    customIcon = L.icon({
         iconUrl: '../static/media/posMarker.png',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
 
-    const marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
+    marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
-    // RESET-VIEW Button
+
     L.Control.ResetView = L.Control.extend({
         onAdd: function(map) {
-            const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
+            var btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
             btn.innerHTML = '⟳';
             btn.style.backgroundColor = 'white';
             btn.style.width = '30px';
             btn.style.height = '30px';
             btn.style.cursor = 'pointer';
-
-            btn.onclick = function() {
+            
+            btn.onclick = function(){
                 map.setView([lastLat, lastLong], 15);
             };
             return btn;
         },
-        onRemove: function(map) {}
+    
+        onRemove: function(map) {
+        }
     });
     new L.Control.ResetView({ position: 'topleft' }).addTo(map);
-
-    // COLOR-TOGGLE Button
-    let darkMode = false;
 
     L.Control.ColorToggle = L.Control.extend({
         onAdd: function(map) {
@@ -72,14 +75,14 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.style.cursor = 'pointer';
 
             btn.onclick = function() {
-                if (darkMode) {
+                if (mapDarkMode) {
                     map.removeLayer(darkTileLayer);
                     lightTileLayer.addTo(map);
                 } else {
                     map.removeLayer(lightTileLayer);
                     darkTileLayer.addTo(map);
                 }
-                darkMode = !darkMode;
+                mapDarkMode = !mapDarkMode;
             };
             return btn;
         },
