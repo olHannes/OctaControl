@@ -14,6 +14,8 @@ import gps
 import pytz
 import requests
 
+from AudioMetadata import getPlayerDeviceName
+
 # define global fields
 trunkPowerPin = 23
 climatePin = 25
@@ -231,13 +233,11 @@ def disable_pairing_mode():
     
 def getConnBluetoothName():
     try:
-        result = subprocess.check_output(['bluetoothctl', 'info']).decode('utf-8').strip()
-        if "Name" in result:
-            start_index = result.find("Name:") + 6
-            end_index = result.find("\n", start_index)
-            return result[start_index:end_index].strip()
-        return "no connection"
-    except subprocess.CalledProcessError:
+        result = getPlayerDeviceName()
+        if result == "Unknown Device":
+            return "no connection"
+        return result
+    except:
         return "no connection!"
 
 

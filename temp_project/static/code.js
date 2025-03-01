@@ -1385,7 +1385,7 @@ async function getBluetoothName() {
         const data = await response.json();
 
         if (data && data.name) {
-            if(data.name != "no connection"){
+            if(data.name != "no connection" && data.name != "no connection!"){
                 bluetoothName.innerText = data.name;
                 bluetoothName.style.color="green";
                 clearInterval(bluetoothNameIntervall);
