@@ -1023,10 +1023,6 @@ async function update() {
             return;
         }
         
-        if (! await checkInternet()) {
-            showErrorMessage("Netzwerkfehler", "Die Internetverbindung ist noch nicht vorhanden. Bitte in den verbindungseinstellungen aktivieren, oder einen Moment warten!");
-            return;
-        }
 
         disableSystemSettings();
 
@@ -1915,6 +1911,7 @@ async function updateMap(lat, lon) {
         
         if (await checkInternet()){
             document.getElementById("map").style.display = "flex";
+            document.getElementById("offlineMessage").style.display = "none";
             marker.setLatLng([lat, lon]);
             map.setView([lat, lon], 15);
         } else {
