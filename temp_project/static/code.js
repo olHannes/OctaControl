@@ -38,7 +38,6 @@ document.addEventListener ("DOMContentLoaded", () => {
 
     marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
-});
 
     L.Control.ResetView = L.Control.extend({
         onAdd: function(map) {
@@ -60,7 +59,7 @@ document.addEventListener ("DOMContentLoaded", () => {
     });
 
     new L.Control.ResetView({ position: 'topleft' }).addTo(map);
-
+});
 
 
 
