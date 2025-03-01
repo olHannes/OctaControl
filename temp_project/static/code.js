@@ -1366,6 +1366,7 @@ async function disablePairingMode() {
 
 
 // Wlan control functions
+let wlanNameIntervall = null;
 async function enableWlan() {
     console.log("Wlan eingeschaltet.");
     wlanToggle.style.pointerEvents = 'none';
@@ -1385,6 +1386,7 @@ async function enableWlan() {
             isWlanOn = true;
             updateConfig("isWlanEnabled", true);
             showMessage("Online Modus", "Online Modus wurde gestartet: Internetverbindung wird vorbereitet");
+            wlanNameIntervall = setInterval();
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + data.message);
         }
@@ -1426,7 +1428,6 @@ async function disableWlan() {
 
 
 async function checkInternet() {
-
     try {
         const response = await fetch("http://127.0.0.1:5000/wlan/connection/getAccess");
         if (!response.ok) {
@@ -1444,6 +1445,33 @@ async function checkInternet() {
         return false;
     }
 }
+
+const wlanName = document.getElementById('wlanName');
+async function getWlanName() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/wlan/connection/getName");
+        if (!response.ok) {
+            throw new Error('Zugriff auf getName-Route war nicht möglich!');
+        }
+        const data = await response.json();
+
+        if (data && data.name) {
+            if(data.name != "no connection"){
+                wlanName.innerText = data.name;
+                wlanName.style.color="green";
+            } else {
+                wlanName.innerText="no connection";
+                wlanName.style.color="red";
+            }
+        } else {
+            wlanName.innerText="no connection";
+            wlanName.style.color="red";
+        }
+    } catch (error) {
+        showErrorMessage("Wlan Fehler:", e);
+    }
+}
+
 
 
 // Feature Settings
