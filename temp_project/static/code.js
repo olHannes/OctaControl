@@ -64,6 +64,28 @@ document.addEventListener ("DOMContentLoaded", () => {
 
 
 
+L.Control.ResetView = L.Control.extend({
+    onAdd: function(map) {
+        var btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
+        btn.innerHTML = '⟳';
+        btn.style.backgroundColor = 'white';
+        btn.style.width = '30px';
+        btn.style.height = '30px';
+        btn.style.cursor = 'pointer';
+        
+        btn.onclick = function(){
+            map.setView([lat, lon], 15);
+        };
+        return btn;
+    },
+    
+    onRemove: function(map) {
+    }
+});
+
+new L.Control.ResetView({ position: 'topleft' }).addTo(map);
+
+
 
 // initial config-settings
 //#########################################################################################################################################
