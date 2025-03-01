@@ -1395,7 +1395,9 @@ async function enableWlan() {
             isWlanOn = true;
             updateConfig("isWlanEnabled", true);
             showMessage("Online Modus", "Online Modus wurde gestartet: Internetverbindung wird vorbereitet");
-            wlanNameIntervall = setInterval();
+            wlanNameIntervall = setInterval(async () => {
+                await getWlanName();
+            }, 5000);
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Einschalten von Wlan: " + data.message);
         }
@@ -1409,6 +1411,7 @@ async function enableWlan() {
 async function disableWlan() {
     console.log("Wlan ausgeschaltet.");
     wlanToggle.style.pointerEvents = 'none';
+    clearInterval(wlanNameIntervall);
     
     try {
         const response = await fetch("http://127.0.0.1:5000/wlan/off", {
@@ -1425,6 +1428,7 @@ async function disableWlan() {
             isWlanOn = false;
             updateConfig("isWlanEnabled", false);
             showMessage("Online Modus", "Online Modus wurde abgeschaltet: Internet-Features sind nicht mehr zugänglich.");
+            getWlanName();
         } else {
             showErrorMessage("Wlan Fehler", "Fehler beim Ausschalten von Wlan: " + data.message);
         }
@@ -1468,6 +1472,7 @@ async function getWlanName() {
             if(data.name != "no connection"){
                 wlanName.innerText = data.name;
                 wlanName.style.color="green";
+                clearInterval(wlanNameIntervall);
             } else {
                 wlanName.innerText="no connection";
                 wlanName.style.color="red";
