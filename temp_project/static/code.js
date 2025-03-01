@@ -39,7 +39,6 @@ document.addEventListener ("DOMContentLoaded", () => {
 
     marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
-    setTimeout(map.invalidateSize(), 1000);
 });
 
 
@@ -478,6 +477,10 @@ function switchToSection(section){
             document.getElementById('home').style.display = 'none';
             document.getElementById('audioControl').style.display = 'none';
             document.getElementById('mapSection').style.display="block";
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 500);
+            
             break;
         case 'connections':
             document.getElementById('connPanel').style.display='block';
