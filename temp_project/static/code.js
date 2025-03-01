@@ -1035,6 +1035,7 @@ async function update() {
             } else {
                 showMessage("Update erfolgreich", "Das System ist jetzt aktualisiert.");
                 document.getElementById('rebootBtn').style.animation = "suggestion 2s ease-in infinite";
+                setVersion();
             }
         } catch (error) {
             showErrorMessage("System Fehler", "Fehler beim Update: " + error.message);
@@ -1045,6 +1046,11 @@ async function update() {
     } catch (error) {
         showErrorMessage("Fehler", "Fehler beim Update: " + error.message);
     }
+}
+
+
+function reloadPage(){
+    window.location.replace(window.location.href);
 }
 
 
