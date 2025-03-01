@@ -9,6 +9,6 @@ while True:
 		temp = dht_device.temperature
 		hum = dht_device.humidity
 		print(f"temp: {temp}, hum.: {hum} ")
-	except RuntimeError as error:
-		print(f"Fehler: {error}")
+	except Exception as e:
+		print(f"Error: {e}")
 	time.sleep(2)

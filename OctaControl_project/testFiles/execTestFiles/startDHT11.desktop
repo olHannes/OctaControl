@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Mein Python Programm
+Name=DHT11 Test
 Exec=python3 ../startDHT11_test.py
 Icon=utilities-terminal
 Terminal=true

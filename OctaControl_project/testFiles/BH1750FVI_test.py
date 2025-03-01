@@ -20,10 +20,10 @@ def getLux(bus):
 bus = smbus.SMBus(1)
 initBH1750(bus)
 
-try:
-    while True:
+while True:
+    try:
         lux_value = getLux(bus)
         print(f"Lux: {lux_value}")
-        time.sleep(2)
-except KeyboardInterrupt:
-    print("Messung beendet")
+    except Exception as e:
+        print(f"Error: {e}")
+    time.sleep(2)

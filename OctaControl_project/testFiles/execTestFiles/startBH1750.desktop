@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Mein Python Programm
+Name=BH1750DVI Test
 Exec=python3 ../BH1750DVI_test.py
 Icon=utilities-terminal
 Terminal=true
