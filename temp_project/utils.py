@@ -12,6 +12,7 @@ import time
 import datetime
 import gps
 import pytz
+import requests
 
 # define global fields
 trunkPowerPin = 23
@@ -263,8 +264,19 @@ def getWlanStatus():
         return {"status": "error", "message": str(e)}
     
 
+def getInternetAccess(url="http://google.com"):
+    try:
+        response = requests.get(url, timeout=3)
+        return response.status_code == 200
+    except requests.ConnectionError:
+        return False
 
-
+def getConnWlanName():
+    try:
+        result = subprocess.check_output(['iwgetid', '-r']).decode('utf-8').strip()
+        return result
+    except subprocess.CalledProcessError:
+        return "no connection"
 
 #System Helper-Functions
 ####################################################################################################################################

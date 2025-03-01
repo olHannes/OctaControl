@@ -287,7 +287,15 @@ def requestWlanStatus():
     return jsonify(result)
 
 
+@app_routes.route("wlan/connection/getAccess", methods=["GET"])
+def requestInternetAccess():
+    result= getInternetAccess()
+    return jsonify(result)
 
+@app_routes.route("/wlan/connection/getName", methods=["GET"])
+def requestWlanName():
+    result = getConnWlanName()
+    return jsonify(result)
 
 
 #System Routes

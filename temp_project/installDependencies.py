@@ -30,7 +30,8 @@ def install_pip_packages():
         "Pillow",
         "adafruit-circuitpython-dht", "smbus2", "RPi.GPIO",
         "gpsd-py3",
-        "pynmea2", "pyserial"
+        "pynmea2", "pyserial",
+        "requests"
     ]
     try:
         subprocess.run(["pip3", "install", "--break-system-packages"] + pip_packages, check=True)

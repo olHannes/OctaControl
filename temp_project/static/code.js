@@ -1426,8 +1426,23 @@ async function disableWlan() {
 
 
 async function checkInternet() {
-    if (!navigator.onLine) return false;
-    return true;
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/wlan/connection/getAccess");
+        if (!response.ok) {
+            throw new Error('Zugriff auf getAccess-Route war nicht möglich!');
+        }
+        const data = await response.json();
+
+        if (data && data.hasAccess) {
+            return data.hasAccess;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        showErrorMessage("Fehler beim Abrufen des Internet-Zugriffs", error);
+        return false;
+    }
 }
 
 
