@@ -1,7 +1,6 @@
 //global mapData
 var map=null;
 var customIcon=null;
-var maker=null;
 
 /**function executed when the page is loaded -> initial loadings */
 document.addEventListener ("DOMContentLoaded", () => {
@@ -40,6 +39,29 @@ document.addEventListener ("DOMContentLoaded", () => {
     marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
 });
+
+    L.Control.ResetView = L.Control.extend({
+        onAdd: function(map) {
+            var btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
+            btn.innerHTML = '⟳';
+            btn.style.backgroundColor = 'white';
+            btn.style.width = '30px';
+            btn.style.height = '30px';
+            btn.style.cursor = 'pointer';
+            
+            btn.onclick = function(){
+                map.setView([lat, lon], 15);
+            };
+            return btn;
+        },
+    
+        onRemove: function(map) {
+        }
+    });
+
+    new L.Control.ResetView({ position: 'topleft' }).addTo(map);
+
+
 
 
 
@@ -947,8 +969,6 @@ async function reboot(){
 async function update() {
     playClickSound();
     try {
-        showMessage("Update", "Versuche, das System zu aktualisieren...");
-
         const wlanResponse = await fetch("http://127.0.0.1:5000/wlan/status");
         if (!wlanResponse.ok) {
             showErrorMessage("Wlan-Status", "Wlan-Status konnte nicht abgerufen werden");
@@ -982,7 +1002,7 @@ async function update() {
                 const errorData = await response.json();
                 showErrorMessage("System Fehler", "Fehler beim Update: " + errorData.message);
             } else {
-                showMessage("Update erfolgreich", "Das System wird jetzt aktualisiert.");
+                showMessage("Update erfolgreich", "Das System ist jetzt aktualisiert.");
                 document.getElementById('rebootBtn').style.animation = "suggestion 2s ease-in infinite";
             }
         } catch (error) {
