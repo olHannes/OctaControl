@@ -1909,7 +1909,7 @@ async function updateMap(lat, lon) {
         lastLat = lat;
         lastLong = lon;
         
-        if (await checkInternet()){
+        if (true){ //await checkInternet()){
             document.getElementById("map").style.display = "flex";
             document.getElementById("offlineMessage").style.display = "none";
             marker.setLatLng([lat, lon]);
