@@ -1,7 +1,7 @@
-//global mapData
-var map=null;
-var customIcon=null;
-var mapDarkMode=false;
+// Global mapData
+var map = null;
+var customIcon = null;
+var mapDarkMode = false;
 
 // TILE-LAYER für helles und dunkles Design
 const lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -11,26 +11,24 @@ const darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z
     attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
 });
 
-/**function executed when the page is loaded -> initial loadings */
-document.addEventListener ("DOMContentLoaded", () => {
-	    
+document.addEventListener("DOMContentLoaded", () => {
+
     preloadImages([
-        '../static/media/trunkPowerOn_img.png'
-        ,'../static/media/trunkPowerOff_img.png'
-        ,'../static/media/home_img.png'
-        ,'../static/media/audioControl_img.png'
-        ,'../static/media/settings_img.png'
-        ,'../static/media/turnOn.png'
-        ,'../static/media/turnOff.png'
-        ,'../static/media/BTPairingOn.png'
-        ,'../static/media/BTPairingOff.png'
-        ,'../static/media/wlanOn.png'
-        ,'../static/media/wlanOff.png'
-        ,'../static/media/featureSettings.png'
+        '../static/media/trunkPowerOn_img.png',
+        '../static/media/trunkPowerOff_img.png',
+        '../static/media/home_img.png',
+        '../static/media/audioControl_img.png',
+        '../static/media/settings_img.png',
+        '../static/media/turnOn.png',
+        '../static/media/turnOff.png',
+        '../static/media/BTPairingOn.png',
+        '../static/media/BTPairingOff.png',
+        '../static/media/wlanOn.png',
+        '../static/media/wlanOff.png',
+        '../static/media/featureSettings.png'
     ]);
     preloadConfig();
     updateVolumeDisplay(audio.volume);
-
 
     map = L.map('map').setView([52.52, 13.405], 15);
     lightTileLayer.addTo(map);
@@ -44,35 +42,40 @@ document.addEventListener ("DOMContentLoaded", () => {
 
     marker = L.marker([52.52, 13.405], { icon: customIcon }).addTo(map);
 
-
+    // Reset-View Button (Größe erhöht)
     L.Control.ResetView = L.Control.extend({
         onAdd: function(map) {
             var btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
             btn.innerHTML = '⟳';
             btn.style.backgroundColor = 'white';
-            btn.style.width = '30px';
-            btn.style.height = '30px';
+            btn.style.width = '50px';
+            btn.style.height = '50px';
+            btn.style.fontSize = '24px';
             btn.style.cursor = 'pointer';
-            
-            btn.onclick = function(){
-                map.setView([lastLat, lastLong], 15);
+            btn.style.border = 'none';
+            btn.style.borderRadius = '8px';
+
+            btn.onclick = function() {
+                map.setView([52.52, 13.405], 15);
             };
             return btn;
         },
-    
-        onRemove: function(map) {
-        }
+        onRemove: function(map) {}
     });
     new L.Control.ResetView({ position: 'topleft' }).addTo(map);
 
+    // Dark/Light-Mode Button (Größe erhöht)
     L.Control.ColorToggle = L.Control.extend({
         onAdd: function(map) {
             const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
             btn.innerHTML = '🌗';
             btn.style.backgroundColor = 'white';
-            btn.style.width = '30px';
-            btn.style.height = '30px';
+            btn.style.width = '50px';
+            btn.style.height = '50px';
+            btn.style.fontSize = '24px';
             btn.style.cursor = 'pointer';
+            btn.style.border = 'none';
+            btn.style.borderRadius = '8px';
 
             btn.onclick = function() {
                 if (mapDarkMode) {
@@ -88,8 +91,18 @@ document.addEventListener ("DOMContentLoaded", () => {
         },
         onRemove: function(map) {}
     });
-
     new L.Control.ColorToggle({ position: 'topleft' }).addTo(map);
+
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 24px !important;
+            border-radius: 8px !important;
+        }
+    `;
+    document.head.appendChild(style);
 });
 
 
