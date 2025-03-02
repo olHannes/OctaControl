@@ -94,15 +94,18 @@ document.addEventListener("DOMContentLoaded", () => {
     new L.Control.ColorToggle({ position: 'topleft' }).addTo(map);
 
     const style = document.createElement('style');
-    style.innerHTML = `
-        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-            width: 50px !important;
-            height: 50px !important;
-            font-size: 24px !important;
-            border-radius: 8px !important;
-        }
-    `;
-    document.head.appendChild(style);
+style.innerHTML = `
+    .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 24px !important;
+        border-radius: 8px !important;
+        text-align: center !important;
+        line-height: 50px !important;
+    }
+`;
+document.head.appendChild(style);
+
 });
 
 
