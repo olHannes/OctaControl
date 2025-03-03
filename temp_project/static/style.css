@@ -484,7 +484,7 @@ input[type=range]::-webkit-slider-thumb {
     background-position: center;
 }
 #trunkPowerBtn {
-    background: url('media/trunkPowerOn_img.png') no-repeat center center;
+    background: url('media/trunkPowerOff_img.png') no-repeat center center;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
