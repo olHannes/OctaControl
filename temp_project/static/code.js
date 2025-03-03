@@ -1696,7 +1696,14 @@ async function fetchGPSData(){
         if (result.status === "success" && result.data) {
             const { latitude, longitude, altitude, speed, track, satellites, local_time } = result.data;
             
-            updatePosition(track, speed, altitude, satellites);
+            if(satellites > 0 && longitude != 0.0 && latitude != 0.0) {
+                document.getElementById('waitPositionDisplay').style.display="none";
+                document.getElementById('GPSData').style.display="block";
+                updatePosition(track, speed, altitude, satellites);
+            } else {
+                document.getElementById('GPSData').style.display="none";
+                document.getElementById('waitPositionDisplay').style.display="block";
+            }
             if (document.getElementById('mapSection').style.display != "none") {
                 updateMapPage(latitude, longitude, altitude, speed, track, satellites);
             }

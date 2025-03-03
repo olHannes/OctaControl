@@ -55,15 +55,21 @@
             <p id="songDisplayText">Songtitle: unknown | Interpret: unknown</p>
         </div>
         
+
         <div id="positionDisplay" onclick="switchToSection('mapSection')">
-            <div id="compassContainer">
-                <img id="compass" src="../static/media/compass.png" alt="Kompass">
+            <div id="waitPositionDisplay">
+                <p>Suche Satelliten...</p>
             </div>
-            <p id="posDisplayText"><span id="direction">0</span> | <span id="altitude">0</span> m <span id="altArrow">⬆</span> | <span id="speed">0</span> km/h</p>
-            <div id="satellitContainer">
-                <img id="satellit" src="../static/media/satellit.png" alt="Sat">
+            <div id="GPSData" style="display: none;">
+                <div id="compassContainer">
+                    <img id="compass" src="../static/media/compass.png" alt="Kompass">
+                </div>
+                <p id="posDisplayText"><span id="direction">0</span> | <span id="altitude">0</span> m <span id="altArrow">⬆</span> | <span id="speed">0</span> km/h</p>
+                <div id="satellitContainer">
+                    <img id="satellit" src="../static/media/satellit.png" alt="Sat">
+                </div>
+                <p id="numSatellit">0</p>
             </div>
-            <p id="numSatellit">0</p>
         </div>
         
     </div>
