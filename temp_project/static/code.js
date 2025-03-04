@@ -1698,7 +1698,7 @@ async function fetchGPSData(){
             
             if(satellites > 0 && longitude != 0.0 && latitude != 0.0) {
                 document.getElementById('waitPositionDisplay').style.display="none";
-                document.getElementById('GPSData').style.display="block";
+                document.getElementById('GPSData').style.display="flex";
                 updatePosition(track, speed, altitude, satellites);
             } else {
                 document.getElementById('GPSData').style.display="none";
