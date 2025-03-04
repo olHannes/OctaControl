@@ -1329,6 +1329,8 @@ async function disableBt() {
             isBluetoothOn = !isBluetoothOn;
             updateConfig("isBluetoothEnabled", false);
             showMessage("BT Connection", "Bluetooth wurde abgeschaltet.");
+            bluetoothName.innerText="no connection";
+            bluetoothName.style.color="red";
 
         } else {
             bluetoothToggle.src = '../static/media/turnOn.png';
