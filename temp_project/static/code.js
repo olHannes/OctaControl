@@ -1582,6 +1582,11 @@ function toggleClock() {
 }
 
 
+// Function to convert Lux Values to a valid Slider Value
+function convertLuxToSlider(lux, luxMin = 0, luxMax = 1000) {
+    return Math.min(Math.max((lux - luxMin) / (luxMax - luxMin) * 100, 0), 100);
+}
+
 
 // Codeblock for Adaptive Brightness
 const adaptiveBrightnessToggle = document.getElementById('adaptiveBrightness');
@@ -1596,7 +1601,9 @@ async function fetchBrightness() {
         }
         const data = await response.json();
         if (data && typeof data.brightness === "number" && !isNaN(data.brightness)) {
-            brightnessSlider.value = data.brightness;
+            
+            const sliderValue = convertLuxToSlider(data.brightness, 0, 1000);
+            brightnessSlider.value = sliderValue;
             updateBrightness();
         }
     } catch (error) {
