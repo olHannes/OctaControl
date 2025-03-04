@@ -2,6 +2,7 @@ import os
 import subprocess
 import json
 import threading
+import smbus
 import RPi.GPIO as GPIO
 import board
 import serial
@@ -24,6 +25,7 @@ dht_device = adafruit_dht.DHT11(board.D25)
 FILE_PATH = "climateData.txt"
 climateLock = threading.Lock()
 
+BH1750_I2C_ADDR = 0x23
 brightnessValues = []
 brightness_lock = threading.Lock()
 
@@ -334,7 +336,12 @@ def update_system():
 ####################################################################################################################################
 # Codeblock Brightness                                                                                                                                              Brightness
 def readBrightness():
-    return 30 # hier muss der i2C-Sensor ausgelesen werden
+    bus = smbus.SMBus(1)
+    bus.write_byte(BH1750_I2C_ADDR, 0x1)
+    time.sleep(0.2)
+    data = bus.read_i2c_block_data(BH1750_I2C_ADDR, 2)
+    lux = (data[0] << 8 | data[1]) / 1.2
+    return round(lux, 2)
 
 def updateBrightnessData():
     global brightnessValues
