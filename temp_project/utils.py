@@ -378,36 +378,18 @@ def updateClimateData():
         time.sleep(5)
 
 
-#Function to set initial System-Time                                                                                                                                System-Time
-def setSystemTime():
-    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-    print("Warte auf gültige GPS-Zeit...")
+
+timeInitialized=False
+def setSystemTime(pTime):
+    if pTime.year > 2000:
+        subprocess.run(["sudo", "systemctl", "stop", "systemd-timesyncd"])
+        time.sleep(1)
     
-    while True:
-        try:
-            report = session.next()
-            
-            if report['class'] == 'TPV':
-                utc_time = getattr(report, 'time', None)
+        subprocess.run(["sudo", "timedatectl", "set-time", pTime])
+        print(f"Systemzeit auf {pTime} gesetzt.")
+        timeInitialized=True
 
-                if utc_time:
-                    utc_dt = datetime.datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                    formatted_time = utc_dt.strftime("%Y-%m-%d %H:%M:%S")
-
-                    if utc_dt.year > 2000:
-                        subprocess.run(["sudo", "systemctl", "stop", "systemd-timesyncd"])
-                        time.sleep(1)
-                        
-                        subprocess.run(["sudo", "timedatectl", "set-time", formatted_time])
-                        print(f"Systemzeit auf {formatted_time} gesetzt.")
-
-                        subprocess.run(["sudo", "systemctl", "start", "systemd-timesyncd"])
-                        return
-            time.sleep(1)
-            
-        except Exception as e:
-            print(f"Fehler beim Lesen der GPS-Zeit: {e}")
-            time.sleep(5)
+        subprocess.run(["sudo", "systemctl", "start", "systemd-timesyncd"])
 
 
 # Function to poll GPS Data
@@ -443,6 +425,8 @@ def pollingGPSData():
                     gps_data['satellites'] = satellites
                     gps_data['local_time'] = local_time
                 
+                if timeInitialized is False:
+                    setSystemTime(local_time)
                 print(f"Satellites: {satellites}")
                 print(f"Position: {latitude}, {longitude}")
                 print(f"Hoehe: {altitude}m")

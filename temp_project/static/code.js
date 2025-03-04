@@ -1987,7 +1987,6 @@ function setMetaDataSafely() {
 }
 
 setInterval(updateClock, 1000);
-setInterval(updateClock, 1000);
 
 fetchGPSDataSafely();
 getPlayerDeviceSafely();
