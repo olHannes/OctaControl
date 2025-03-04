@@ -405,7 +405,8 @@ def setSystemTime():
 
 # Function to poll GPS Data
 def pollingGPSData():
-    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+    session = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE | gps.WATCH_JSON)
+    session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE | gps.WATCH_JSON)
 
     while True:
         try:
@@ -448,3 +449,6 @@ def pollingGPSData():
 def get_gps_data():
     with gps_lock:
         return gps_data.copy()
+    
+def restartGPSModule():
+    os.system("sudo systemctl restart gpsd")

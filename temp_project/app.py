@@ -2,7 +2,7 @@ from flask import Flask, render_template
 import threading
 
 from routes import app_routes
-from utils import setSystemTime, updateClimateData, updateBrightnessData, pollingGPSData
+from utils import setSystemTime, updateClimateData, updateBrightnessData, pollingGPSData, restartGPSModule
 
 # define global fields
 app = Flask(__name__)
@@ -17,6 +17,7 @@ def index():
 ####################################################################################################################################
 # Start Method
 if __name__ == "__main__":
+    restartGPSModule()
     threading.Thread(target=setSystemTime, daemon=True).start()
     threading.Thread(target=updateClimateData, daemon=True).start()
     threading.Thread(target=updateBrightnessData, daemon=True).start()
