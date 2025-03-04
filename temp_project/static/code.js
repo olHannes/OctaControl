@@ -210,12 +210,11 @@ async function preloadConfig() {
         if (json.touchSoundValue !== undefined) {
             lastClickVolume = json.touchSoundValue;
             audio.volume = lastClickVolume;
-            updateVolumeDisplay(json.touchSoundValue);
+            updateVolumeDisplay(lastClickVolume);
         }
 
         if (json.isTouchSoundEnabled !== undefined) {
             if (json.isTouchSoundEnabled) {
-                isPlayClickSound=false;
                 togglePlayClickSound();
             }
         }
@@ -254,6 +253,7 @@ function fallbackFunctions() {
     setVolumeSlider(getVolume());
     setBalanceSlider(getBalance());
     togglePlayClickSound();
+    updateVolumeDisplay(0.5);
     enableBt();
     disableWlan();  
     document.getElementById('colorSlider').value = 39;
@@ -1767,8 +1767,8 @@ function togglePosDisplay() {
 
 // Codeblock for touch-sound (toggle and Volume)
 const clickSoundPath = '../static/media/sounds/clickSound.mp3';
-let isPlayClickSound = true;
-let lastClickVolume = 1;
+let isPlayClickSound = false;
+let lastClickVolume = 0.5;
 const audio = new Audio(clickSoundPath);
 audio.volume = lastClickVolume;
 
