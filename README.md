@@ -4,12 +4,13 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
 
 ## Pages
 - Home
+- Map
 - Music
 - Settings
 
 ## Home
-- Navigate between the Music and Settings pages.
-- Display of several information <GPS Data | Climate Data | Song Information>
+- Navigate between the Map, Music and Settings pages.
+- Display of several information <GPS Data | Climate Data | Song Information | Clock>
 
 ## Music & Audio Control
 
@@ -19,8 +20,13 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
 - **Audio Control:** Provides the following functions: <Play | Pause | Previous | Skip>.
 - **Volume Control:** Adjust the Raspberry Pi's volume using a slider [0-100].
 
-## Settings
 
+## Map
+- Leaflet Map with Marker for current Position <The card currently requires internet (hotspot) access>
+- Map Buttons: <Zoom In | Zoom Out | Return to current Position | Toggle Dark-Mode>
+- Information: <Speed | Direction | Latitude | Longitude | Altitude | Satellites>
+
+## Settings
 ### Connections
 #### Bluetooth
 1. **Bluetooth Control:** <On | Off>
@@ -40,19 +46,26 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
 4. **Shutdown:** Shut down the Raspberry Pi directly from the interface.
 5. **Reboot:** Restart the Raspberry Pi directly, necessary after updates.
 6. **Update:** Load changes from the repository, reload autostart configurations, and install all dependencies.
-7. **Version:** View the current version <Date + Commit>, including the history of the last 10 commits.
+7. **Reload:** Reload the browser-page <If the update only contains frontend changes the Reload whould be enough>.
 
 ### Trunk-Power
 1. **Power toggle:** Toggle the Relais for the trunk-power (stars + amplifier).
 
 ### General-Settings
-1. **Audio Control:** Opens the Page to manipulate audio settings <Balance |>.
-2. **Touch Sound:** Toggle for touch soundFx <On | Off> + Loudness of these soundFx.
-3. **Power toggle:** Toggle the Relais for the trunk-power (stars + amplifier).
-4. **Adaptive Brightness:** Toggle the automatic adjusted brightness of the webpage <Sensor: BH1750>.
-5. **Climate Data:** Toggle the Display of Temperature and Humidity on the home-page.
-6. **Music Information:** Toggle the Display of Song-Data <Title | Artist> on the home-page.
-7. **GPS Data:** Toggle the Display of GPS-Data <Direction, Height, Speed> on the home-page.
+1. **Audio Control:** Opens the Audio-Page to manipulate audio settings <Balance |>.
+2. **Touch Sound:** Toggle for touch soundFx <On | Off> + Loudness of these soundFx <0, 0.25, 0.5, 0.75, 1>.
+#### Widgets
+1. **Clock toggle:** Toggle the Clock Widget on the home-screen <enable | disable>.
+2. **Climate Data:** Toggle the Climate Widget on the home-screen <enable | disable>. It contains: <Temperature | Humidity>.
+3. **Music Information:** Toggle the Display of Song-Data <Title | Artist> on the home-screen.
+4. **GPS Data:** Toggle the Display of GPS-Data <Direction, Height, Speed, Satellites> on the home-page.
+
+#### Features
+1. **Power toggle:** Toggle the Relais for the trunk-power (stars + amplifier).
+2. **Adaptive Brightness:** Toggle the automatic adjusted brightness of the webpage <Sensor: BH1750>.
+3. **Sleep Timer:** Toggle the appearence of the sleepTimer-Window and adjust the time-period after it appears.
+
+**Version:** View the current version <Date + Commit>, including the history of the last 10 commits.
 
 ## Installation
 
@@ -90,7 +103,7 @@ OctaControl is a simple infotainment system designed for use in my car. The inte
    The system has been tested on a **Raspberry Pi 3 B+** and a **Raspberry Pi 4**. The tested operating system is the Linux distribution ***Raspberry Pi OS***.
 
 2. **Touchscreen:**
-   For this project, a 10.1-inch touchscreen is used, connected via HDMI for video and USB for power and touch functionality.
+   For this project, a 10.1-inch touchscreen is used, connected via HDMI for video and USB for power and touch functionality. Some styles may need to be adjusted for larger or smaller screens.
 
 3. **Relays:**
    In this setup, the entire system powers on when the car is unlocked. A signal from the interior light toggles a 12V relay, which activates a 12V to 5V converter that powers the Raspberry Pi.
