@@ -218,10 +218,6 @@ async function preloadConfig() {
             lastClickVolume = 0.5;
             audio.volume = lastClickVolume;
             updateVolumeDisplay(lastClickVolume);
-        } else {
-            lastClickVolume = 0.5;
-            audio.volume = lastClickVolume;
-            updateVolumeDisplay(lastClickVolume);
         }
 
         if (json.isTouchSoundEnabled !== undefined) {
