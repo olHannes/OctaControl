@@ -178,6 +178,8 @@ async function preloadConfig() {
         document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
         updateBrightness();
         
+        updateBrightness();
+        
         if (json.isTrunkPowerEnabled !== undefined) {
             if (json.isTrunkPowerEnabled) {
                 toggleTrunkPower();
@@ -210,6 +212,10 @@ async function preloadConfig() {
 
         if (json.touchSoundValue !== undefined) {
             lastClickVolume = json.touchSoundValue;
+            audio.volume = lastClickVolume;
+            updateVolumeDisplay(lastClickVolume);
+        } else {
+            lastClickVolume = 0.5;
             audio.volume = lastClickVolume;
             updateVolumeDisplay(lastClickVolume);
         } else {
