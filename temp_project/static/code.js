@@ -176,7 +176,8 @@ async function preloadConfig() {
         document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
         updateBackgroundColor();
         document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
-
+        updateBrightness();
+        
         if (json.isTrunkPowerEnabled !== undefined) {
             if (json.isTrunkPowerEnabled) {
                 toggleTrunkPower();
@@ -209,6 +210,10 @@ async function preloadConfig() {
 
         if (json.touchSoundValue !== undefined) {
             lastClickVolume = json.touchSoundValue;
+            audio.volume = lastClickVolume;
+            updateVolumeDisplay(lastClickVolume);
+        } else {
+            lastClickVolume = 0.5;
             audio.volume = lastClickVolume;
             updateVolumeDisplay(lastClickVolume);
         }
@@ -1705,14 +1710,14 @@ async function fetchGPSData(){
         if (result.status === "success" && result.data) {
             const { latitude, longitude, altitude, speed, track, satellites, local_time } = result.data;
             
-            if(satellites > 0 && longitude != 0.0 && latitude != 0.0) {
-                document.getElementById('waitPositionDisplay').style.display="none";
-                document.getElementById('GPSData').style.display="flex";
+            //if(satellites > 0 && longitude != 0.0 && latitude != 0.0) {
+                //document.getElementById('waitPositionDisplay').style.display="none";
+                //document.getElementById('GPSData').style.display="flex";
                 updatePosition(track, speed, altitude, satellites);
-            } else {
-                document.getElementById('GPSData').style.display="none";
-                document.getElementById('waitPositionDisplay').style.display="block";
-            }
+            //} else {
+                //document.getElementById('GPSData').style.display="flex";
+                //document.getElementById('waitPositionDisplay').style.display="block";
+            //}
             if (document.getElementById('mapSection').style.display != "none") {
                 updateMapPage(latitude, longitude, altitude, speed, track, satellites);
             }
