@@ -129,128 +129,89 @@ function preloadImages(imageArray) {
 // load and apply the config data
 async function preloadConfig() {
     try {
-        const response = await fetch('http://127.0.0.1:5000/system/config');
-
-        if (!response.ok) {
-            console.warn('Failed to load config, falling back to defaults.');
-            fallbackFunctions();
-            showErrorMessage("Failed while loading Config.", "Response was not ok.");
-            return;
-        }
-
-        const json = await response.json();
-        console.log(json);
+        const config = JSON.parse(localStorage.getItem('systemConfig')) || {};
 
         setVolumeSlider(getVolume());
         setBalanceSlider(getBalance());
         setVersion();
 
-        if (json.isBluetoothEnabled !== undefined) {
-            if (json.isBluetoothEnabled) {
-                enableBt();
-            } else {
-                disableBt();
-            }
+        if (config.isBluetoothEnabled !== undefined) {
+            config.isBluetoothEnabled ? enableBt() : disableBt();
         } else {
             enableBt();
         }
 
-        if (json.isPairingmodeEnabled !== undefined) {
-            if(json.isPairingmodeEnabled) {
-                enablePairingMode();
-            } else {
-                disablePairingMode();
-            }
+        if (config.isPairingmodeEnabled !== undefined) {
+            config.isPairingmodeEnabled ? enablePairingMode() : disablePairingMode();
         } else {
             disablePairingMode();
         }
 
-        if (json.isWlanEnabled !== undefined) {
-            if(json.isWlanEnabled) {
-                enableWlan();
-            } else {
-                disableWlan();
-            }
+        if (config.isWlanEnabled !== undefined) {
+            config.isWlanEnabled ? enableWlan() : disableWlan();
         }
 
-        document.getElementById('colorSlider').value = json.colorSliderValue !== undefined ? json.colorSliderValue : 39;
+        document.getElementById('colorSlider').value = config.colorSliderValue !== undefined ? config.colorSliderValue : 39;
         updateBackgroundColor();
-        document.getElementById('brightnessSlider').value = json.brightnessSliderValue !== undefined ? json.brightnessSliderValue : 100;
+
+        document.getElementById('brightnessSlider').value = config.brightnessSliderValue !== undefined ? config.brightnessSliderValue : 100;
         updateBrightness();
-        
-        updateBrightness();
-        
-        if (json.isTrunkPowerEnabled !== undefined) {
-            if (json.isTrunkPowerEnabled) {
-                toggleTrunkPower();
-            }
+
+        if (config.isTrunkPowerEnabled) {
+            toggleTrunkPower();
         }
 
-        if (json.isAdaptiveBrightnessEnabled !== undefined) {
-            if (json.isAdaptiveBrightnessEnabled) {
-                toggleAdaptiveBrightness();
-            }
+        if (config.isAdaptiveBrightnessEnabled) {
+            toggleAdaptiveBrightness();
         }
 
-        if (json.isClimateDataEnabled !== undefined) {
-            if (json.isClimateDataEnabled) {
-                toggleClimateData();
-            }
+        if (config.isClimateDataEnabled) {
+            toggleClimateData();
         }
 
-        if (json.isPosDisplayEnabled !== undefined) {
-            if (json.isPosDisplayEnabled) {
-                togglePosDisplay();
-            }
+        if (config.isPosDisplayEnabled) {
+            togglePosDisplay();
         }
 
-        if (json.isSongDisplayEnabled !== undefined) {
-            if (json.isSongDisplayEnabled) {
-                toggleSongDisplay();
-            }
+        if (config.isSongDisplayEnabled) {
+            toggleSongDisplay();
         }
 
-        if (json.touchSoundValue !== undefined) {
-            lastClickVolume = json.touchSoundValue;
-            audio.volume = lastClickVolume;
-            updateVolumeDisplay(lastClickVolume);
+        if (config.touchSoundValue !== undefined) {
+            lastClickVolume = config.touchSoundValue;
         } else {
             lastClickVolume = 0.5;
-            audio.volume = lastClickVolume;
-            updateVolumeDisplay(lastClickVolume);
+        }
+        audio.volume = lastClickVolume;
+        updateVolumeDisplay(lastClickVolume);
+
+        if (config.isTouchSoundEnabled) {
+            togglePlayClickSound();
         }
 
-        if (json.isTouchSoundEnabled !== undefined) {
-            if (json.isTouchSoundEnabled) {
-                togglePlayClickSound();
-            }
+        if (config.isClockEnabled) {
+            toggleClock();
         }
 
-        if (json.isClockEnabled !== undefined) {
-            if (json.isClockEnabled) {
-                toggleClock();
-            }
-        }
-
-        if (json.sleepTimerIndex !== undefined) {
-            lastSleepTimerIndex = currentSleepTimerIndex = json.sleepTimerIndex;
+        if (config.sleepTimerIndex !== undefined) {
+            lastSleepTimerIndex = currentSleepTimerIndex = config.sleepTimerIndex;
             updateTimeIndicator();
         }
-        if (json.sleepTimerActive !== undefined) {
-            sleepTimerActive = json.sleepTimerActive;
-        
+
+        if (config.sleepTimerActive !== undefined) {
+            sleepTimerActive = config.sleepTimerActive;
+            sleepTimerToggle.textContent = sleepTimerActive ? "SleepTimer: An" : "SleepTimer: Aus";
+            sleepTimerToggle.style.color = sleepTimerActive ? "green" : "red";
+
             if (sleepTimerActive) {
-                sleepTimerToggle.textContent = "SleepTimer: An";
-                sleepTimerToggle.style.color = "green";
                 startSleepTimer();
             } else {
-                sleepTimerToggle.textContent = "SleepTimer: Aus";
-                sleepTimerToggle.style.color = "red";
                 clearTimeout(sleepTimerTimeout);
             }
-        }       
+        }
+
     } catch (error) {
-        showErrorMessage('Error fetching config:', error);
+        showErrorMessage('Error loading config from localStorage:', error);
         fallbackFunctions();
     }
 }
@@ -262,7 +223,7 @@ function fallbackFunctions() {
     togglePlayClickSound();
     updateVolumeDisplay(0.5);
     enableBt();
-    disableWlan();  
+    disableWlan();
     document.getElementById('colorSlider').value = 39;
     document.getElementById('brightnessSlider').value = 100;
     updateBrightness();
@@ -286,27 +247,14 @@ function fallbackFunctions() {
 
 
 function updateConfig(key, value) {
-    fetch("http://127.0.0.1:5000/system/config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            key: key,
-            value: value
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "success") {
-            console.log(`Erfolgreich: ${data.message}`);
-        } else {
-            console.error(`Fehler: ${data.message}`);
-        }
-    })
-    .catch(error => {
-        console.error("Netzwerkfehler:", error);
-    });
+    try {
+        const config = JSON.parse(localStorage.getItem('systemConfig')) || {};
+        config[key] = value;
+        localStorage.setItem('systemConfig', JSON.stringify(config));
+        console.log(`Gespeichert: ${key} = ${value}`);
+    } catch (error) {
+        console.error("Fehler beim Speichern im localStorage:", error);
+    }
 }
 
 
