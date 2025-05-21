@@ -677,6 +677,9 @@ async function setVolume(volume) {
         if (data.status === "success") {
             const metaData = document.getElementById('metaData');
             metaData.style.borderColor = volume > 80 ? 'red' : 'white';
+            if(volume <= 0) {
+                pauseAudio();
+            }
         } else {
             showErrorMessage("Volumen Fehler", data.message);
         }
