@@ -48,41 +48,6 @@ def requestTrunkPowerOff():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
-@app_routes.route("/system/config", methods=["GET"])
-def requestConfig():
-    try:
-        json_file_path = os.path.expanduser("~/Documents/settings.json")
-        
-        if not os.path.exists(json_file_path):
-            return jsonify({"status": "error", "message": "JSON file not found"}), 404
-        
-        with open(json_file_path, 'r') as json_file:
-            data = json.load(json_file)
-        return jsonify(data)
-
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-
-@app_routes.route("/system/config", methods=["POST"])
-def updateConfig():
-    try:
-        data = request.get_json()
-        if "key" not in data or "value" not in data:
-            return jsonify({"status": "error", "message": "Missing 'key' or 'value' in request"}), 400
-
-        key = data["key"]
-        value = data["value"]
-        if update_config(key, value):
-            return jsonify({"status": "success", "message": f"Updated {key} to {value}"}), 200
-        else:
-            return jsonify({"status": "error", "message": "Failed to update config"}), 500
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-    
-
-
-
 
 #Audio Routes
 ####################################################################################################################################
