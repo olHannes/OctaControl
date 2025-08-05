@@ -37,6 +37,26 @@ def power():
         return jsonify({"error": f"Failed to set bluetooth state: {e}"}), 500
 
 
+@bt_setup_api.route("/scan", methods=["GET"])
+def scan_devices():
+    """
+    Scans for available Bluetooth devices
+    """
+    log.verbose(blApiTag, "GET /scan received")
+    try:
+        output = subprocess.check_output(["bluetoothctl", "scan", "on"], timeout=5)
+        output = subprocess.check_output(["bluetoothctl", "devices"]).decode()
+        devices = []
+        for line in output.strip().split("\n"):
+            parts = line.strip().split(" ", 2)
+            if len(parts) == 3:
+                devices.append({"address": parts[1], "name": parts[2]})
+        return jsonify({"devices": devices})
+    except Exception as e:
+        log.error(blApiTag, f"Failed to scan devices - {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @bt_setup_api.route("/paired_devices", methods=["GET"])
 def paired_devices():
     """
@@ -88,4 +108,85 @@ def pair_device():
 
     except Exception as e:
         log.error(blApiTag, f"Failed to pair with device - {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@bt_setup_api.route("/connect", methods=["POST"])
+def connect_device():
+    """
+    Payload: {"address": "<device_mac_address>"}
+    Tries to connect to a paired device
+    """
+    log.verbose(blApiTag, "POST /connect received")
+    address = request.json.get("address")
+    if not address:
+        log.error(blApiTag, "Missing address data")
+        return jsonify({"error": "Missing 'address'"}), 400
+
+    try:
+        subprocess.run(["bluetoothctl", "connect", address], check=True, timeout=5)
+        return jsonify({"status": f"Connected to {address}"})
+    except subprocess.CalledProcessError as e:
+        log.error(blApiTag, f"Failed to connect - {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@bt_setup_api.route("/disconnect", methods=["POST"])
+def disconnect_device():
+    """
+    Payload: {"address": "<device_mac_address>"}
+    """
+    log.verbose(blApiTag, "POST /disconnect received")
+    address = request.json.get("address")
+    if not address:
+        log.error(blApiTag, "Missing address data")
+        return jsonify({"error": "Missing 'address'"}), 400
+
+    try:
+        subprocess.run(["bluetoothctl", "disconnect", address], check=True, timeout=5)
+        return jsonify({"status": f"Disconnected from {address}"})
+    except subprocess.CalledProcessError as e:
+        log.error(blApiTag, f"Failed to disconnect - {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@bt_setup_api.route("/remove", methods=["POST"])
+def remove_device():
+    """
+    Payload: {"address": "<device_mac_address>"}
+    """
+    log.verbose(blApiTag, "POST /remove received")
+    address = request.json.get("address")
+    if not address:
+        return jsonify({"error": "Missing 'address'"}), 400
+
+    try:
+        subprocess.run(["bluetoothctl", "remove", address], check=True, timeout=5)
+        return jsonify({"status": f"Removed device {address}"})
+    except subprocess.CalledProcessError as e:
+        log.error(blApiTag, f"Failed to remove device - {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@bt_setup_api.route("/status", methods=["GET"])
+def bt_status():
+    log.verbose(blApiTag, "GET /status received")
+    try:
+        output = subprocess.check_output(["bluetoothctl", "show"]).decode()
+        powered = "yes" if "Powered: yes" in output else "no"
+        discoverable = "yes" if "Discoverable: yes" in output else "no"
+
+        connected_device = None
+        devices_output = subprocess.check_output(["bluetoothctl", "info"]).decode()
+        match = re.search(r"Name: (.+)", devices_output)
+        if match:
+            connected_device = match.group(1)
+
+        return jsonify({
+            "powered": powered,
+            "discoverable": discoverable,
+            "connected_device": connected_device
+        })
+    except Exception as e:
+        log.error(blApiTag, f"Failed to get BT status - {e}")
         return jsonify({"error": str(e)}), 500
