@@ -8,14 +8,20 @@ class BluetoothController:
 
     def _find_current_player(self):
         manager = self.bus.get('org.bluez', '/')
-        for obj in manager.GetManagedObjects():
-            if obj.endswith('/player0'):
-                self.player = self.bus.get('org.bluez', obj)
+        for path, interface in manager.GetManagedObjects().items():
+            if 'org.bluez.MediaPlayer1' in interface:
+                self.player = self.bus.get('org.bluez', path)
                 break
+        #for obj in manager.GetManagedObjects():
+        #    if obj.endswith('/player0'):
+        #        self.player = self.bus.get('org.bluez', obj)
+        #        break
 
     def _ensure_player(self):
         if not self.player:
-            raise RuntimeError("No Bluetooth media player found")
+            self._find_current_player()
+            if not self.player:
+                raise RuntimeError("No Bluetooth media player found")
 
     def play(self):
         self._ensure_player()
@@ -36,3 +42,7 @@ class BluetoothController:
     def previous(self):
         self._ensure_player()
         self.player.Previous()
+
+    def get_status(self):
+        self._ensure_player()
+        return self.player.Status
