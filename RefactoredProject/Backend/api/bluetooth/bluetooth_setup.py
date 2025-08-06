@@ -60,18 +60,17 @@ def scan_devices():
 @bt_setup_api.route("/visibility", methods=["POST"])
 def set_visibility():
     """
-    Payload: {"discoverable": true/false, "pairable": true/false}
+    Payload: {"discoverable": on/off}
     """
     log.verbose(blApiTag, "POST /visibility received")
     data = request.json
-    discoverable = data.get("discoverable", False)
-    pairable = data.get("pairable", False)
+    discoverable = data.get("discoverable", "off")
 
     try:
         process = subprocess.Popen(["bluetoothctl"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         process.stdin.write(b"discoverable-timeout 0\n")
-        process.stdin.write(f"discoverable {'on' if discoverable else 'off'}\n".encode())
-        process.stdin.write(f"pairable {'on' if pairable else 'off'}\n".encode())
+        process.stdin.write(f"discoverable {discoverable}\n".encode())
+        process.stdin.write(f"pairable {discoverable}\n".encode())
         process.stdin.write(b"quit\n")
         process.stdin.flush()
         stdout, stderr = process.communicate(timeout=5)
@@ -79,7 +78,7 @@ def set_visibility():
         return jsonify({
             "status": "visibility updated",
             "discoverable": discoverable,
-            "pairable": pairable,
+            "pairable": discoverable,
             "output": stdout.decode()
         })
     except Exception as e:

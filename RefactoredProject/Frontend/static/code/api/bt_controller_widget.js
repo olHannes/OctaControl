@@ -111,15 +111,32 @@ class BtSetupWidget extends HTMLElement {
     async toggleVisibility() {
         this.showLoader();
         const current = await this.loadStatus(true);
-        const newVisibility = current.discoverable === "yes" ? "no" : "yes";
+        const newVisibility = current.discoverable === "yes" ? "off" : "on";
 
-        await fetch("/api/bluetooth/setup/visibility", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ discoverable: newVisibility })
-        });
-        this.loadStatus();
-        this.hideLoader();
+        try{
+            const res = await fetch("/api/bluetooth/setup/visibility", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ discoverable: newVisibility })
+            });
+            if(!res.ok){
+                const errorData = await res.json();
+                console.error("API failure - visibility:", errorData?.error || "Invalid error");
+            }else {
+                const responseData = await res.json();
+                if(responseData.discoverable !== newVisibility){
+                    console.warn("Couldnt toggle visibility!");
+                    if(responseData.output){
+                        console.info("API Output:", responseData.output);
+                    }
+                }
+                this.loadStatus();
+            }
+        }catch (e) {
+            console.err("Failed toggle visibility:", e);
+        }finally {
+            this.hideLoader();
+        }
     }
 
 
