@@ -88,18 +88,23 @@ class BtSetupWidget extends HTMLElement {
     */
     async togglePower() {
         this.showLoader();
-        const res = await this.loadStatus(true);
-        const current = res.powered;
-        const newState = current == "yes" ? "off" : "on";
+        try {
+            const res = await this.loadStatus(true);
+            if(!res.ok) throw new Error("Failed toggle Bluetooth");
+            const current = res.powered;
+            const newState = current == "yes" ? "off" : "on";
 
-        await fetch("/api/bluetooth/setup/power", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ state: newState })
-        });
-
-        this.loadStatus();
-        this.hideLoader();
+            await fetch("/api/bluetooth/setup/power", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ state: newState })
+            });
+            this.loadStatus();
+        }catch (e){
+            console.error("Failure while toggle Bluetooth power: ", e);
+        }finally {
+            this.hideLoader();
+        }
     }
 
 
@@ -111,6 +116,10 @@ class BtSetupWidget extends HTMLElement {
     async toggleVisibility() {
         this.showLoader();
         const current = await this.loadStatus(true);
+        if(!current) {
+            console.error("failed toggle visibility: status was undefined");
+            this.hideLoader();
+        }
         const newVisibility = current.discoverable === "yes" ? "off" : "on";
 
         try{
@@ -120,8 +129,7 @@ class BtSetupWidget extends HTMLElement {
                 body: JSON.stringify({ discoverable: newVisibility })
             });
             if(!res.ok){
-                const errorData = await res.json();
-                console.error("API failure - visibility:", errorData?.error || "Invalid error");
+                throw new Error("Failed toggle visibility");
             }else {
                 const responseData = await res.json();
                 if(responseData.discoverable !== newVisibility){
@@ -158,6 +166,7 @@ class BtSetupWidget extends HTMLElement {
         
         try{
             const res = await fetch("/api/bluetooth/scan", { method: "POST" });
+            if(!res.ok) throw new Error("Scan Error");
             const devices = await res.json();
 
             if(this.scanning){
@@ -165,8 +174,13 @@ class BtSetupWidget extends HTMLElement {
             }
         } catch (err) {
             console.error("Scan Error: ", err);
+            this.scanning = false;
+            this.shadowRoot.querySelector("#startScan").textContent = "🔍 Scan";
+            this.shadowRoot.querySelector("#deviceListTitle").textContent = "Gekoppelte Geräte";
+            this.loadPairedDevices();
+        }finally {
+            this.hideLoader();
         }
-        this.hideLoader();
     }
 
 
@@ -261,11 +275,18 @@ class BtSetupWidget extends HTMLElement {
      */
     async loadPairedDevices() {
         this.showLoader();
-        const res = await fetch("/api/bluetooth/paired");
-        const devices = await res.json();
-
-        this.renderDevices(devices, "paired");
-        this.hideLoader();
+        try {
+            const res = await fetch("/api/bluetooth/paired");
+            if(!res.ok){
+                throw new Error("Loading paired device failure");
+            }
+            const devices = await res.json();
+            this.renderDevices(devices, "paired");
+        }catch (e){
+            console.error("Paired List Error:", e);
+        }finally {
+            this.hideLoader();
+        }
     }
 
 
