@@ -58,6 +58,7 @@ class BtSetupWidget extends HTMLElement {
         } else {
                 const status = data.powered === "yes" ? "EIN" : "AUS";
                 const deviceName = data.name || "Unbekannt";
+                const connectedDev = data.connected_device || null;
 
                 const btStatus = this.shadowRoot.querySelector("#btStatus");
                 btStatus.innerHTML = `Bluetooth: <strong>${status}</strong> - `;
@@ -65,6 +66,16 @@ class BtSetupWidget extends HTMLElement {
                 const deviceNameSpan = document.createElement("span");
                 deviceNameSpan.className = "device-name";
                 deviceNameSpan.textContent = deviceName;
+
+                if(deviceName != "Unbekannt" && connectedDev?.address) {
+                    deviceNameSpan.title = "Zum Trennen klicken";
+                    deviceNameSpan.style.cursor = "pointer";
+                    
+                    deviceNameSpan.addEventListener("click", () => {
+                        this.disconnectDevice(connectedDev.address);
+                    });
+                }
+
                 btStatus.appendChild(deviceNameSpan);
 
                 requestAnimationFrame(() => {
@@ -252,7 +263,7 @@ class BtSetupWidget extends HTMLElement {
         const endpointMap = {
             connect: "/api/bluetooth/device/connect",
             pair: "/api/bluetooth/device/pair",
-            remove: "/api/bluetooth/device/remove"
+            remove: "/api/bluetooth/device/remove",
         };
         if(!endpointMap[action]) return;
 
@@ -269,6 +280,26 @@ class BtSetupWidget extends HTMLElement {
     }
 
 
+    async disconnectDevice(address){
+        if(!address) return;
+
+        try{
+            this.showLoader();
+            const res = await fetch("/api/bluetooth/disconnect", {
+                mehtod: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ address })
+            });
+            if(!res.ok) throw new Error("Failed to disconnect to device");
+            this.loadStatus();
+        }catch{
+            console.error("Failed to disconnect");
+        }finally{
+            this.hideLoader();
+        }
+    }
+
+
     /**
      * load Paried Devices
      * reads the paired devicelist and calls the renderDevice function
@@ -276,11 +307,11 @@ class BtSetupWidget extends HTMLElement {
     async loadPairedDevices() {
         this.showLoader();
         try {
-            const res = await fetch("/api/bluetooth/paired");
+            const res = await fetch("/api/bluetooth/paired_devices");
             if(!res.ok){
                 throw new Error("Loading paired device failure");
             }
-            const devices = await res.json();
+            const devices = await res.json().paired_devices;
             this.renderDevices(devices, "paired");
         }catch (e){
             console.error("Paired List Error:", e);
