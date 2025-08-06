@@ -57,6 +57,36 @@ def scan_devices():
         return jsonify({"error": str(e)}), 500
 
 
+@bt_setup_api.route("/visibility", methods=["POST"])
+def set_visibility():
+    """
+    Payload: {"discoverable": true/false, "pairable": true/false}
+    """
+    log.verbose(blApiTag, "POST /visibility received")
+    data = request.json
+    discoverable = data.get("discoverable", False)
+    pairable = data.get("pairable", False)
+
+    try:
+        process = subprocess.Popen(["bluetoothctl"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process.stdin.write(b"discoverable-timeout 0\n")
+        process.stdin.write(f"discoverable {'on' if discoverable else 'off'}\n".encode())
+        process.stdin.write(f"pairable {'on' if pairable else 'off'}\n".encode())
+        process.stdin.write(b"quit\n")
+        process.stdin.flush()
+        stdout, stderr = process.communicate(timeout=5)
+
+        return jsonify({
+            "status": "visibility updated",
+            "discoverable": discoverable,
+            "pairable": pairable,
+            "output": stdout.decode()
+        })
+    except Exception as e:
+        log.error(blApiTag, f"Failed to change visibility - {e}")
+        return jsonify({"error": f"Failed to change visibility - {e}"}), 500
+
+
 @bt_setup_api.route("/paired_devices", methods=["GET"])
 def paired_devices():
     """
@@ -96,6 +126,7 @@ def pair_device():
     try:
         process = subprocess.Popen(["bluetoothctl"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         process.stdin.write(f"pair {address}\n".encode())
+        process.stdin.write(f"trus {address}\n".encode())
         process.stdin.write(b"quit\n")
         process.stdin.flush()
         stdout, stderr = process.communicate(timeout=10)
@@ -172,21 +203,42 @@ def remove_device():
 def bt_status():
     log.verbose(blApiTag, "GET /status received")
     try:
-        output = subprocess.check_output(["bluetoothctl", "show"]).decode()
+        output = subprocess.check_output(["bluetoothctl", "show"], timeout=5).decode()
+
         powered = "yes" if "Powered: yes" in output else "no"
         discoverable = "yes" if "Discoverable: yes" in output else "no"
+        pairable = "yes" if "Pairable: yes" in output else "no"
 
+        timeout_match = re.search(r"DiscoverableTimeout: (\d+)", output)
+        discoverable_timeout = int(timeout_match.group(1)) if timeout_match else None
+
+        paired_output = subprocess.check_output(["bluetoothctl", "paired-devices"], timeout=5).decode()
         connected_device = None
-        devices_output = subprocess.check_output(["bluetoothctl", "info"]).decode()
-        match = re.search(r"Name: (.+)", devices_output)
-        if match:
-            connected_device = match.group(1)
+
+        for line in paired_output.strip().splitlines():
+            parts = line.strip().split(" ", 2)
+            if len(parts) >= 2:
+                address = parts[1]
+                try:
+                    info_output = subprocess.check_output(["bluetoothctl", "info", address], timeout=5).decode()
+                    if "Connected: yes" in info_output:
+                        name_match = re.search(r"Name: (.+)", info_output)
+                        connected_device = {
+                            "address": address,
+                            "name": name_match.group(1) if name_match else "Unknown"
+                        }
+                        break
+                except subprocess.CalledProcessError:
+                    continue
 
         return jsonify({
             "powered": powered,
             "discoverable": discoverable,
+            "pairable": pairable,
+            "discoverable_timeout": discoverable_timeout,
             "connected_device": connected_device
         })
+
     except Exception as e:
         log.error(blApiTag, f"Failed to get BT status - {e}")
         return jsonify({"error": str(e)}), 500
