@@ -174,7 +174,6 @@ class BtSetupWidget extends HTMLElement {
         this.scanning = true;
         this.shadowRoot.querySelector("#startScan").textContent = "Scan abbrechen";
         this.showLoader();
-        
         try{
             const res = await fetch("/api/bluetooth/scan", { method: "POST" });
             if(!res.ok) throw new Error("Scan Error");
@@ -269,13 +268,15 @@ class BtSetupWidget extends HTMLElement {
 
         this.showLoader();
 
-        await fetch(endpointMap[action], {
+        const res = await fetch(endpointMap[action], {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ address })
         });
+        if(!res.ok) console.error(`Failed to ${action} - ${address}`);
 
-        if(["remove", "pair", "connect"].includes(action)) this.loadPairedDevices();
+        if(action === "pair") this.startScan();
+        else if(action === "remove" || action === "connect") this.loadPairedDevices();
         this.hideLoader();
     }
 
