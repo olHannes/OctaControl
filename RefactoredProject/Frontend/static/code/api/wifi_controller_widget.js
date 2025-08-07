@@ -138,12 +138,24 @@ class WifiSetupWidget extends HTMLElement {
     /**
      * connect
      */
-    async connect(wifi, password){
+    async connect(ssid, password){
         this.showLoader();
         try {
-            
+            const res = await fetch("/api/wlan/connect", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ssid, password })
+            });
+
+            if(!res.ok){
+                const errorData = await res.json();
+                throw new Error(errorData.error || "Unbekannter Fehler");
+            }
+
+            const result = await res.json();
+            await this.status();
         } catch (error) {
-            
+            console.error("Failure while connecting to the network:", error);
         } finally {
             this.hideLoader();
         }
@@ -153,12 +165,23 @@ class WifiSetupWidget extends HTMLElement {
     /**
      * disconnect
      */
-    async disconnect(wifi){
+    async disconnect(ssid){
         this.showLoader();
         try {
-            
+            const res = await fetch("/api/wlan/disconnect", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ssid })
+            });
+
+            if(!res.ok){
+                const errorData = await res.json();
+                throw new Error(errorData.error || "Unbekannter Fehler");
+            } 
+
+            await this.status();
         } catch (error) {
-            
+            console.error("Failure while disconnecting to the network", error);
         } finally {
             this.hideLoader();
         }
