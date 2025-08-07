@@ -32,8 +32,9 @@ def wlan_power():
 
         return jsonify({"status": f"WLAN turned {state}"})
     except subprocess.CalledProcessError as e:
-        log.error(wlanApiTag, "/power: failed to toggle wlan - {e}")
+        log.error(wlanApiTag, f"/power: failed to toggle wlan - {e}")
         return jsonify({"error": f"Failed to set WLAN state - {e}"}), 500
+
 
 @wlan_api.route("/status", methods=["GET"])
 def wlan_status():
@@ -41,9 +42,46 @@ def wlan_status():
     provides the current wlan status
     """
     log.verbose(wlanApiTag, "POST /status received")
+    
     try:
-        output = subprocess.check_output(["nmcli", "radio", "wifi"]).decode().strip()
-        return jsonify({"wifi_status": output})
+        wifi_power_output = subprocess.check_output(["nmcli", "radio", "wifi"]).decode().strip()
+        state = "on" if wifi_power_output.lower() == "enabled" else "off"
+
+        if state == "off":
+            return jsonify({
+                "state": "off",
+                "status": "disconnected",
+                "name": None,
+                "ip": None,
+                "signal": None
+            }), 200
+
+        con_info = subprocess.check_output(
+            ["nmcli", "-t", "-f", "active,ssid,signal", "dev", "wifi"]
+        ).decode().strip().splitlines()
+
+        active_connection = next((line for line in con_info if line.startswith("yes:")), None)
+        if not active_connection:
+            return jsonify({
+                "state": "on",
+                "status": "disconnected",
+                "name": None,
+                "ip": None,
+                "signal": None
+            }), 200
+        
+        _, ssid, signal = active_connection.split(":")
+
+        ip_output = subprocess.check_output(["hostname", "-I"]).decode().strip()
+        ip_address = ip_output.split()[0] if ip_output else "unbekannt"
+
+        return jsonify({
+            "state": "on",
+            "status": "connected",
+            "name": ssid,
+            "ip": ip_address,
+            "signal": signal
+        })
     except Exception as e:
         log.error(wlanApiTag, "/status: failed to get status - {e}")
         return jsonify({"error": f"Failed to get Wlan state - {e}"}), 500
