@@ -7,13 +7,48 @@ class WifiSetupWidget extends HTMLElement {
     }
 
 
+    
+    demoNetworks = [
+    {
+        ssid: "Heimnetzwerk",
+        signal: 78,
+        secured: true,
+        connected: false
+    },
+    {
+        ssid: "OpenWifi123",
+        signal: 53,
+        secured: false,
+        connected: false
+    },
+    {
+        ssid: "Netzwerk-Büro",
+        signal: 92,
+        secured: true,
+        connected: true
+    },
+    {
+        ssid: "Gastzugang",
+        signal: 40,
+        secured: true,
+        connected: false
+    },
+    {
+        ssid: "MobileHotspot",
+        signal: 67,
+        secured: false,
+        connected: false
+    }
+];
+
+
     /**
      * Initial function
      * -> renders the content
      */
     connectedCallback() {
         this.render();
-        this.addListeners
+        this.setupListeners();
         this.known();
     }
 
@@ -53,11 +88,17 @@ class WifiSetupWidget extends HTMLElement {
         
         const toggleBtn = this.shadowRoot.querySelector("#toggleBtn");
         toggleBtn.textContent = (state === "on") ? "WLAN deaktivieren" : "WLAN aktivieren";
+        const disconnectBtn = this.shadowRoot.querySelector("#disconnectBtn");
 
         if (status === "connected") {
             name = data.name;
             ip = data.ip;
             signal = data.signal;
+            disconnectBtn.classList.remove("hidden");
+            disconnectBtn.onclick = () => this.disconnect(name);
+        } else {
+            disconnectBtn.classList.add("hidden");
+            disconnectBtn.onclick = null;
         }
 
         this.shadowRoot.querySelector("#statusName").textContent = `Verbunden mit: ${name}`;
@@ -100,17 +141,21 @@ class WifiSetupWidget extends HTMLElement {
     }
 
 
-
     /**
      * scan
      */
     async scan(){
         this.showLoader();
+        this.renderNetwork(this.demoNetworks.map(n => ({ ...n, known: false })), true);
+        this.hideLoader();
+        return;
         try {
-            const res = await fetch("/api/wifi/scan", { mehtod: "GET" });
+            const res = await fetch("/api/wifi/scan", { method: "GET" });
             if(!res.ok) throw new Error("Failed to scan networks");
 
             const data = await res.json();
+
+            const networks = data.networks.map(n => ({ ...n, known: false }));
             this.renderNetwork(data, true);
         } catch (error) {
             console.error("Failed to scan", error);
@@ -125,10 +170,18 @@ class WifiSetupWidget extends HTMLElement {
      */
     async known(){
         this.showLoader();
+        this.renderNetwork(this.demoNetworks.map(n => ({ ...n, known: true })), false);
+        this.hideLoader();
         try {
-            
+            const res = await fetch("/api/wifi/known", { method: "GET" });
+            if(!res.ok) throw new Error("Failed to load known networks");
+
+            const data = await res.json();
+
+            const networks = data.networks.map(n => ({ ...n, known: true }));
+            this.renderNetwork(networks, false);
         } catch (error) {
-            
+            console.error("Failed yto load known networks", error);
         } finally {
             this.hideLoader();
         }
@@ -192,10 +245,37 @@ class WifiSetupWidget extends HTMLElement {
      * render Network
      */
     renderNetwork(list, scanned=false){
-        const listTag = this.shadowRoot.querySelector("#networkList");
+        const title = this.shadowRoot.querySelector("#networkListTitle");
+        title.textContent = scanned? "Gefundene Netzwerke" : "Bekannte Netzwerke";
 
-        list.forEach(element => {
-            
+        const listTag = this.shadowRoot.querySelector("#networkList");
+        listTag.innerHTML = "";
+
+        list.forEach(net => {
+            const item = document.createElement("div");
+            item.classList.add("network-item");
+
+            const name = document.createElement("span");
+            name.classList.add("network-name");
+            name.textContent = net.ssid || "<Unbekanntes Netzwerk>";
+
+            const actions = document.createElement("div");
+            actions.classList.add("network-actions");
+
+            const btn = document.createElement("button");
+            btn.textContent = "Verbinden";
+            btn.addEventListener("click", () => {
+                if(net.known) {
+                    this.connect(net.ssid, null);
+                }else {
+                    //show Password input and call pair
+                }
+            });
+
+            actions.appendChild(btn);
+            item.appendChild(name);
+            item.appendChild(actions);
+            listTag.append(item);
         });
     }
     
@@ -269,6 +349,16 @@ class WifiSetupWidget extends HTMLElement {
                     margin: 0.2rem 0;
                 }
 
+                #disconnectBtn {
+                    margin-top: 0.5rem;
+                    background: #3b1f1f;
+                    color: #fff;
+                    border: none;
+                    padding: 0.4rem 0.8rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
                 .actions {
                     display: flex;
                     gap: 0.5rem;
@@ -292,6 +382,12 @@ class WifiSetupWidget extends HTMLElement {
                     background: #16161d;
                     padding: 0.5rem;
                     border-radius: 8px;
+                }
+                
+                .list h4 {
+                    margin: 0 0 0.5rem 0;
+                    font-size: 1rem;
+                    color: #ccc;
                 }
 
                 .network-item {
@@ -333,6 +429,7 @@ class WifiSetupWidget extends HTMLElement {
                     <p id="statusName">Verbunden mit: -</p>
                     <p id="statusIp">IP: -</p>
                     <p id="statusSignal">Signal: -</p>
+                    <button id="disconnectBtn" class="hidden">Verbindung trennen</button>
                 </section>
 
                 <div class="actions">
@@ -340,8 +437,9 @@ class WifiSetupWidget extends HTMLElement {
                     <button id="knownBtn">Bekannte Netzwerke</button>
                 </div>
 
-                <div class="list" id="networkList">
-                    <!-- Netzwerk-Items hier -->
+                <div class="list">
+                    <h4 id="networkListTitle">Netzwerke</h4>
+                    <div id="networkList"></div>
                 </div>
 
                 <div id="loader" class="loader hidden"></div>

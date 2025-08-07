@@ -120,6 +120,38 @@ def scan_wifi():
         return jsonify({ "error": f"Failed to scan - {e}" }), 500
 
 
+@wlan_api.route("/known", methods=["GET"])
+def known_wifi():
+    """
+    Returns a list of known WIFI networks
+    """
+    log.verbose(wlanApiTag, "GET /known received")
+    try:
+        result = subprocess.run(
+            ["nmcli", "-t", "-f", "name,type", "connection", "show"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        lines = result.stdout.strip().split("\n")
+        wifi_connections = []
+
+        for line in lines:
+            if not line.strip():
+                continue
+            name, conn_type = line.strip().split(":")
+
+            if conn_type == "802-11-wireless":
+                wifi_connections.append({
+                    "ssid": name
+                })
+        return jsonify({ "networks": wifi_connections }), 200
+    except subprocess.CalledProcessError as e:
+        log.error(wlanApiTag, f"Failed to get known networks - {e.stderr}")
+        return jsonify({ "error": "Could not list known networks" }), 500
+
+
 @wlan_api.route("/connect", methods=["POST"])
 def connect_to_wifi():
     """
