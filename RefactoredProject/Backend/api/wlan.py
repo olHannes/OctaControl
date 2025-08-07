@@ -83,5 +83,34 @@ def wlan_status():
             "signal": signal
         })
     except Exception as e:
-        log.error(wlanApiTag, "/status: failed to get status - {e}")
+        log.error(wlanApiTag, f"/status: failed to get status - {e}")
         return jsonify({"error": f"Failed to get Wlan state - {e}"}), 500
+
+
+@wlan_api.route("/scan", methods=["GET"])
+def scan_wifi():
+    log.verbose(wlanApiTag, "GET /scan received")
+    try:
+        subprocess.run(["nmcli", "dev", "wifi", "rescan"], check=True)
+        result = subprocess.check_output(
+            ["nmcli", "-t", "-f", "ssid,signal", "dev", "wifi"], 
+            stderr=subprocess.STDOUT
+        ).decode("utf-8").strip().splitlines()
+
+        networks = []
+        for line in result:
+            if not line:
+                continue
+        ssid, signal = line.split(":", 1)
+        networks.append({
+            "ssid": ssid if ssid else "<hidden>",
+            "signal": signal
+        })
+        return jsonify({ "networks": networks }), 200
+
+    except subprocess.CalledProcessError as e:
+        log.error(wlanApiTag, f"/scan failed - {e.output.decode().strip()}")
+        return jsonify({ "error": "Scan command failed" }), 500
+    except Exception as e:
+        log.error(wlanApiTag, f"/scan failed - {e}")
+        return jsonify({ "error": f"Failed to scan - {e}" }), 500
