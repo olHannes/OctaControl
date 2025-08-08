@@ -266,10 +266,15 @@ class WifiSetupWidget extends HTMLElement {
     }
     
 
-    setupNewConnection(ssid, signal){
-        if(!ssid || !signal) return;
-        //show keyboard, textinput, ssid name, signal strength
+    setupNewConnection(ssid, signal) {
+        if (!ssid || !signal) return;
+        const root = this.shadowRoot;
+        root.querySelector("#connectToSSID").textContent = `SSID: ${ssid}`;
+        root.querySelector("#connectToSignal").textContent = `Signal: ${signal}`;
+        root.querySelector("#wifiPassword").value = "";
+        root.querySelector("#connectToNetwork").classList.remove("hidden");
     }
+
 
 
     /**
@@ -281,6 +286,71 @@ class WifiSetupWidget extends HTMLElement {
         root.querySelector("#scanBtn").addEventListener("click", () => this.scan());
         root.querySelector("#knownBtn").addEventListener("click", () => this.known());
         root.querySelector("#toggleBtn").addEventListener("click", () => this.toggleWifi());
+
+        const passwordInput = this.shadowRoot.querySelector("#wifiPassword");
+        let isShift = false;
+
+        this.shadowRoot.querySelectorAll("#keyboard .key").forEach(key => {
+            key.addEventListener("click", () => {
+                const keyValue = key.textContent;
+
+                if (key.classList.contains("shift")) {
+                    isShift = !isShift;
+                    key.classList.toggle("active", isShift);
+                    toggleShift(isShift);
+                    return;
+                }
+
+                if (key.classList.contains("backspace")) {
+                    passwordInput.value = passwordInput.value.slice(0, -1);
+                    return;
+                }
+
+                if (key.classList.contains("space")) {
+                    passwordInput.value += " ";
+                    return;
+                }
+
+                if (
+                    !key.classList.contains("action-connect") &&
+                    !key.classList.contains("action-cancel")
+                ) {
+                    passwordInput.value += keyValue;
+                }
+            });
+        });
+
+        const toggleShift = (shiftOn) => {
+            this.shadowRoot.querySelectorAll("#keyboard .key").forEach(k => {
+                if (
+                    !k.classList.contains("shift") &&
+                    !k.classList.contains("backspace") &&
+                    !k.classList.contains("space") &&
+                    !k.classList.contains("symbol") &&
+                    !k.classList.contains("action-connect") &&
+                    !k.classList.contains("action-cancel")
+                ) {
+                    k.textContent = shiftOn
+                        ? k.textContent.toUpperCase()
+                        : k.textContent.toLowerCase();
+                }
+            });
+        };
+
+        this.shadowRoot.querySelector(".action-connect").addEventListener("click", () => {
+            const ssid = this.shadowRoot.querySelector("#connectToSSID").textContent.replace("SSID: ", "");
+            const password = passwordInput.value;
+            if (ssid && password) {
+                this.connect(ssid, password);
+            }
+        });
+
+        this.shadowRoot.querySelector(".action-cancel").addEventListener("click", () => {
+            passwordInput.value = "";
+            this.shadowRoot.querySelector("#connectToSSID").textContent = "SSID: -";
+            this.shadowRoot.querySelector("#connectToSignal").textContent = "Signal: -";
+            this.shadowRoot.querySelector("#connectToNetwork").classList.add("hidden");
+        });
 
     }
 
@@ -432,6 +502,68 @@ class WifiSetupWidget extends HTMLElement {
                     border-radius: 5px;
                     cursor: pointer;
                 }
+
+                #keyboard {
+                    margin-top: 0.5rem;
+                    background: #1a1a20;
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    display: inline-block;
+                    position: relative;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 100%;
+                }
+
+                .key-row {
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 0.3rem;
+                }
+
+                .key {
+                    background: #2b3a5e;
+                    color: white;
+                    border: none;
+                    padding: 0.7rem 1.9rem;
+                    margin: 0.1rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    min-width: 2rem;
+                    text-align: center;
+                }
+
+                .key:hover {
+                    background: #3e5580;
+                }
+
+                .key.shift, .key.backspace, .key.space {
+                    background: #44475a;
+                }
+
+                .key.space {
+                    flex: 1;
+                    max-width: 150px;
+                }
+
+                .key.action-connect {
+                    background: #2ecc71; /* Grün */
+                }
+
+                .key.action-connect:hover {
+                    background: #27ae60;
+                }
+
+                .key.action-cancel {
+                    background: #e74c3c; /* Rot */
+                }
+
+                .key.action-cancel:hover {
+                    background: #c0392b;
+                }
+
+
             </style>
         `;
 
@@ -457,6 +589,55 @@ class WifiSetupWidget extends HTMLElement {
                 <div class="list">
                     <h4 id="networkListTitle">Netzwerke</h4>
                     <div id="networkList"></div>
+                </div>
+
+                <div id="connectToNetwork" >
+                    <div style="text-align: center;">
+                        <span id="connectToSSID">SSID: -</span><br>
+                        <span id="connectToSignal">Signal: -</span><br>
+                        <input type="text" id="wifiPassword" placeholder="Passwort eingeben">
+                    </div>
+
+                    <div id="keyboard">
+                        <div class="key-row">
+                            <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+                            <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+                            <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+                            <button class="key">0</button>
+                        </div>
+
+                        <div class="key-row">
+                            <button class="key">q</button><button class="key">w</button><button class="key">e</button>
+                            <button class="key">r</button><button class="key">t</button><button class="key">y</button>
+                            <button class="key">u</button><button class="key">i</button><button class="key">o</button>
+                            <button class="key">p</button>
+                        </div>
+
+                        <div class="key-row">
+                            <button class="key">a</button><button class="key">s</button><button class="key">d</button>
+                            <button class="key">f</button><button class="key">g</button><button class="key">h</button>
+                            <button class="key">j</button><button class="key">k</button><button class="key">l</button>
+                        </div>
+
+                        <div class="key-row">
+                            <button class="key shift">⇧</button>
+                            <button class="key">z</button><button class="key">x</button><button class="key">c</button>
+                            <button class="key">v</button><button class="key">b</button><button class="key">n</button>
+                            <button class="key">m</button>
+                            <button class="key backspace">⌫</button>
+                        </div>
+
+                        <div class="key-row">
+                            <button class="key symbol">!</button><button class="key symbol">@</button>
+                            <button class="key symbol">#</button><button class="key symbol">$</button>
+                            <button class="key symbol">%</button><button class="key symbol">&</button>
+                            <button class="key space">␣</button>
+                        </div>
+                        <div class="key-row">
+                            <button class="key action-connect">Connect</button>
+                            <button class="key action-cancel">Abbruch</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="loader" class="loader hidden"></div>
