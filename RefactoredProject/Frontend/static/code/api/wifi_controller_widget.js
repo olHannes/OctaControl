@@ -20,6 +20,7 @@ class WifiSetupWidget extends HTMLElement {
 
 
     /**
+     * show Loader
      * Shows a Loading animation
      */
     showLoader() {
@@ -41,6 +42,7 @@ class WifiSetupWidget extends HTMLElement {
      * returns a color based on the signal strength
      */
     getSignalColor(signal) {
+        if(typeof signal !== "number") return "gray";
         if (signal >= 80) return "green";
         if (signal >= 50) return "gold";
         return "red";
@@ -49,62 +51,64 @@ class WifiSetupWidget extends HTMLElement {
 
     /**
      * status
+     * calls the api to get the current wifi status.
+     * the function updates the panel and changes the power button
      */
     async status(){
-    try {
-        const res = await fetch("/api/wifi/status", { method: "GET" });
-        if(!res.ok) throw new Error("Failed to fetch status");
-        
-        const data = await res.json();
-        const state = data.state;
-        const status = data.status;
-        
-        let name = "-";
-        let ip = "-";
-        let signal = "-";
-        
-        const root = this.shadowRoot;
+        try {
+            const res = await fetch("/api/wifi/status", { method: "GET" });
+            if(!res.ok) throw new Error("Failed to fetch status");
+            
+            const data = await res.json();
+            const state = data.state;
+            const status = data.status;
+            
+            let name = "-";
+            let ip = "-";
+            let signal = "-";
+            
+            const root = this.shadowRoot;
 
-        const toggleBtn = root.querySelector("#toggleBtn");
-        if (state === "on") {
-            toggleBtn.textContent = "WLAN deaktivieren";
-            toggleBtn.classList.add("on");
-            toggleBtn.classList.remove("off");
-        } else {
-            toggleBtn.textContent = "WLAN aktivieren";
-            toggleBtn.classList.add("off");
-            toggleBtn.classList.remove("on");
+            const toggleBtn = root.querySelector("#toggleBtn");
+            if (state === "on") {
+                toggleBtn.textContent = "WLAN deaktivieren";
+                toggleBtn.classList.add("on");
+                toggleBtn.classList.remove("off");
+            } else {
+                toggleBtn.textContent = "WLAN aktivieren";
+                toggleBtn.classList.add("off");
+                toggleBtn.classList.remove("on");
+            }
+
+            const disconnectBtn = root.querySelector("#disconnectBtn");
+            
+            if (status === "connected") {
+                name = data.name;
+                ip = data.ip;
+                signal = data.signal;
+                disconnectBtn.classList.remove("hidden");
+                disconnectBtn.onclick = () => this.disconnect(name);
+            } else {
+                disconnectBtn.classList.add("hidden");
+                disconnectBtn.onclick = null;
+            }
+
+            root.querySelector("#statusName").textContent = `Verbunden mit: ${name}`;
+            root.querySelector("#statusIp").innerHTML = `IP: <i>${ip}</i>`;
+            const statSignal = root.querySelector("#statusSignal");
+            statSignal.textContent = `Signal: ${signal}`;
+            statSignal.style.color = this.getSignalColor(signal);
+
+            return data;
+        } catch (error) {
+            console.error("Failed to load status", error);
         }
-
-        const disconnectBtn = root.querySelector("#disconnectBtn");
-        
-        if (status === "connected") {
-            name = data.name;
-            ip = data.ip;
-            signal = data.signal;
-            disconnectBtn.classList.remove("hidden");
-            disconnectBtn.onclick = () => this.disconnect(name);
-        } else {
-            disconnectBtn.classList.add("hidden");
-            disconnectBtn.onclick = null;
-        }
-
-        root.querySelector("#statusName").textContent = `Verbunden mit: ${name}`;
-        root.querySelector("#statusIp").innerHTML = `IP: <i>${ip}</i>`;
-        const statSignal = root.querySelector("#statusSignal");
-        statSignal.textContent = `Signal: ${signal}`;
-        statSignal.style.color = this.getSignalColor(signal);
-
-        return data;
-    } catch (error) {
-        console.error("Failed to load status", error);
     }
-}
-
 
 
     /**
      * toggle Wifi
+     * updates the status and toggles the wifi (on / off) based on the current state
      */
     async toggleWifi() {
         this.showLoader();
@@ -133,17 +137,17 @@ class WifiSetupWidget extends HTMLElement {
 
     /**
      * scan
+     * gets a list of scanned and available wifis
      */
     async scan(){
         this.showLoader();
         try {
             const res = await fetch("/api/wifi/scan", { method: "GET" });
             if(!res.ok) throw new Error("Failed to scan networks");
-
             const data = await res.json();
 
             const networks = data.networks.map(n => ({ ...n, known: false }));
-            this.renderNetwork(data, true);
+            this.renderNetwork(networks, true);
         } catch (error) {
             console.error("Failed to scan", error);
         } finally {
@@ -154,6 +158,7 @@ class WifiSetupWidget extends HTMLElement {
 
     /**
      * known
+     * gets a list of known and safed networks
      */
     async known(){
         this.showLoader();
@@ -166,7 +171,7 @@ class WifiSetupWidget extends HTMLElement {
             const networks = data.networks.map(n => ({ ...n, known: true }));
             this.renderNetwork(networks, false);
         } catch (error) {
-            console.error("Failed yto load known networks", error);
+            console.error("Failed to load known networks", error);
         } finally {
             this.hideLoader();
         }
@@ -175,6 +180,8 @@ class WifiSetupWidget extends HTMLElement {
 
     /**
      * connect
+     * @param ssid: the ssid of the aimed network
+     * @param password: a password to connect with the wlan
      */
     async connect(ssid, password){
         this.showLoader();
@@ -202,6 +209,7 @@ class WifiSetupWidget extends HTMLElement {
 
     /**
      * disconnect
+     * @param ssid: try to disconnect to a given network
      */
     async disconnect(ssid){
         this.showLoader();
@@ -228,6 +236,9 @@ class WifiSetupWidget extends HTMLElement {
 
     /**
      * render Network
+     * @param list: a list of found networks (scan or know)
+     * @param scanned: false = known networks -> direct connection possible, true = scanned networks - password required
+     * The function renders a list of networks with ssid and a button to connect with
      */
     renderNetwork(list, scanned=false){
         const title = this.shadowRoot.querySelector("#networkListTitle");
@@ -253,7 +264,6 @@ class WifiSetupWidget extends HTMLElement {
                 if(net.known) {
                     this.connect(net.ssid, null);
                 }else {
-                    //show Password input and call pair
                     this.setupNewConnection(net.ssid, net.signal);
                 }
             });
@@ -266,13 +276,31 @@ class WifiSetupWidget extends HTMLElement {
     }
     
 
+    /**
+     * setup new Connection
+     * @param ssid: the ssid of the network the user tries to connect with
+     * @param signal: the signal strength of the aimed network
+     * The function shows a keyboard and the aimed network.
+     */
     setupNewConnection(ssid, signal) {
         if (!ssid || !signal) return;
         const root = this.shadowRoot;
         root.querySelector("#connectToSSID").textContent = `SSID: ${ssid}`;
         root.querySelector("#connectToSignal").textContent = `Signal: ${signal}`;
         root.querySelector("#wifiPassword").value = "";
-        root.querySelector("#connectToNetwork").classList.remove("hidden");
+        root.querySelector("#connectToNetwork").classList.add("show");
+    }
+
+
+    /**
+     * hide new Connection
+     * hides the keyboard and resets the input values
+     */
+    hideNewConnection(){
+        this.shadowRoot.querySelector("#wifiPassword").value = "";
+        this.shadowRoot.querySelector("#connectToSSID").textContent = "SSID: -";
+        this.shadowRoot.querySelector("#connectToSignal").textContent = "Signal: -";
+        this.shadowRoot.querySelector("#connectToNetwork").classList.remove("show");
     }
 
 
@@ -320,6 +348,7 @@ class WifiSetupWidget extends HTMLElement {
             });
         });
 
+        //toggle shift
         const toggleShift = (shiftOn) => {
             this.shadowRoot.querySelectorAll("#keyboard .key").forEach(k => {
                 if (
@@ -337,21 +366,20 @@ class WifiSetupWidget extends HTMLElement {
             });
         };
 
+        //action: connect
         this.shadowRoot.querySelector(".action-connect").addEventListener("click", () => {
             const ssid = this.shadowRoot.querySelector("#connectToSSID").textContent.replace("SSID: ", "");
             const password = passwordInput.value;
             if (ssid && password) {
                 this.connect(ssid, password);
+                this.hideNewConnection();
             }
         });
 
+        //action: cancel
         this.shadowRoot.querySelector(".action-cancel").addEventListener("click", () => {
-            passwordInput.value = "";
-            this.shadowRoot.querySelector("#connectToSSID").textContent = "SSID: -";
-            this.shadowRoot.querySelector("#connectToSignal").textContent = "Signal: -";
-            this.shadowRoot.querySelector("#connectToNetwork").classList.add("hidden");
+            this.hideNewConnection();
         });
-
     }
 
 
@@ -503,6 +531,52 @@ class WifiSetupWidget extends HTMLElement {
                     cursor: pointer;
                 }
 
+                #connectToNetwork {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(14, 14, 18, 0.95);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: center;
+                    padding: 1rem;
+                    box-sizing: border-box;
+                    z-index: 2000;
+                    opacity: 0;
+                    pointer-events: none;
+                    transform: translateY(20px);
+                    transition: all 0.3s ease;
+                }
+
+                #wifiPassword {
+                    width: 100%;
+                    max-width: 400px;
+                    padding: 0.6rem 1rem;
+                    font-size: 1.1rem;
+                    border-radius: 8px;
+                    border: 2px solid #444;
+                    background: #1b1b22;
+                    color: white;
+                    margin-top: 0.5rem;
+                    text-align: center;
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                }
+
+                #wifiPassword:focus {
+                    outline: none;
+                    border-color: #61dafb;
+                    box-shadow: 0 0 8px rgba(97, 218, 251, 0.5);
+                }
+
+                #connectToNetwork.show {
+                    opacity: 1;
+                    pointer-events: auto;
+                    transform: translateY(0);
+                }
+
                 #keyboard {
                     margin-top: 0.5rem;
                     background: #1a1a20;
@@ -513,6 +587,12 @@ class WifiSetupWidget extends HTMLElement {
                     left: 50%;
                     transform: translateX(-50%);
                     width: 100%;
+                    animation: slideUp 0.3s ease-out;
+                }
+
+                @keyframes slideUp {
+                    from { transform: translateY(50px); opacity: 0; }
+                    to   { transform: translateY(0); opacity: 1; }
                 }
 
                 .key-row {
@@ -562,7 +642,6 @@ class WifiSetupWidget extends HTMLElement {
                 .key.action-cancel:hover {
                     background: #c0392b;
                 }
-
 
             </style>
         `;
