@@ -64,8 +64,18 @@ class WifiSetupWidget extends HTMLElement {
         let signal = "-";
         
         const root = this.shadowRoot;
+
         const toggleBtn = root.querySelector("#toggleBtn");
-        toggleBtn.textContent = (state === "on") ? "WLAN deaktivieren" : "WLAN aktivieren";
+        if (state === "on") {
+            toggleBtn.textContent = "WLAN deaktivieren";
+            toggleBtn.classList.add("on");
+            toggleBtn.classList.remove("off");
+        } else {
+            toggleBtn.textContent = "WLAN aktivieren";
+            toggleBtn.classList.add("off");
+            toggleBtn.classList.remove("on");
+        }
+
         const disconnectBtn = root.querySelector("#disconnectBtn");
         
         if (status === "connected") {
@@ -318,6 +328,31 @@ class WifiSetupWidget extends HTMLElement {
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 1rem;
+                }
+
+                #toggleBtn {
+                    padding: 0.5rem 1rem;
+                    font-size: 1rem;
+                    border: none;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    transition: background 0.3s, transform 0.2s;
+                    color: white;
+                    font-weight: bold;
+                }
+
+                #toggleBtn.on {
+                    background: #2ecc71; /* Grün */
+                    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+                }
+
+                #toggleBtn.off {
+                    background: #e74c3c; /* Rot */
+                    box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+                }
+
+                #toggleBtn:hover {
+                    transform: scale(1.05);
                 }
 
                 .status {
