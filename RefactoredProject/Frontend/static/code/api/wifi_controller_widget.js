@@ -7,41 +7,6 @@ class WifiSetupWidget extends HTMLElement {
     }
 
 
-    
-    demoNetworks = [
-    {
-        ssid: "Heimnetzwerk",
-        signal: 78,
-        secured: true,
-        connected: false
-    },
-    {
-        ssid: "OpenWifi123",
-        signal: 53,
-        secured: false,
-        connected: false
-    },
-    {
-        ssid: "Netzwerk-Büro",
-        signal: 92,
-        secured: true,
-        connected: true
-    },
-    {
-        ssid: "Gastzugang",
-        signal: 40,
-        secured: true,
-        connected: false
-    },
-    {
-        ssid: "MobileHotspot",
-        signal: 67,
-        secured: false,
-        connected: false
-    }
-];
-
-
     /**
      * Initial function
      * -> renders the content
@@ -50,6 +15,7 @@ class WifiSetupWidget extends HTMLElement {
         this.render();
         this.setupListeners();
         this.known();
+        this.status();
     }
 
 
@@ -71,6 +37,17 @@ class WifiSetupWidget extends HTMLElement {
 
 
     /**
+     * signalColor
+     * returns a color based on the signal strength
+     */
+    getSignalColor(signal) {
+        if (signal >= 80) return "green";
+        if (signal >= 50) return "gold";
+        return "red";
+    }
+
+
+    /**
      * status
      */
     async status(){
@@ -86,10 +63,11 @@ class WifiSetupWidget extends HTMLElement {
         let ip = "-";
         let signal = "-";
         
-        const toggleBtn = this.shadowRoot.querySelector("#toggleBtn");
+        const root = this.shadowRoot;
+        const toggleBtn = root.querySelector("#toggleBtn");
         toggleBtn.textContent = (state === "on") ? "WLAN deaktivieren" : "WLAN aktivieren";
-        const disconnectBtn = this.shadowRoot.querySelector("#disconnectBtn");
-
+        const disconnectBtn = root.querySelector("#disconnectBtn");
+        
         if (status === "connected") {
             name = data.name;
             ip = data.ip;
@@ -101,9 +79,11 @@ class WifiSetupWidget extends HTMLElement {
             disconnectBtn.onclick = null;
         }
 
-        this.shadowRoot.querySelector("#statusName").textContent = `Verbunden mit: ${name}`;
-        this.shadowRoot.querySelector("#statusIp").textContent = `IP: ${ip}`;
-        this.shadowRoot.querySelector("#statusSignal").textContent = `Signal: ${signal}`;
+        root.querySelector("#statusName").textContent = `Verbunden mit: ${name}`;
+        root.querySelector("#statusIp").innerHTML = `IP: <i>${ip}</i>`;
+        const statSignal = root.querySelector("#statusSignal");
+        statSignal.textContent = `Signal: ${signal}`;
+        statSignal.style.color = this.getSignalColor(signal);
 
         return data;
     } catch (error) {
@@ -146,9 +126,6 @@ class WifiSetupWidget extends HTMLElement {
      */
     async scan(){
         this.showLoader();
-        this.renderNetwork(this.demoNetworks.map(n => ({ ...n, known: false })), true);
-        this.hideLoader();
-        return;
         try {
             const res = await fetch("/api/wifi/scan", { method: "GET" });
             if(!res.ok) throw new Error("Failed to scan networks");
@@ -170,8 +147,6 @@ class WifiSetupWidget extends HTMLElement {
      */
     async known(){
         this.showLoader();
-        this.renderNetwork(this.demoNetworks.map(n => ({ ...n, known: true })), false);
-        this.hideLoader();
         try {
             const res = await fetch("/api/wifi/known", { method: "GET" });
             if(!res.ok) throw new Error("Failed to load known networks");
@@ -269,6 +244,7 @@ class WifiSetupWidget extends HTMLElement {
                     this.connect(net.ssid, null);
                 }else {
                     //show Password input and call pair
+                    this.setupNewConnection(net.ssid, net.signal);
                 }
             });
 
@@ -279,6 +255,12 @@ class WifiSetupWidget extends HTMLElement {
         });
     }
     
+
+    setupNewConnection(ssid, signal){
+        if(!ssid || !signal) return;
+        //show keyboard, textinput, ssid name, signal strength
+    }
+
 
     /**
      * setup Listeners
