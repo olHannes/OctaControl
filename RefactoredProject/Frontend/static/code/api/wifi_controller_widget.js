@@ -70,6 +70,34 @@ class WifiSetupWidget extends HTMLElement {
 
 
     /**
+     * show Notification
+     * @param message: text that will be shown
+     * @param type: "success" or "error" -> style feature
+     * @param timeout: timeout in milliseconds
+     */
+    showNotification(message, type = "success", timeout = 3000) {
+        const el = this.shadowRoot.querySelector("#notification");
+        el.textContent = message;
+        el.className = `show ${type}`;
+        
+        if (timeout) {
+            clearTimeout(this._notifTimer);
+            this._notifTimer = setTimeout(() => this.hideNotification(), timeout);
+        }
+    }
+
+
+    /**
+     * hide Notification
+     * hides a notification after a timeout
+     */
+    hideNotification() {
+        const el = this.shadowRoot.querySelector("#notification");
+        el.classList.remove("show");
+    }
+
+
+    /**
      * signalColor
      * returns a color based on the signal strength
      */
@@ -134,6 +162,7 @@ class WifiSetupWidget extends HTMLElement {
             return data;
         } catch (error) {
             console.error("Failed to load status", error);
+            this.showNotification("Fehler beim Status laden!", "error");
         }
     }
 
@@ -158,9 +187,10 @@ class WifiSetupWidget extends HTMLElement {
             });
 
             if (!res.ok) throw new Error("Failed to toggle WLAN power");
-
+            
             await this.status();
         } catch (error) {
+            this.showNotification(`Wlan konnte nicht '${newState}' geschaltet werden!`, "error");
             console.error("Failed to toggle WLAN:", error);
         } finally {
             this.hideLoader("status");
@@ -181,8 +211,10 @@ class WifiSetupWidget extends HTMLElement {
             const data = await res.json();
 
             const networks = data.networks.map(n => ({ ...n, known: false }));
+            this.showNotification(`Netzwerke erfolgreich gescannt`, "info");
             this.renderNetwork(networks, true);
         } catch (error) {
+            this.showNotification(`Wlan Netzwerke konnten nicht gescannt werden!`, "error");
             console.error("Failed to scan", error);
         } finally {
             this.hideLoader("list");
@@ -202,9 +234,11 @@ class WifiSetupWidget extends HTMLElement {
 
             const data = await res.json();
 
+            this.showNotification(`Gespeicherte Netzwerke erfolgreich abgerufen`, "info");
             const networks = data.networks.map(n => ({ ...n, known: true }));
             this.renderNetwork(networks, false);
         } catch (error) {
+            this.showNotification("Bekannte Netzwerke konnten nicht geladen werden!", "error");
             console.error("Failed to load known networks", error);
         } finally {
             this.hideLoader("list");
@@ -233,8 +267,10 @@ class WifiSetupWidget extends HTMLElement {
             }
 
             const result = await res.json();
+            this.showNotification(`Erfolgreich mit '${ssid}' verbunden.`, "success");
             await this.status();
         } catch (error) {
+            this.showNotification(`Es konnte keine Verbindung mit '${ssid}' hergestellt werden!`);
             console.error("Failure while connecting to the network:", error);
         } finally {
             this.hideLoader("status");
@@ -262,8 +298,10 @@ class WifiSetupWidget extends HTMLElement {
                 throw new Error(errorData.error || "Unbekannter Fehler");
             } 
 
+            this.showNotification(`Erfolgreich von '${ssid}' getrennt.`, "success");
             await this.status();
         } catch (error) {
+            this.showNotification(`Die Verbindung zu '${ssid}' konnte nicht getrennt werden!`, "error");
             console.error("Failure while disconnecting to the network", error);
         } finally {
             this.hideLoader("status");
@@ -487,6 +525,44 @@ class WifiSetupWidget extends HTMLElement {
                     transform: scale(1.05);
                 }
 
+
+                #notification {
+                    position: relative;
+                    padding: 0.6rem 1rem;
+                    margin-bottom: 0.5rem;
+                    border-radius: 6px;
+                    font-size: 0.9rem;
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    pointer-events: none;
+                    transition: opacity 0.4s ease, transform 0.4s ease;
+                }
+
+                #notification.show {
+                    opacity: 1;
+                    transform: translateY(0);
+                    pointer-events: auto;
+                }
+
+                #notification.success {
+                    background: #2ecc71;
+                    color: white;
+                    box-shadow: 0 2px 6px rgba(46, 204, 113, 0.4);
+                }
+
+                #notification.error {
+                    background: #e74c3c;
+                    color: white;
+                    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+                }
+
+                #notification.info {
+                    background: #3498db;
+                    color: white;
+                    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.4);
+                }
+
+
                 .status {
                     position: relative;
                     background: #1b1b22;
@@ -702,6 +778,8 @@ class WifiSetupWidget extends HTMLElement {
                     <h3>WLAN-Einstellungen</h3>
                     <button id="toggleBtn">An/Aus</button>
                 </header>
+
+                <div id="notification" class="hidden"></div>
 
                 <section class="status">
                     <div id="statusLoader" class="loader hidden"></div>
