@@ -7,6 +7,21 @@ class WifiSetupWidget extends HTMLElement {
     }
 
 
+    demoNetworks = {
+            networks: [
+                { ssid: "TestNetzwerk1", signal: 75, known: false },
+                { ssid: "Hausnetz", signal: 90, known: true },
+                { ssid: "Gastnetzwerk", signal: 55, known: false },
+                { ssid: "CafeWiFi", signal: 35, known: true },
+                { ssid: "Test0", signal: 35, known: true },
+                { ssid: "Test1", signal: 10, known: false },
+                { ssid: "Test2", signal: 5, known: true },
+                { ssid: "Test3", signal: 100, known: true },
+                { ssid: "Unbekanntes", signal: 20, known: false }
+            ]
+        };
+
+
     /**
      * Initial function
      * -> renders the content
@@ -23,8 +38,11 @@ class WifiSetupWidget extends HTMLElement {
      * show Loader
      * Shows a Loading animation
      */
-    showLoader() {
-        this.shadowRoot.querySelector("#loader").classList.remove("hidden");
+    showLoader(type = "global") {
+        const el = this.shadowRoot.querySelector(`#${type}Loader`);
+        if (el) el.classList.remove("hidden");
+
+        this.setButtonsDisabled(true);
     }
 
 
@@ -32,8 +50,22 @@ class WifiSetupWidget extends HTMLElement {
      * hide Loader
      * Hides a Loading animation
      */
-    hideLoader() {
-        this.shadowRoot.querySelector("#loader").classList.add("hidden");
+    hideLoader(type = "global") {
+        const el = this.shadowRoot.querySelector(`#${type}Loader`);
+        if (el) el.classList.add("hidden");
+
+        this.setButtonsDisabled(false);
+    }
+
+    /**
+     * set Buttons disabled
+     * disables all the buttons when a api is active
+     */
+    setButtonsDisabled(disabled) {
+        const root = this.shadowRoot;
+        root.querySelectorAll("button").forEach(btn => {
+            btn.disabled = disabled;
+        });
     }
 
 
@@ -111,7 +143,8 @@ class WifiSetupWidget extends HTMLElement {
      * updates the status and toggles the wifi (on / off) based on the current state
      */
     async toggleWifi() {
-        this.showLoader();
+        this.showLoader("status");
+        this.showLoader("list");
         try {
             const data = await this.status();
             const newState = (data.state === "on") ? "off" : "on";
@@ -130,7 +163,8 @@ class WifiSetupWidget extends HTMLElement {
         } catch (error) {
             console.error("Failed to toggle WLAN:", error);
         } finally {
-            this.hideLoader();
+            this.hideLoader("status");
+            this.hideLoader("list");
         }
     }
 
@@ -140,7 +174,7 @@ class WifiSetupWidget extends HTMLElement {
      * gets a list of scanned and available wifis
      */
     async scan(){
-        this.showLoader();
+        this.showLoader("list");
         try {
             const res = await fetch("/api/wifi/scan", { method: "GET" });
             if(!res.ok) throw new Error("Failed to scan networks");
@@ -151,7 +185,7 @@ class WifiSetupWidget extends HTMLElement {
         } catch (error) {
             console.error("Failed to scan", error);
         } finally {
-            this.hideLoader();
+            this.hideLoader("list");
         }
     }
 
@@ -161,7 +195,7 @@ class WifiSetupWidget extends HTMLElement {
      * gets a list of known and safed networks
      */
     async known(){
-        this.showLoader();
+        this.showLoader("list");
         try {
             const res = await fetch("/api/wifi/known", { method: "GET" });
             if(!res.ok) throw new Error("Failed to load known networks");
@@ -173,7 +207,7 @@ class WifiSetupWidget extends HTMLElement {
         } catch (error) {
             console.error("Failed to load known networks", error);
         } finally {
-            this.hideLoader();
+            this.hideLoader("list");
         }
     }
 
@@ -184,7 +218,8 @@ class WifiSetupWidget extends HTMLElement {
      * @param password: a password to connect with the wlan
      */
     async connect(ssid, password){
-        this.showLoader();
+        this.showLoader("status");
+        this.showLoader("list");
         try {
             const res = await fetch("/api/wlan/connect", {
                 method: "POST",
@@ -202,7 +237,8 @@ class WifiSetupWidget extends HTMLElement {
         } catch (error) {
             console.error("Failure while connecting to the network:", error);
         } finally {
-            this.hideLoader();
+            this.hideLoader("status");
+            this.hideLoader("list");
         }
     }
 
@@ -212,7 +248,8 @@ class WifiSetupWidget extends HTMLElement {
      * @param ssid: try to disconnect to a given network
      */
     async disconnect(ssid){
-        this.showLoader();
+        this.showLoader("status");
+        this.showLoader("list");
         try {
             const res = await fetch("/api/wlan/disconnect", {
                 method: "POST",
@@ -229,7 +266,8 @@ class WifiSetupWidget extends HTMLElement {
         } catch (error) {
             console.error("Failure while disconnecting to the network", error);
         } finally {
-            this.hideLoader();
+            this.hideLoader("status");
+            this.hideLoader("list");
         }
     }
 
@@ -304,9 +342,9 @@ class WifiSetupWidget extends HTMLElement {
     }
 
 
-
     /**
      * setup Listeners
+     * sets all listeners to the different buttons and to the keyboard
      */
     setupListeners(){
         const root = this.shadowRoot;
@@ -384,23 +422,19 @@ class WifiSetupWidget extends HTMLElement {
 
 
     /**
-     * render 
+     * render
+     * setup the html and css structure
      */
     render() {
         const pStyle = `
             <style>
                 .loader {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    border: 4px solid rgba(255, 255, 255, 0.1);
-                    border-top: 4px solid #61dafb;
+                    border: 4px solid rgba(0,0,0,0.1);
+                    border-left-color: #09f;
                     border-radius: 50%;
-                    width: 28px;
-                    height: 28px;
+                    width: 24px;
+                    height: 24px;
                     animation: spin 1s linear infinite;
-                    z-index: 1000;
                 }
 
                 .hidden {
@@ -408,7 +442,7 @@ class WifiSetupWidget extends HTMLElement {
                 }
 
                 @keyframes spin {
-                    to { transform: translate(-50%, -50%) rotate(360deg); }
+                    to { transform: rotate(360deg); }
                 }
 
                 .wifi-widget {
@@ -435,7 +469,7 @@ class WifiSetupWidget extends HTMLElement {
                     border-radius: 20px;
                     cursor: pointer;
                     transition: background 0.3s, transform 0.2s;
-                    color: white;
+                    color: #adadad;
                     font-weight: bold;
                 }
 
@@ -454,6 +488,7 @@ class WifiSetupWidget extends HTMLElement {
                 }
 
                 .status {
+                    position: relative;
                     background: #1b1b22;
                     padding: 0.8rem;
                     border-radius: 8px;
@@ -462,6 +497,12 @@ class WifiSetupWidget extends HTMLElement {
 
                 .status p {
                     margin: 0.2rem 0;
+                }
+                
+                #statusLoader {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
                 }
 
                 #disconnectBtn {
@@ -492,8 +533,11 @@ class WifiSetupWidget extends HTMLElement {
                 }
 
                 .list {
+                    position: relative;
+                    min-height: 30px;
                     max-height: 250px;
                     overflow-y: auto;
+                    overflow-x: hidden;
                     background: #16161d;
                     padding: 0.5rem;
                     border-radius: 8px;
@@ -503,6 +547,12 @@ class WifiSetupWidget extends HTMLElement {
                     margin: 0 0 0.5rem 0;
                     font-size: 1rem;
                     color: #ccc;
+                }
+
+                #listLoader {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
                 }
 
                 .network-item {
@@ -654,6 +704,7 @@ class WifiSetupWidget extends HTMLElement {
                 </header>
 
                 <section class="status">
+                    <div id="statusLoader" class="loader hidden"></div>
                     <p id="statusName">Verbunden mit: -</p>
                     <p id="statusIp">IP: -</p>
                     <p id="statusSignal">Signal: -</p>
@@ -666,6 +717,8 @@ class WifiSetupWidget extends HTMLElement {
                 </div>
 
                 <div class="list">
+                    <div id="listLoader" class="loader"></div>
+
                     <h4 id="networkListTitle">Netzwerke</h4>
                     <div id="networkList"></div>
                 </div>
@@ -718,8 +771,6 @@ class WifiSetupWidget extends HTMLElement {
                         </div>
                     </div>
                 </div>
-
-                <div id="loader" class="loader hidden"></div>
             </div>
         `;
 
