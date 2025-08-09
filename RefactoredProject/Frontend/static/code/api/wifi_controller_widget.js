@@ -466,6 +466,13 @@ class WifiSetupWidget extends HTMLElement {
     render() {
         const pStyle = `
             <style>
+                :host {
+                    display: block;
+                    width: 100%;  
+                    max-width: 750px;
+                    margin: 0 auto;
+                }
+
                 .loader {
                     border: 4px solid rgba(0,0,0,0.1);
                     border-left-color: #09f;
