@@ -60,7 +60,7 @@ def wlan_status():
             ["nmcli", "-t", "-f", "active,ssid,signal", "dev", "wifi"]
         ).decode().strip().splitlines()
 
-        active_connection = next((line for line in con_info if line.startswith("yes:")), None)
+        active_connection = next((line for line in con_info if line.startswith("ja:")), None)
         if not active_connection:
             return jsonify({
                 "state": "on",
@@ -105,11 +105,11 @@ def scan_wifi():
         for line in result:
             if not line:
                 continue
-        ssid, signal = line.split(":", 1)
-        networks.append({
-            "ssid": ssid if ssid else "<hidden>",
-            "signal": signal
-        })
+            ssid, signal = line.split(":", 1)
+            networks.append({
+                "ssid": ssid if ssid else "<hidden>",
+                "signal": signal
+            })
         return jsonify({ "networks": networks }), 200
 
     except subprocess.CalledProcessError as e:
