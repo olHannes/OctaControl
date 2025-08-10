@@ -29,8 +29,6 @@ class BtSetupWidget extends HTMLElement {
     showStatusLoader() {
         this.shadowRoot.querySelector("#statusLoader").classList.remove("hidden");
         this.shadowRoot.querySelector("#connectedDevice").style.opacity = "0.5";
-        this.shadowRoot.querySelector("#btPowerStatus").style.opacity = "0.5";
-        this.shadowRoot.querySelector("#btVisible").style.opacity = "0.5";
     }
 
 
@@ -40,8 +38,6 @@ class BtSetupWidget extends HTMLElement {
     hideStatusLoader() {
         this.shadowRoot.querySelector("#statusLoader").classList.add("hidden");
         this.shadowRoot.querySelector("#connectedDevice").style.opacity = "1";
-        this.shadowRoot.querySelector("#btPowerStatus").style.opacity = "1";
-        this.shadowRoot.querySelector("#btVisible").style.opacity = "1";
     }
 
 
@@ -63,25 +59,38 @@ class BtSetupWidget extends HTMLElement {
 
     /**
      * show Notification
-     * shows a notification message in a specific style 
-     * @param message: message string
-     * @param type: style {success, info, error}
+     * @param message: text that will be shown
+     * @param type: "success" or "error" -> style feature
      * @param timeout: timeout in milliseconds
      */
-    showNotification(message, type = "success", timeout=3000) {
-        const notif = this.shadowRoot.querySelector("#notification");
-        notif.textContent = message;
-        notif.className = `notification show ${type}`;
-        setTimeout(() => {
-            notif.classList.remove("show");
-        }, timeout);
+    showNotification(message, type = "success", timeout = 3000) {
+        const el = this.shadowRoot.querySelector("#notification");
+        el.textContent = message;
+
+        el.classList.remove("success", "error", "info", "show");
+
+        el.classList.add("notification", type);
+
+        requestAnimationFrame(() => {
+            el.classList.add("show");
+        });
+
+        if(timeout){
+            clearTimeout(this._notifTimer);
+            this._notifTimer = setTimeout(() => this.hideNotification(), timeout);
+        }
     }
 
-    demoStatus = {
-        "powered": "yes",
-        "deviceName": null,
-        "connected_device": null
+
+    /**
+     * hide Notification
+     * hides a notification after a timeout
+     */
+    hideNotification() {
+        const el = this.shadowRoot.querySelector("#notification");
+        el.classList.remove("show");
     }
+
 
     /**
     * Load Status
@@ -95,41 +104,33 @@ class BtSetupWidget extends HTMLElement {
             const res = await fetch("/api/bluetooth/setup/status");
             if(!res.ok) throw new Error("Serverfehler")
             const data = await res.json();
-            //const data = this.demoStatus;
 
-        if(returnValue == true){
-            return data;
-        } else {
-                const status = data.powered === "yes" ? "EIN" : "AUS";
-                const deviceName = data.name || "Unbekannt";
-                const connectedDev = data.connected_device || null;
+            if(returnValue == true) return data;
 
-                const btStatus = this.shadowRoot.querySelector("#btStatus");
-                btStatus.innerHTML = `Bluetooth: <strong>${status}</strong> - `;
+            //Power Status
+            const powerStatus = data.powered === "yes" ? "EIN" : "AUS";
+            const newPowerStatus = powerStatus === "EIN" ? "AUS" : "EIN";
+            const pTxtColor = newPowerStatus === "AUS" ? "red" : "green";
+            const btToggleBtn = this.shadowRoot.querySelector("#togglePower");
+            btToggleBtn.innerHTML = "Blutooth " + `<p style="color: ${pTxtColor}; margin: 0;">${newPowerStatus}</p>`;
 
-                const deviceNameSpan = document.createElement("span");
-                deviceNameSpan.className = "device-name";
-                deviceNameSpan.textContent = deviceName;
-
-                if(deviceName != "Unbekannt" && connectedDev?.address) {
-                    deviceNameSpan.title = "Zum Trennen klicken";
-                    deviceNameSpan.style.cursor = "pointer";
-                    
-                    deviceNameSpan.addEventListener("click", () => {
-                        this.disconnectDevice(connectedDev.address);
-                    });
-                }
-
-                btStatus.appendChild(deviceNameSpan);
-
-                requestAnimationFrame(() => {
-                    if(deviceNameSpan.scrollWidth > deviceNameSpan.clientWidth) {
-                        deviceNameSpan.classList.add("scroll");
-                    }else {
-                        deviceNameSpan.classList.remove("scroll");
-                    }
-                });
+            //Discoverable Status
+            const discoverableStatus = data.discoverable === "yes" ? "EIN" : "AUS";
+            const newDiscoverableStatus = discoverableStatus === "EIN" ? "AUS" : "EIN";
+            const txtColor = newDiscoverableStatus === "AUS" ? "red" : "green";
+            const discoverableBtn = this.shadowRoot.querySelector("#toggleVisibility");
+            discoverableBtn.innerHTML = "Sichtbarkeit " + `<p style="color: ${txtColor}; margin: 0;">${newDiscoverableStatus}</p>`;
+            
+            //Connected Device
+            const connectedDev = data.connected_device;
+            const connectedDevTag = this.shadowRoot.querySelector("#connectedDevice");
+            if(connectedDev && connectedDev !== "Unbekannt" && connectedDev.address){
+                connectedDevTag.innerHTML = `
+                Verbundenes Gerät: <i>${connectedDev.name}</i> - <i>${connectedDev.address}</i>`;
+            } else {
+                connectedDevTag.innerHTML = `Verbundenes Gerät: -`;
             }
+
         } catch (err) {
             console.error("Fehler beim Status laden: ", err);
         }
@@ -145,20 +146,23 @@ class BtSetupWidget extends HTMLElement {
         this.showStatusLoader();
         this.showListLoader();
         try {
-            const res = await this.loadStatus(true);
-            if(!res.ok) throw new Error("Failed toggle Bluetooth");
-            const current = res.powered;
+            const stat = await this.loadStatus(true);
+            if(!stat || !stat.powered) throw new Error("Failed toggle Bluetooth");
+            const current = stat.powered;
             const newState = current == "yes" ? "off" : "on";
 
-            await fetch("/api/bluetooth/setup/power", {
+            const res = await fetch("/api/bluetooth/setup/power", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ state: newState })
             });
+            if(!res.ok) throw new Error("Failed to toggle Bluetooth");
+
             this.loadStatus();
-        }catch (e){
-            this.showNotification(`Bluetooth konnte nicht '${newState}' geschaltet werden!`, "error");
-            console.error("Failure while toggle Bluetooth power: ", e);
+            this.showNotification(`Bluetooth konnte erfolgreich '${newState}' geschaltet werden.`, "success");
+        }catch (error){
+            console.error("Failure while toggle Bluetooth power: ", error);
+            this.showNotification(`Bluetooth konnte nicht geschaltet werden!`, "error");
         }finally {
             this.hideStatusLoader();
             this.hideListLoader();
@@ -176,7 +180,8 @@ class BtSetupWidget extends HTMLElement {
         const current = await this.loadStatus(true);
         if(!current) {
             console.error("failed toggle visibility: status was undefined");
-            this.hideLoader();
+            this.showNotification(`Sichtbarkeit konnte nicht geändert werden!`, "error");
+            this.hideStatusLoader();
         }
         const newVisibility = current.discoverable === "yes" ? "off" : "on";
 
@@ -197,36 +202,18 @@ class BtSetupWidget extends HTMLElement {
                     }
                 }
                 this.loadStatus();
+                this.showNotification(`Sichtbarkeit konnte erfolgreich '${newVisibility}' geschaltet werden.`, "success");
                 if(newVisibility == "off"){
                     this.loadPairedDevices();
                 }
             }
-        }catch (e) {
-            this.showNotification(`Fehler beim setzen der Sichtbarkeit auf '${newState}'`);
-            console.err("Failed toggle visibility:", e);
+        }catch (error) {
+            console.error("Failed toggle visibility:", error);
+            this.showNotification(`Fehler beim ändern der Sichtbarkeit auf '${newVisibility}'`);
         }finally {
             this.hideStatusLoader();
         }
     }
-
-    demoDevices = [
-        { name: "Logitech MX Keys", address: "AA:BB:CC:DD:EE:01" },
-        { name: "Bose QC35 II", address: "AA:BB:CC:DD:EE:02" },
-        { name: "Samsung Galaxy S22", address: "AA:BB:CC:DD:EE:03" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: "Apple AirPods Pro", address: "AA:BB:CC:DD:EE:04" },
-        { name: null, address: "AA:BB:CC:DD:EE:05" }
-    ];
-    demoDevices_ = [
-        { name: "New Device", address: "AA:BB:CC:DD:EE:01" },
-        { name: "Test Handy", address: "AA:BB:CC:DD:EE:04" },
-        { name: null, address: "AA:BB:CC:DD:EE:05" }
-    ];
 
 
     /**
@@ -236,30 +223,30 @@ class BtSetupWidget extends HTMLElement {
     async startScan() {
         if(this.scanning){
             this.scanning = false;
-            this.shadowRoot.querySelector("#startScan").textContent = "🔍 Scan";
+            this.shadowRoot.querySelector("#startScan").textContent = "Scan";
             this.shadowRoot.querySelector("#deviceListTitle").textContent = "Gekoppelte Geräte";
             this.loadPairedDevices();
             return;
         }
         this.scanning = true;
-        this.shadowRoot.querySelector("#startScan").textContent = "Scan abbrechen";
+        this.shadowRoot.querySelector("#startScan").textContent = "Gekoppelte Geräte";
         this.showListLoader();
         try{
-            //const res = await fetch("/api/bluetooth/setup/scan", { method: "POST" });
-            //if(!res.ok) throw new Error("Scan Error");
-            //const devices = await res.json();
-            const devices = this.demoDevices_;
+            const res = await fetch("/api/bluetooth/setup/scan", { method: "POST" });
+            if(!res.ok) throw new Error("Scan Error");
+            const devices = await res.json();
 
             if(this.scanning){
                 this.renderDevices(devices, "found");
             }
-        } catch (err) {
-            this.showNotification("Scan konnte nicht erfolgreich ausgeführt werden!", "error");
-            console.error("Scan Error: ", err);
+            this.showNotification("Scan wurde erfolgreich ausgeführt", "success");
+        } catch (error) {
+            console.error("Scan Error: ", error);
             this.scanning = false;
-            this.shadowRoot.querySelector("#startScan").textContent = "🔍 Scan";
+            this.shadowRoot.querySelector("#startScan").textContent = "Scan";
             this.shadowRoot.querySelector("#deviceListTitle").textContent = "Gekoppelte Geräte";
             this.loadPairedDevices();
+            this.showNotification("Scan konnte nicht erfolgreich ausgeführt werden!", "error");
         }finally {
             this.hideListLoader();
         }
@@ -273,16 +260,15 @@ class BtSetupWidget extends HTMLElement {
     async loadPairedDevices() {
         this.showListLoader();
         try {
-            //const res = await fetch("/api/bluetooth/setup/paired_devices");
-            //if(!res.ok){
-                //throw new Error("Loading paired device failure");
-            //
-            //const devices = await res.json().paired_devices;
-            const devices = this.demoDevices;
+            const res = await fetch("/api/bluetooth/setup/paired_devices");
+            if(!res.ok) throw new Error("Loading paired device failure");
+            const devices = await res.json().paired_devices;
+
             this.renderDevices(devices, "paired");
-        }catch (e){
+            this.showNotification("Gekoppelte Geräte wurden erfolgreich abgerufen.", "success");
+        }catch (error){
+            console.error("Paired List Error:", error);
             this.showNotification(`Die gekoppelten Geräte konnten nicht geladen werden!`, "error");
-            console.error("Paired List Error:", e);
         }finally {
             this.hideListLoader();
         }
@@ -302,7 +288,7 @@ class BtSetupWidget extends HTMLElement {
         title.textContent = mode === "found" ? "Gefundene Geräte" : "Gekoppelte Geräte";
         list.innerHTML = "";
 
-        if (devices.length === 0) {
+        if (!Array.isArray(devices) || devices.length === 0) {
             list.innerHTML = `<div style="opacity: 0.6;">Keine Geräte gefunden</div>`;
             return;
         }
@@ -340,18 +326,24 @@ class BtSetupWidget extends HTMLElement {
 
         this.showListLoader();
         this.showStatusLoader();
+        try {
+            const res = await fetch(endpointMap[action], {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ address })
+            });
+            if(!res.ok) throw new Error(`Failed to ${action} - ${address}`);
 
-        const res = await fetch(endpointMap[action], {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ address })
-        });
-        if(!res.ok) console.error(`Failed to ${action} - ${address}`);
-
-        if(action === "pair") this.startScan();
-        else if(action === "remove" || action === "connect") this.loadPairedDevices();
-        this.hideListLoader();
-        this.hideStatusLoader();
+            if(action === "pair") this.startScan();
+            else if(action === "remove" || action === "connect") this.loadPairedDevices();
+            this.showNotification(`'${action}' wurde erfolgreich ausgeführt.`, "success");
+        } catch (error) {
+            console.error(`Fehler bei deviceAction: ${error}`);
+            this.showNotification(`'${action}' konnte nicht ausgeführt werden!`, "error");
+        } finally {
+            this.hideListLoader();
+            this.hideStatusLoader();
+        }
     }
 
 
@@ -371,9 +363,9 @@ class BtSetupWidget extends HTMLElement {
             });
             if(!res.ok) throw new Error("Failed to disconnect to device");
             this.loadStatus();
-        }catch{
+        }catch (error){
             this.showNotification(`Verbindung zu '${address}' konnte nicht getrennt werden!`, "error");
-            console.error("Failed to disconnect");
+            console.error(`Failed to disconnect: ${error}`);
         }finally{
             this.hideStatusLoader();
         }
@@ -446,6 +438,7 @@ class BtSetupWidget extends HTMLElement {
                 width: 320px;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
                 backdrop-filter: blur(6px);
+                min-width: 375px;
             }
 
             h3 {
@@ -477,6 +470,11 @@ class BtSetupWidget extends HTMLElement {
 
             button:active {
                 transform: scale(0.97);
+            }
+
+            #actions {
+                display: flex;
+                justify-content: space-around;
             }
 
             .device-section h4 {
@@ -530,16 +528,42 @@ class BtSetupWidget extends HTMLElement {
                 color: var(--color-heading);
             }
 
-            .notification {
-                margin-top: 0.5em;
-                padding: 0.5em;
+            #notification {
+                position: relative;
+                padding: 0.3rem 0.3rem;
+                margin-bottom: 0.5rem;
                 border-radius: 6px;
-                font-size: 0.9em;
-                display: none;
+                font-size: 0.9rem;
+                opacity: 0;
+                transform: translateY(-10px);
+                pointer-events: none;
+                transition: opacity 0.4s ease, transform 0.4s ease;
+                min-height: 1.5rem;
             }
-            .notification.show { display: block; }
-            .notification.success { background: rgba(0,200,0,0.15); color: #6f6; }
-            .notification.error { background: rgba(200,0,0,0.15); color: #f88; }
+
+            #notification.show {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+
+            #notification.success {
+                background: #2ecc71;
+                color: white;
+                box-shadow: 0 2px 6px rgba(46, 204, 113, 0.4);
+            }
+
+            #notification.error {
+                background: #e74c3c;
+                color: white;
+                box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+            }
+
+            #notification.info {
+                background: #3498db;
+                color: white;
+                box-shadow: 0 2px 6px rgba(52, 152, 219, 0.4);
+            }
 
             .status-controls {
                 margin-top: 1em;
@@ -547,6 +571,7 @@ class BtSetupWidget extends HTMLElement {
 
             #statusContainer {
                 margin-top: 0.5em;
+                margin-bottom: 12px;
                 font-size: 0.9em;
                 color: var(--color-text);
                 border: 1px solid var(--color-border);
@@ -594,13 +619,11 @@ class BtSetupWidget extends HTMLElement {
                 <div id="statusContainer">
                     <div id="statusLoader" class="loader hidden"></div>
                     <span id="connectedDevice">Verbundenes Gerät: -</span>
-                    <span id="btPowerStatus">Bluetooth: Aus</span>
-                    <span id="btVisible">Sichtbarkeit: Aus</span>
                 </div>
 
                 <div id="actions">
                     <button id="togglePower">An/Aus</button>
-                    <button id="toggleVisibility">👁 Sichtbarkeit</button>
+                    <button id="toggleVisibility">Sichtbarkeit</button>
                     <button id="startScan">Scan</button>
                 </div>
 
