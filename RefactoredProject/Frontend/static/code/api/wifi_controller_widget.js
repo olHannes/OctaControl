@@ -103,6 +103,7 @@ class WifiSetupWidget extends HTMLElement {
     async status(){
         try {
             const res = await fetch(`${this.apiPath}/api/wifi/status`, { method: "GET" });
+
             if(!res.ok) throw new Error("Failed to fetch status");
             
             const data = await res.json();
@@ -166,9 +167,7 @@ class WifiSetupWidget extends HTMLElement {
 
             const res = await fetch(`${this.apiPath}/api/wifi/power`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ state: newState })
             });
 
