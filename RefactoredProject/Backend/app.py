@@ -1,12 +1,10 @@
 from flask import Flask, render_template
-from flask_cors import CORS
 from api.wlan_setup import wlan_api
 from utils.Logger import Logger
 import os
 
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
-CORS(app)
 
 app.register_blueprint(wlan_api)
 
