@@ -154,36 +154,34 @@ def known_wifi():
 
 @wlan_api.route("/connect", methods=["POST"])
 def connect_to_wifi():
-    """
-    Payload: {"ssid": "<network_name>", "password": "<network_password>"}
-    Tries to connect the Raspberry Pi to the given WiFi network.
-    """
     log.verbose(wlanApiTag, "POST /connect received")
     try:
         data = request.json
-        if not data or "ssid" not in data or "password" not in data:
-            log.error(wlanApiTag, "/connect: Missing 'ssid' or 'password'")
-            return jsonify({"error": "Missing 'ssid' or 'password'"}), 400
+        if not data or "ssid" not in data:
+            log.error(wlanApiTag, "/connect: Missing 'ssid'")
+            return jsonify({"error": "Missing 'ssid'"}), 400
         
         ssid = data["ssid"]
-        password = data["password"]
-        
+        password = data.get("password")
+
         subprocess.run(["nmcli", "device", "disconnect", "wlan0"], check=False)
 
-        result = subprocess.run(
-            ["nmcli", "dev", "wifi", "connect", ssid, "password", password],
-            capture_output=True,
-            text=True
-        )
+        if password:
+            cmd = ["nmcli", "dev", "wifi", "connect", ssid, "password", password]
+        else:
+            cmd = ["nmcli", "dev", "wifi", "connect", ssid]
+
+        result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode != 0:
-            return jsonify({ "error": "Failed to connect" + result.stderr }), 500
-        
+            return jsonify({"error": "Failed to connect - " + result.stderr}), 500
+
         return jsonify({"status": f"Connected to {ssid}"}), 200
 
     except Exception as e:
-        log.error(wlanApiTag, f"Failed to connect with {ssid} - {e}")
-        return jsonify({ "error" : f"Failed to connect to wifi - {e}" }), 500
+        log.error(wlanApiTag, f"Failed to connect with {data.get('ssid')} - {e}")
+        return jsonify({"error": f"Failed to connect to wifi - {e}"}), 500
+
     
 
 @wlan_api.route("/disconnect", methods=["POST"])

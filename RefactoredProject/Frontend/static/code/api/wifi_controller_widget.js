@@ -186,8 +186,20 @@ class WifiSetupWidget extends HTMLElement {
             if (!res.ok) throw new Error("Failed to toggle WLAN power");
             
             await this.status();
+
+            const toggleBtn = this.shadowRoot.querySelector("#toggleBtn");
+            if (newState === "on") {
+                toggleBtn.textContent = "WLAN deaktivieren";
+                toggleBtn.classList.add("on");
+                toggleBtn.classList.remove("off");
+            } else {
+                toggleBtn.textContent = "WLAN aktivieren";
+                toggleBtn.classList.add("off");
+                toggleBtn.classList.remove("on");
+            }
+
         } catch (error) {
-            this.showNotification(`Wlan konnte nicht '${newState}' geschaltet werden!`, "error");
+            this.showNotification(`Wlan konnte nicht geschaltet werden!`, "error");
             console.error("Failed to toggle WLAN:", error);
         } finally {
             this.hideLoader("status");
@@ -267,7 +279,7 @@ class WifiSetupWidget extends HTMLElement {
             this.showNotification(`Erfolgreich mit '${ssid}' verbunden.`, "success");
             await this.status();
         } catch (error) {
-            this.showNotification(`Es konnte keine Verbindung mit '${ssid}' hergestellt werden!`);
+            this.showNotification(`Es konnte keine Verbindung mit '${ssid}' hergestellt werden!`, "error");
             console.error("Failure while connecting to the network:", error);
         } finally {
             this.hideLoader("status");
@@ -516,12 +528,13 @@ class WifiSetupWidget extends HTMLElement {
                 }
 
                 #toggleBtn.on {
-                    background: #2ecc71; /* Grün */
+                    background: #2ecc71;
+                    color: white;
                     box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
                 }
 
                 #toggleBtn.off {
-                    background: #e74c3c; /* Rot */
+                    background: #e74c3c;
                     box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
                 }
 
