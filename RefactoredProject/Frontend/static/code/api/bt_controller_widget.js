@@ -31,9 +31,9 @@ class BtSetupWidget extends HTMLElement {
      */
     connectedCallback() {
         this.render();
+        this.setupListeners();
         this.loadStatus();
         this.loadPairedDevices();
-        this.setupListeners();
     }
 
 

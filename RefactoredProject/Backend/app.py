@@ -1,12 +1,16 @@
 from flask import Flask, render_template
-from api.wlan_setup import wlan_api
 from utils.Logger import Logger
 import os
+
+from api.wlan_setup import wlan_api
+from api.bluetooth.bluetooth_setup import bt_setup_api
 
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
 
 app.register_blueprint(wlan_api)
+app.register_blueprint(bt_setup_api)
+
 
 @app.route("/")
 def index():
