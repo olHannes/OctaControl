@@ -129,15 +129,153 @@ class BluetoothAudioWidget extends HTMLElement {
                 }
 
                 .audio-widget {
-                    
+                    position: relative;
+                    width: 600px;
+                    height: 200px; /* größer */
+                    border-radius: 15px;
+                    overflow: hidden;
+                    color: white;
+                    font-family: Arial, sans-serif;
+                    background-color: #222;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    padding: 20px 25px;
+                    box-sizing: border-box;
                 }
 
+                .cover {
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url("../static/media/audio_placeholder.png");
+                    background-position: top center;
+                    background-size: cover;
+                    filter: brightness(0.7);
+                    pointer-events: none;
+                    transform: translateX(-50%);
+                    z-index: 0;
+                    mask-image: radial-gradient(circle at top center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 69%);
+                    -webkit-mask-image: radial-gradient(circle at top center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 69%);
+                }
+
+                .info-controls {
+                    position: relative;
+                    z-index: 2;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .info {
+                    max-width: 60%;
+                }
+
+                .title {
+                    font-size: 1.6rem;
+                    font-weight: bold;
+                    margin-bottom: 6px;
+                    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+                }
+
+                .artist {
+                    font-size: 1.1rem;
+                    opacity: 0.8;
+                    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+                }
+
+                .play-pause button {
+                    background: rgba(255,255,255,0.15);
+                    border: none;
+                    color: white;
+                    font-size: 1.8rem; /* kleiner */
+                    padding: 8px 14px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    transition: background 0.3s ease;
+                    margin-left: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 44px;
+                    height: 44px;
+                }
+
+                .play-pause button:hover {
+                    background: rgba(255,255,255,0.4);
+                }
+
+                .bottom-controls {
+                    position: relative;
+                    z-index: 2;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    margin-top: 12px;
+                }
+
+                .bottom-controls button {
+                    background: rgba(255,255,255,0.15);
+                    border: none;
+                    color: white;
+                    font-size: 1.2rem;
+                    padding: 6px 10px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: background 0.3s ease;
+                    width: 36px;
+                    height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .bottom-controls button:hover {
+                    background: rgba(255,255,255,0.4);
+                }
+
+                .progress-bar-container {
+                    flex-grow: 1;
+                    height: 10px;
+                    background: rgba(255,255,255,0.2);
+                    border-radius: 5px;
+                    cursor: pointer;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .progress-bar {
+                    height: 100%;
+                    width: 40%;
+                    background: #1db954;
+                    border-radius: 5px 0 0 5px;
+                    transition: width 0.2s ease;
+                }
             </style>
         `;
 
         const pHTML = `
             <div class="audio-widget">
-                <h3>Audio</h3>
+                <div class="cover" id="cover"></div>
+                <div class="info-controls">
+                    <div class="info">
+                    <div class="title" id="title">Title wird geladen...</div>
+                    <div class="artist" id="artist">Interpret</div>
+                    </div>
+                    <div class="play-pause">
+                    <button id="play-pause" title="Play">&#9658;</button>
+                    </div>
+                </div>
+
+                <div class="bottom-controls">
+                    <button id="prev" title="Vorheriger">&#9664;&#9664;</button>
+                    <div class="progress-bar-container" aria-label="Fortschritt Lied">
+                    <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <button id="next" title="Nächster">&#9654;&#9654;</button>
+                </div>
             </div>
         `;
 
