@@ -4,9 +4,18 @@ class WifiSetupWidget extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
+        this.apiPath = "http://127.0.0.1:5000";
+
+        this.wlanApis = {
+            "power": `${this.apiPath}/api/wlan/power`,
+            "status": `${this.apiPath}/api/wlan/status`,
+            "scan": `${this.apiPath}/api/wlan/scan`,
+            "known": `${this.apiPath}/api/wlan/known`,
+            "connect": `${this.apiPath}/api/wlan/connect`,
+            "disconnect": `${this.apiPath}/api/wlan/disconnect`
+        };
     }
 
-    apiPath = "http://127.0.0.1:5000";
 
     /**
      * Initial function
@@ -42,6 +51,7 @@ class WifiSetupWidget extends HTMLElement {
 
         this.setButtonsDisabled(false);
     }
+
 
     /**
      * set Buttons disabled
@@ -100,9 +110,9 @@ class WifiSetupWidget extends HTMLElement {
      * calls the api to get the current wifi status.
      * the function updates the panel and changes the power button
      */
-    async status(){
+    async status(intervall=false){
         try {
-            const res = await fetch(`${this.apiPath}/api/wlan/status`, { method: "GET" });
+            const res = await fetch(`${this.wlanApis.status}`, { method: "GET" });
 
             if(!res.ok) throw new Error("Failed to fetch status");
             
@@ -148,8 +158,10 @@ class WifiSetupWidget extends HTMLElement {
 
             return data;
         } catch (error) {
-            console.error("Failed to load status", error);
-            this.showNotification("Fehler beim Status laden!", "error");
+            if(!intervall){
+                console.error("Failed to load status", error);
+                this.showNotification("Fehler beim Status laden!", "error");
+            }
         }
     }
 
@@ -165,7 +177,7 @@ class WifiSetupWidget extends HTMLElement {
             const data = await this.status();
             const newState = (data.state === "on") ? "off" : "on";
 
-            const res = await fetch(`${this.apiPath}/api/wlan/power`, {
+            const res = await fetch(`${this.wlanApis.power}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ state: newState })
@@ -191,7 +203,7 @@ class WifiSetupWidget extends HTMLElement {
     async scan(){
         this.showLoader("list");
         try {
-            const res = await fetch(`${this.apiPath}/api/wlan/scan`, { method: "GET" });
+            const res = await fetch(`${this.wlanApis.scan}`, { method: "GET" });
             if(!res.ok) throw new Error("Failed to scan networks");
             const data = await res.json();
 
@@ -214,7 +226,7 @@ class WifiSetupWidget extends HTMLElement {
     async known(){
         this.showLoader("list");
         try {
-            const res = await fetch(`${this.apiPath}/api/wlan/known`, { method: "GET" });
+            const res = await fetch(`${this.wlanApis.known}`, { method: "GET" });
             if(!res.ok) throw new Error("Failed to load known networks");
 
             const data = await res.json();
@@ -240,7 +252,7 @@ class WifiSetupWidget extends HTMLElement {
         this.showLoader("status");
         this.showLoader("list");
         try {
-            const res = await fetch(`${this.apiPath}/api/wlan/connect`, {
+            const res = await fetch(`${this.wlanApis.connect}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ssid, password })
@@ -272,7 +284,7 @@ class WifiSetupWidget extends HTMLElement {
         this.showLoader("status");
         this.showLoader("list");
         try {
-            const res = await fetch(`${this.apiPath}/api/wlan/disconnect`, {
+            const res = await fetch(`${this.wlanApis.disconnect}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ssid })

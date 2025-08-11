@@ -75,5 +75,5 @@ def get_status():
         return jsonify({"status": status})
     except Exception as e:
         log.error(blApiTag, f"Failed to get playing status")
-        return jsonify({"error", str(e)}), 500
+        return jsonify({"error": str(e)}), 500
     

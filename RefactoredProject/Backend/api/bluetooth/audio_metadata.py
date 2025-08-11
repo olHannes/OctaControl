@@ -1,10 +1,32 @@
 from flask import Blueprint, jsonify
-from utils.media_player import get_metadata, get_progress, get_player_device_name
+from utils.media_player import *
 from utils.Logger import Logger
 
 bt_meta_api = Blueprint("bt_meta_api", __name__, url_prefix="/api/bluetooth/metadata")
 blApiTag = "BtMeta"
 log = Logger()
+
+@bt_meta_api.route("/all", methods=["GET"])
+def all_data():
+    log.verbose(blApiTag, "GET /all received")
+    try:
+        meta = get_metadata()
+        progress = get_progress()
+        isPlaying = is_playing()
+        device = get_player_device_name()
+
+        response = {
+            "device": device,
+            "is_playing": isPlaying,
+            "progress": progress,
+        }
+        response.update(meta)
+        return jsonify(response), 200
+
+    except Exception as e:
+        log.error(blApiTag, f"Failed to get all data: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 @bt_meta_api.route("/track", methods=["GET"])
 def track_meta():

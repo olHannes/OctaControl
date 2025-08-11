@@ -5,10 +5,23 @@ class BtSetupWidget extends HTMLElement {
         super();
         this.attachShadow({ mode: "open" });
         this.scanning = false;
+
+        this.apiPath = "http://127.0.0.1:5000";
+
+        this.bluetoothApis = {
+            "power": `${this.apiPath}/api/bluetooth/setup/power`,
+            "scan": `${this.apiPath}/api/bluetooth/setup/scan`,
+            "visibility": `${this.apiPath}/api/bluetooth/setup/visibility`,
+            "paired_devices": `${this.apiPath}/api/bluetooth/setup/paired_devices`,
+            "pair": `${this.apiPath}/api/bluetooth/setup/pair`,
+            "connect": `${this.apiPath}/api/bluetooth/setup/connect`,
+            "disconnect": `${this.apiPath}/api/bluetooth/setup/disconnect`,
+            "remove": `${this.apiPath}/api/bluetooth/setup/remove`,
+            "status": `${this.apiPath}/api/bluetooth/setup/status`
+        };
     }
 
-    apiPath = "http://127.0.0.1:5000";
-
+    
     /**
      * Initial function
      * -> renders the content
@@ -102,7 +115,7 @@ class BtSetupWidget extends HTMLElement {
     */
     async loadStatus(returnValue=false) {
         try {
-            const res = await fetch(`${this.apiPath}/api/bluetooth/setup/status`);
+            const res = await fetch(`${this.bluetoothApis.status}`);
             if(!res.ok) throw new Error("Serverfehler")
             const data = await res.json();
 
@@ -152,7 +165,7 @@ class BtSetupWidget extends HTMLElement {
             const current = stat.powered;
             const newState = current == "yes" ? "off" : "on";
 
-            const res = await fetch(`${this.apiPath}/api/bluetooth/setup/power`, {
+            const res = await fetch(`${this.bluetoothApis.power}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ state: newState })
@@ -187,7 +200,7 @@ class BtSetupWidget extends HTMLElement {
         const newVisibility = current.discoverable === "yes" ? "off" : "on";
 
         try{
-            const res = await fetch(`${this.apiPath}/api/bluetooth/setup/visibility`, {
+            const res = await fetch(`${this.bluetoothApis.visibility}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ discoverable: newVisibility })
@@ -233,7 +246,7 @@ class BtSetupWidget extends HTMLElement {
         this.shadowRoot.querySelector("#startScan").textContent = "Gekoppelte Geräte";
         this.showListLoader();
         try{
-            const res = await fetch(`${this.apiPath}/api/bluetooth/setup/scan`, { method: "POST" });
+            const res = await fetch(`${this.bluetoothApis.scan}`, { method: "POST" });
             if(!res.ok) throw new Error("Scan Error");
             const devices = await res.json();
 
@@ -261,7 +274,7 @@ class BtSetupWidget extends HTMLElement {
     async loadPairedDevices() {
         this.showListLoader();
         try {
-            const res = await fetch(`${this.apiPath}/api/bluetooth/setup/paired_devices`);
+            const res = await fetch(`${this.bluetoothApis.paired_devices}`);
             if(!res.ok) throw new Error("Loading paired device failure");
             const devices = await res.json().paired_devices;
 
@@ -319,16 +332,16 @@ class BtSetupWidget extends HTMLElement {
      */
     async handleDeviceAction(action, address){
         const endpointMap = {
-            connect: "/api/bluetooth/setup/connect",
-            pair: "/api/bluetooth/setup/pair",
-            remove: "/api/bluetooth/setup/remove",
+            connect: `${this.bluetoothApis.connect}`,
+            pair: `${this.bluetoothApis.pair}`,
+            remove: `${this.bluetoothApis.remove}`,
         };
         if(!endpointMap[action]) return;
 
         this.showListLoader();
         this.showStatusLoader();
         try {
-            const res = await fetch(this.apiPath + endpointMap[action], {
+            const res = await fetch(endpointMap[action], {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ address })
@@ -357,7 +370,7 @@ class BtSetupWidget extends HTMLElement {
 
         try{
             this.showStatusLoader();
-            const res = await fetch(`${this.apiPath}/api/bluetooth/setup/disconnect`, {
+            const res = await fetch(`${this.bluetoothApis.disconnect}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ address })
