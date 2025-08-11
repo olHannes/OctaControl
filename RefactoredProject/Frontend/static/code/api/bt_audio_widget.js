@@ -31,6 +31,7 @@ class BluetoothAudioWidget extends HTMLElement {
      */
     connectedCallback() {
         this.render();
+        this.setupElements();
         this.setupListeners();
     }
 
