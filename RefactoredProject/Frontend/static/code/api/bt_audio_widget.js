@@ -13,6 +13,14 @@ class BluetoothAudioWidget extends HTMLElement {
             "skip": `${this.apiPath}/api/bluetooth/control/skip`,
             "previous": `${this.apiPath}/api/bluetooth/control/previous`,
         };
+
+        this.btnPrev = null;
+        this.btnNext = null;
+        this.btnPlayPause = null;
+        this.progressBar = null;
+        this.cover = null;
+        this.title = null;
+        this.artist = null;
     }
 
 
@@ -28,14 +36,18 @@ class BluetoothAudioWidget extends HTMLElement {
 
 
     /**
+     * toggle buttons
      * enables / disables the clickable buttos -> used to limit user inputs
      */
     toggleButtons(activate=false){
-
+        this.btnPrev.disabled = activate;
+        this.btnNext.disabled = activate;
+        this.btnPlayPause.disabled = activate;
     }
 
 
     /**
+     * update
      * calls the GET-/all api and call the updateUI function
      * @return: returns the received metadata 
      */
@@ -49,30 +61,22 @@ class BluetoothAudioWidget extends HTMLElement {
 
 
     /**
-     * play Track
+     * togglePlay
+     * plays or pauses the current track
      */
-    async play(){
+    async togglePlay(){
         try {
             
         } catch (error) {
             
+        } finally {
+            this.toggleButtons();
         }
     }
 
 
     /**
-     * pause Track
-     */
-    async pause(){
-        try {
-            
-        } catch (error) {
-            
-        }
-    }
-
-
-    /**
+     * next
      * Go to next Track
      */
     async skip(){
@@ -80,11 +84,14 @@ class BluetoothAudioWidget extends HTMLElement {
             
         } catch (error) {
             
+        } finally {
+            this.toggleButtons();
         }
     }
 
 
     /**
+     * previous
      * Go to previous Track
      */
     async previous(){
@@ -92,11 +99,14 @@ class BluetoothAudioWidget extends HTMLElement {
             
         } catch (error) {
             
+        } finally {
+            this.toggleButtons();
         }
     }
 
 
     /**
+     * update UI
      * updates the widget based on the metadata
      */
     updateUI(pMeta){
@@ -105,12 +115,40 @@ class BluetoothAudioWidget extends HTMLElement {
 
     
     /**
+     * setup Elements
+     * sets all the global items
+     */
+    setupElements(){
+        const root = this.shadowRoot;
+        this.btnPrev = root.querySelector("#prev");
+        this.btnNext = root.querySelector("#next");
+        this.btnPlayPause = root.querySelector("#play-pause");
+        this.progressBar = root.querySelector("#progress-bar");
+        this.cover = root.querySelector("#cover");
+        this.title = root.querySelector("#title");
+        this.artist = root.querySelector("#artist");
+    }
+
+
+    /**
      * setup Listeners
      * sets all listeners to the different buttons and to the keyboard
      */
     setupListeners(){
-        const root = this.shadowRoot;
+        this.btnPrev.addEventListener("click", () => {
+            this.toggleButtons(true);
+            this.previous();
+        });
 
+        this.btnNext.addEventListener("click", () => {
+            this.toggleButtons(true);
+            this.skip();
+        });
+
+        this.btnPlayPause.addEventListener("click", () => {
+            this.toggleButtons(true);
+            this.togglePlay();
+        });
     }
 
 
