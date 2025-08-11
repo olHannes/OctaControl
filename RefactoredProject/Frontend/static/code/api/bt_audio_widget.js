@@ -54,9 +54,16 @@ class BluetoothAudioWidget extends HTMLElement {
      */
     async update(){
         try {
+            const res = await fetch(`${this.audioApis.all}`, method = "GET");
+            if(!res.ok) throw new Error("Failed to call /all api");
+
+            const data = await res.json();
+            if(data.error) throw new Error(data.error);
             
+            this.updateUI(data);
+
         } catch (error) {
-            
+            console.error(error);
         }
     }
 
@@ -111,7 +118,20 @@ class BluetoothAudioWidget extends HTMLElement {
      * updates the widget based on the metadata
      */
     updateUI(pMeta){
+        device = pMeta.device || "Unbekannt";
+        is_playing = pMeta.is_playing || false;
+        progress = pMeta.progress || 0;
+        title = pMeta.title || "-";
+        artist = pMeta.artist || "-";
+        album = pMeta.album || "-";
 
+        if(is_playing == true){
+            //update play-pause btn
+        }
+        //update progressBar
+        
+        this.title.innerText = title;
+        this.artist.innerText = artist;
     }
 
     
