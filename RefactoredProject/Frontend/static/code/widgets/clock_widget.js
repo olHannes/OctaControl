@@ -157,11 +157,12 @@ class ClockWidget extends HTMLElement {
                     font-weight: 600;
                 }
                 .time-large {
-                    font-size: 1.15rem;
+                    font-size: 2rem;
                     color: white;
                 }
                 .date {
                     opacity: 0.75;
+                    font-size: 1.25rem;
                 }
             </style>
         `;

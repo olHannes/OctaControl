@@ -448,7 +448,7 @@ class BtSetupWidget extends HTMLElement {
                 color: var(--color-text);
                 border-radius: 16px;
                 padding: 1.5em;
-                width: 100%;
+                width: 550px;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
                 backdrop-filter: blur(6px);
             }
