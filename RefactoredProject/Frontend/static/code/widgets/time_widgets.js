@@ -274,7 +274,7 @@ class TimeWidget extends HTMLElement {
 
                 .time-widget {
                     background: var(--card);
-                    border-radius: 12px;
+                    border-radius: 7px;
                     box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
                     display: flex;
                     flex-direction: column;

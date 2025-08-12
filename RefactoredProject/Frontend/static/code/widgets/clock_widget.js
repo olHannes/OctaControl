@@ -83,7 +83,7 @@ class ClockWidget extends HTMLElement {
 
                 .clock-widget {
                     width: 600px;
-                    height: 400px;
+                    height: 250px;
                     background: var(--card);
                     padding: 1rem;
                     border-radius: 18px;
@@ -95,7 +95,8 @@ class ClockWidget extends HTMLElement {
                 }
 
                 .clock-wrap {
-                    width: 100%;
+                    width: 72%;
+                    height: 100%;
                     aspect-ratio: 1 / 1;
                     border-radius: 50%;
                     display: grid;
@@ -157,12 +158,12 @@ class ClockWidget extends HTMLElement {
                     font-weight: 600;
                 }
                 .time-large {
-                    font-size: 2rem;
+                    font-size: 1.5rem;
                     color: white;
                 }
                 .date {
                     opacity: 0.75;
-                    font-size: 1.25rem;
+                    font-size: 1.1rem;
                 }
             </style>
         `;

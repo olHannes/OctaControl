@@ -189,8 +189,8 @@ class BluetoothAudioWidget extends HTMLElement {
 
                 .audio-widget {
                     position: relative;
-                    width: 600px;
-                    height: 200px; /* größer */
+                    width: 550px;
+                    height: 150px;
                     border-radius: 15px;
                     overflow: hidden;
                     color: white;
