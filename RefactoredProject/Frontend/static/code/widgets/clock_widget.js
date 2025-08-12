@@ -1,15 +1,26 @@
+//code/widgets/clock_widget.js
 class ClockWidget extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
     }
 
+
+    /**
+     * connected callback
+     * setup of html, items and starts the loop 
+     */
     connectedCallback() {
         this.render();
         this.setupItems();
         this.start();
     }
 
+
+    /**
+     * setup items
+     * uses a querySelector to find the moveable items
+     */
     setupItems() {
         this.clockWrap = this.shadowRoot.querySelector("#clock");
         this.hourHand = this.shadowRoot.querySelector("#hour");
@@ -19,6 +30,11 @@ class ClockWidget extends HTMLElement {
         this.dateEl = this.shadowRoot.querySelector("#date");
     }
 
+
+    /**
+     * start
+     * handles a loop to update the clock
+     */
     start() {
         const update = () => {
             const now = new Date();
@@ -46,6 +62,11 @@ class ClockWidget extends HTMLElement {
         update();
     }
 
+
+    /**
+     * render
+     * includes the html and css structure
+     */
     render() {
         const style = `
             <style>
