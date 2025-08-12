@@ -477,8 +477,7 @@ class WifiSetupWidget extends HTMLElement {
             <style>
                 :host {
                     display: block;
-                    width: 100%;  
-                    max-width: 750px;
+                    width: 100%;
                     margin: 0 auto;
                 }
 
@@ -627,7 +626,7 @@ class WifiSetupWidget extends HTMLElement {
 
                 .list {
                     position: relative;
-                    min-height: 30px;
+                    min-height: 60px;
                     max-height: 250px;
                     overflow-y: auto;
                     overflow-x: hidden;

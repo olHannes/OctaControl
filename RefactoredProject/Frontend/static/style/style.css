@@ -1,0 +1,85 @@
+.widget-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    background: linear-gradient(135deg, #42674d, #000000);
+}
+
+.widget-container::-webkit-scrollbar, 
+.widget-container::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.widget-collection {
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+}
+
+.widget-container > .widget-collection > * {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    color: #fff;
+    min-width: 300px;
+    min-height: 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    background: linear-gradient(145deg, #3a3a3a52, #2a2a2a52);
+    transition: all 0.2s ease;
+}
+
+.widget.empty {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+.empty-widget {
+    width: 98%;
+    position: relative;
+    left: 1%;
+}
+
+.widget-container > .widget-collection > *:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+@media (hover: hover) {
+    .widget-container > .widget-collection > *:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+}
+
+
+#settingsWidget {
+    width: 200px;
+    height: 95%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+#settingsWidget img {
+    width: 60%;
+}
+#settings {
+    opacity: 0;
+    transform: translateX(-75px);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+#settings.show {
+    opacity: 1;
+    transform: translateX(0);
+}

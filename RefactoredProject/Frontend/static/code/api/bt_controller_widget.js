@@ -437,7 +437,6 @@ class BtSetupWidget extends HTMLElement {
 
                 display: block;
                 width: 100%;
-                max-width: 750px;
                 margin: 0 auto;
             }
 
@@ -449,10 +448,9 @@ class BtSetupWidget extends HTMLElement {
                 color: var(--color-text);
                 border-radius: 16px;
                 padding: 1.5em;
-                width: 320px;
+                width: 100%;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
                 backdrop-filter: blur(6px);
-                min-width: 375px;
             }
 
             h3 {
@@ -500,6 +498,7 @@ class BtSetupWidget extends HTMLElement {
 
             #deviceList {
                 max-height: 215px;
+                min-height: 50px;
                 overflow-y: auto;
                 display: flex;
                 flex-direction: column;

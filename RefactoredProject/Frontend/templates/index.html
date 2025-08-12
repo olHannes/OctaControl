@@ -3,15 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style/style.css">
     <title>OctaControl</title>
 </head>
 <body>
-    <bt-audio-widget></bt-audio-widget>
 
-    <bt-setup-widget></bt-setup-widget>
-    
-    <wifi-setup-widget></wifi-setup-widget>
-    
+    <div id="widget-container" class="widget-container">
+        <div class="widget-collection">
+            <bt-audio-widget></bt-audio-widget>
+            <div class="empty-widget" style="height: 68%;"></div>
+        </div>
+
+        <div class="widget-collection">
+            <div class="empty-widget" style="height: 51%;"></div>
+            <div class="empty-widget" style="height: 42%;"></div>
+        </div>
+        
+        <div class="widget-collection">
+            <div id="settingsWidget" onclick="toggleSettings();">
+                <img src="../static/media/settings.svg" alt="Settings" width="50" height="auto">
+            </div>
+        </div>
+        
+        <div class="widget-collection" id="settings">
+            <wifi-setup-widget style="width: 600px;"></wifi-setup-widget>
+            <bt-setup-widget style="width: 600px;"></bt-setup-widget>
+        </div>
+    </div>
+
+
+    <script src="../static/code/index.js"></script>
     <script src="../static/code/api/bt_controller_widget.js" type="module"></script>
     <script src="../static/code/api/bt_audio_widget.js" type="module"></script>
     <script src="../static/code/api/wifi_controller_widget.js" type="module"></script>
