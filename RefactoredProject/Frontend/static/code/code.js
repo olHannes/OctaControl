@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const container = document.querySelector('.widget-container');
     function updateScale() {
-        return;
+        //return;
         const containerRect = container.getBoundingClientRect();
         const centerX = containerRect.left + containerRect.width / 2;
 

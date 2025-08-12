@@ -436,7 +436,7 @@ class BtSetupWidget extends HTMLElement {
                 --color-scrollbar-thumb: #3C4A5A;
 
                 display: block;
-                width: 100%;
+                width: 600px;
                 margin: 0 auto;
             }
 

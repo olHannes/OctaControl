@@ -46,7 +46,7 @@
     border: 1px dashed rgba(255, 255, 255, 0.2);
 }
 .empty-widget {
-    width: 98%;
+    width: 250px;
     position: relative;
     left: 1%;
 }
@@ -65,7 +65,7 @@
 
 
 #settingsWidget {
-    width: 200px;
+    width: 250px;
     height: 95%;
     display: flex;
     align-items: center;
@@ -75,6 +75,7 @@
     width: 60%;
 }
 #settings {
+    gap: 5%;
     opacity: 0;
     transform: translateX(-75px);
     transition: transform 0.4s ease, opacity 0.4s ease;

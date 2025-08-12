@@ -477,7 +477,7 @@ class WifiSetupWidget extends HTMLElement {
             <style>
                 :host {
                     display: block;
-                    width: 100%;
+                    width: 600px;
                     margin: 0 auto;
                 }
 

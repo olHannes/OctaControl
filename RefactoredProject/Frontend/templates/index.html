@@ -11,12 +11,11 @@
     <div id="widget-container" class="widget-container">
         <div class="widget-collection">
             <bt-audio-widget></bt-audio-widget>
-            <div class="empty-widget" style="height: 68%;"></div>
         </div>
-
+        
         <div class="widget-collection">
-            <div class="empty-widget" style="height: 51%;"></div>
-            <div class="empty-widget" style="height: 42%;"></div>
+            <div class="empty-widget" style="height: 39%;"></div>
+            <clock-widget></clock-widget>
         </div>
         
         <div class="widget-collection">
@@ -25,16 +24,17 @@
             </div>
         </div>
         
-        <div class="widget-collection" id="settings">
-            <wifi-setup-widget style="width: 600px;"></wifi-setup-widget>
-            <bt-setup-widget style="width: 600px;"></bt-setup-widget>
+        <div class="widget-collection" id="settings" style="display: none;">
+            <wifi-setup-widget></wifi-setup-widget>
+            <bt-setup-widget></bt-setup-widget>
         </div>
     </div>
 
 
-    <script src="../static/code/index.js"></script>
+    <script src="../static/code/code.js"></script>
     <script src="../static/code/api/bt_controller_widget.js" type="module"></script>
     <script src="../static/code/api/bt_audio_widget.js" type="module"></script>
     <script src="../static/code/api/wifi_controller_widget.js" type="module"></script>
+    <script src="../static/code/widgets/clock_widget.js" type="module"></script>
 </body>
 </html>
