@@ -25,8 +25,8 @@
         <div class="widget-collection">
             <relais-widget id="relais-widget"></relais-widget>
         </div>
-
-
+        
+        
         <!-- Settings-->
         <div class="widget-collection">
             <div id="settingsWidget" onclick="toggleSettings();">
@@ -39,10 +39,10 @@
                 <wifi-setup-widget></wifi-setup-widget>
                 <bt-setup-widget style="width: 600px; height: 100%;"></bt-setup-widget>
             </div>
-
+            
             <div class="settings-column">
                 <div class="empty-widget" style="width: 280px; height: 46%;">Infotainment Settins<br><br>- Toggle of visibility for the widgets<br>- Setup of position for every widget<br>- load and save user-specific data in a database<br>- Widget for climate Data (remote and local)<br>- Volume slider<br>- Widget for systemcontrol (shutdown, restart, update)</div>
-                <div class="empty-widget" style="width: 100%; height: 54%; background-color: beige;"></div>
+                <system-widget id="system-widget"></system-widget>
             </div>
           
         </div>
@@ -55,6 +55,7 @@
     <script src="../static/code/api/map_widget.js" type="module"></script>
 
     <script src="../static/code/api/relais_widget.js" type="module"></script>
+    <script src="../static/code/api/system_widget.js" type="module"></script>
 
     <script src="../static/code/widgets/clock_widget.js" type="module"></script>
     <script src="../static/code/widgets/time_widgets.js" type="module"></script>

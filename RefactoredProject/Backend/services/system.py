@@ -14,7 +14,7 @@ def reboot():
         subprocess.run(["sudo", "reboot"], check=True)
         return jsonify({"status": "Rebooting system"})
     except subprocess.CalledProcessError as e:
-        log.error(systemApiTag, "/reboot failed to reboot - {e}")
+        log.error(systemApiTag, f"/reboot failed to reboot - {e}")
         return jsonify({"error": f"Failed to reboot - {e}"}), 500
 
 @system_api.route("/shutdown", methods=["POST"])
@@ -24,7 +24,7 @@ def shutdown():
         subprocess.run(["sudo", "shutdown", "now"], check=True)
         return jsonify({"status": "Shutting down system"})
     except subprocess.CalledProcessError as e:
-        log.error(systemApiTag, "Failed to shutdown - {e}")
+        log.error(systemApiTag, f"Failed to shutdown - {e}")
         return jsonify({"error": f"Failed to shutdown: {e}"}), 500
 
 @system_api.route("/update", methods=["POST"])
@@ -36,8 +36,8 @@ def update():
         subprocess.run(["bash", script_absolute_path], check=True)
         return jsonify({"status": "System updated"})
     except subprocess.CalledProcessError as e:
-        log.error(systemApiTag, "Failed to update the system - {e}")
+        log.error(systemApiTag, f"Failed to update the system - {e}")
         return jsonify({"error": f"Failed to update system - {e}"}), 500
     except FileNotFoundError:
-        log.error(systemApiTag, "Failed to update the system - File not found")
+        log.error(systemApiTag, f"Failed to update the system - File not found")
         return jsonify({"error": f"Failed to update the system - File not found"}), 500
