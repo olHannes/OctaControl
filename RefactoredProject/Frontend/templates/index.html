@@ -9,16 +9,25 @@
 <body>
 
     <div id="widget-container" class="widget-container">
+        <!--Collection 1-->
         <div class="widget-collection">
             <bt-audio-widget style="width: 550px; height: 27%;" id="audio-widget"></bt-audio-widget>
             <map-widget style="width: 550px; height: 66%;" id="map-widget"></map-widget>
         </div>
         
+        <!--Collection 2-->
         <div class="widget-collection">
             <time-widget style="height: 43%;" id="time-widget"></time-widget>
             <clock-widget style="height: 50%;" id="clock-widget"></clock-widget>
         </div>
         
+        <!--Collection 3-->
+        <div class="widget-collection">
+            <relais-widget id="relais-widget"></relais-widget>
+        </div>
+
+
+        <!-- Settings-->
         <div class="widget-collection">
             <div id="settingsWidget" onclick="toggleSettings();">
                 <img src="../static/media/settings.svg" alt="Settings" width="50" height="auto">
@@ -37,7 +46,6 @@
             </div>
           
         </div>
-
     </div>
 
 
@@ -46,9 +54,12 @@
     <script src="../static/code/api/bt_controller_widget.js" type="module"></script>
     <script src="../static/code/api/map_widget.js" type="module"></script>
 
-    <script src="../static/code/api/bt_audio_widget.js" type="module"></script>
-    <script src="../static/code/api/wifi_controller_widget.js" type="module"></script>
+    <script src="../static/code/api/relais_widget.js" type="module"></script>
+
     <script src="../static/code/widgets/clock_widget.js" type="module"></script>
     <script src="../static/code/widgets/time_widgets.js" type="module"></script>
+
+    <script src="../static/code/api/bt_audio_widget.js" type="module"></script>
+    <script src="../static/code/api/wifi_controller_widget.js" type="module"></script>
 </body>
 </html>

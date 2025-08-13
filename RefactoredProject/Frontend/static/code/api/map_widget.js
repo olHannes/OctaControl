@@ -1,3 +1,4 @@
+//code/api/map_widget.js
 class MapWidget extends HTMLElement {
     constructor() {
         super();
@@ -7,6 +8,7 @@ class MapWidget extends HTMLElement {
         this.marker = null;
     }
 
+    
     /**
      * connected callback
      */
