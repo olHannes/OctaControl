@@ -4,12 +4,14 @@ import os
 
 from api.wlan_setup import wlan_api
 from api.bluetooth.bluetooth_setup import bt_setup_api
+from services.relais_control import relais_api
 
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
 
 app.register_blueprint(wlan_api)
 app.register_blueprint(bt_setup_api)
+app.register_blueprint(relais_api)
 
 
 @app.route("/")
