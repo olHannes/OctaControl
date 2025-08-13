@@ -1,9 +1,13 @@
+//code/api/relais_widget.js
+
+import {save, load, StorageKeys } from '../utils/settings.js';
+
 class RelaisWidget extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this.apiPath = "http://127.0.0.1:5000/api/system/relais";
-
+        
         this.relaiApis = {
             "init": `${this.apiPath}/init`,
             "status": `${this.apiPath}/status?type=`,
@@ -60,6 +64,7 @@ class RelaisWidget extends HTMLElement {
             }
         }
         this.updateUI();
+        this.loadSettings();
     }
 
 
@@ -69,6 +74,7 @@ class RelaisWidget extends HTMLElement {
      */
     async toggleDevice(device) {
         const newState = !this.state[device];
+        
         try {
             const res = await fetch(`${this.relaiApis.toggle}`, {
                 method: "POST",
@@ -78,10 +84,10 @@ class RelaisWidget extends HTMLElement {
             if(!res.ok) throw new Error(`Failed to set device '${device}' to '${newState}'`);
             this.state[device] = newState;
             this.updateUI();
+            this.saveSettings();
+
         } catch (error) {
             console.error(`Failed to toggle Device: ${error}`);
-        } finally {
-
         }
     }
 
@@ -95,6 +101,7 @@ class RelaisWidget extends HTMLElement {
     setDeviceState(device, state) {
         this.state[device] = state;
         this.updateUI();
+        this.saveSettings();
     }
 
 
@@ -115,10 +122,40 @@ class RelaisWidget extends HTMLElement {
     updateUI() {
         for (let device of Object.keys(this.state)) {
             const el = this.shadowRoot.querySelector(`.device[data-device="${device}"]`);
+            if(!el) continue;
             if (this.state[device]) {
                 el.classList.add("on");
             } else {
                 el.classList.remove("on");
+            }
+        }
+    }
+
+
+    /**
+     * save Settings
+     */
+    saveSettings() {
+        save(StorageKeys.TRUNK_ACTIVE, this.state.trunk);
+        save(StorageKeys.ASSISTANT, this.state["park-assistent"]);
+    }
+
+
+    /**
+     * load Settings
+     */
+    loadSettings() {
+        const trunk = load(StorageKeys.TRUNK_ACTIVE);
+        const assistant = load(StorageKeys.ASSISTANT);
+
+        if (trunk !== null) {
+            if((trunk && !this.state.trunk) || (!trunk && this.state.trunk)){
+                this.toggleDevice("trunk");
+            }
+        }
+        if (assistant !== null){
+            if((assistant && !this.state['park-assistent']) || (!assistant && this.state['park-assistent'])){
+                this.toggleDevice("park-assistent");
             }
         }
     }
