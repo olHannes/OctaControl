@@ -96,16 +96,17 @@
 #settings .settings-column {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 5rem;
 }
 
 .settings-column {
     overflow-y: auto;
     overflow-x: hidden;
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .settings-column::-webkit-scrollbar, 
 .settings-column::-webkit-scrollbar-thumb {
-    color: gray;
-    width: 50px;
+    display: none;
 }

@@ -436,8 +436,9 @@ class BtSetupWidget extends HTMLElement {
                 --color-scrollbar-thumb: #3C4A5A;
 
                 display: block;
-                width: 600px;
-                margin: 0 auto;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
             }
 
             .bt-widget {
@@ -448,7 +449,9 @@ class BtSetupWidget extends HTMLElement {
                 color: var(--color-text);
                 border-radius: 16px;
                 padding: 1.5em;
-                width: 550px;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
                 backdrop-filter: blur(6px);
             }
@@ -604,8 +607,8 @@ class BtSetupWidget extends HTMLElement {
 
             #listLoader {
                 position: absolute;
-                left: 87%;
-                top: 38%;
+                left: 92%;
+                top: 63%;
             }
 
             .loader {

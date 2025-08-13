@@ -293,7 +293,7 @@ class TimeWidget extends HTMLElement {
                 }
 
                 main {
-                    padding: 1rem;
+                    padding: 5px;
                     text-align: center;
                     display: flex;
                     flex-direction: column;
