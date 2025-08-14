@@ -3,7 +3,7 @@
     background-color: #053e33;
     height: 100dvh;
     width: 5%;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
 }
