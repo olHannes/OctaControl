@@ -30,10 +30,10 @@ def shutdown():
 @system_api.route("/update", methods=["POST"])
 def update():
     log.verbose(systemApiTag, "POST /update received")
-    script_absolute_path = "/home/hannes/Documents/OctaControl/updateOctaControl.sh"
+    script_absolute_path = "/home/hannes/Documents/OctaControl/RefactoredProject/setup/full_setup.sh"
 
     try:
-        subprocess.run(["bash", script_absolute_path], check=True)
+        subprocess.run(["sudo", "bash", script_absolute_path], check=True)
         return jsonify({"status": "System updated"})
     except subprocess.CalledProcessError as e:
         log.error(systemApiTag, f"Failed to update the system - {e}")
