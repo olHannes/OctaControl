@@ -6,6 +6,12 @@ const items = {
     "relais": document.getElementById('relais-widget')
 };
 
+const widgets = {
+        system: subPanel.querySelector('system-widget'),
+        wifi: subPanel.querySelector('wifi-setup-widget'),
+        bt: subPanel.querySelector('bt-setup-widget'),
+        vsettings: subPanel.querySelector('vsettings-widget'),
+};
 
 /**
  * toggles the visibility of an widget
@@ -19,32 +25,52 @@ function toggleItemVisibility(elementKey, show = false) {
 
 
 /**
- * toggle Settings
- * show of hide the settings container
+ * toggles the settings-container
  */
-function toggleSettings(){
+function toggleSettings() {
     const panel = document.getElementById('settings');
-    const container = document.getElementById('widget-container');
-
     const isVisible = panel.classList.contains('show');
 
     if (!isVisible) {
-        panel.style.display = "flex";
-        
+        panel.style.display = 'flex';
         requestAnimationFrame(() => {
             panel.classList.add('show');
-
             setTimeout(() => {
                 panel.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
             }, 50);
         });
     } else {
         panel.classList.remove('show');
-
         setTimeout(() => {
-            panel.style.display = "none";
-            panel.removeEventListener('transitionend', handler);
+            panel.style.display = 'none';
+            clearSubPanel();
         }, 400);
+        Object.values(widgets).forEach(widget => {
+            if(widget) widget.style.display="none";
+        });
+        document.getElementById("settingsHeadline").innerText = "Einstellungsmenü:";
     }
 }
 
+
+/**
+ * opens a subpanel (makes a specific list of items visible)
+ */
+function openSubPanel(type) {
+    const subPanel = document.getElementById('subPanel');
+    const headline = document.getElementById('settingsHeadline');
+
+    Object.values(widgets).forEach(widget => {
+        if(widget) widget.style.display = "none";
+    });
+    
+    if(type === "System"){
+        if(widgets.system) widgets.system.style.display="block";
+    } else if (type === "Verbindungen"){
+        if(widgets.wifi) widgets.wifi.style.display="block";
+        if(widgets.bt) widgets.bt.style.display="block";
+    } else if (type === "Widgets"){
+        if(widgets.vsettings) widgets.vsettings.style.display="block";
+    }
+    headline.innerText = type;
+}

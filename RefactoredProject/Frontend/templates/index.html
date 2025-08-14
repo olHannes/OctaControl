@@ -32,7 +32,7 @@
         </div>
         
         
-        <!-- Settings-->
+        <!-- Settings
         <div class="widget-collection">
             <div id="settingsWidget" onclick="toggleSettings();">
                 <img src="../static/media/settings.svg" alt="Settings" width="50" height="auto">
@@ -40,6 +40,7 @@
         </div>
         
         <div class="widget-collection" id="settings" style="display: none;">
+            
             <div class="settings-column" style="gap: 5rem;">
                 <wifi-setup-widget></wifi-setup-widget>
                 <bt-setup-widget style="width: 600px; height: 100%;"></bt-setup-widget>
@@ -49,12 +50,52 @@
                 <div class="empty-widget" style="width: 280px; height: 46%;">Infotainment Settins<br><br>- Toggle of visibility for the widgets<br>- Setup of position for every widget<br>- load and save user-specific data in a database<br>- Widget for climate Data (remote and local)</div>
                 <system-widget id="system-widget"></system-widget>
             </div>
-
+            
             <div class="settings-column">
                 <vsettings-widget></vsettings-widget>
             </div>
-          
+            
         </div>
+        -->
+
+
+
+
+        <!-- Settings-Icon -->
+        <div class="widget-collection">
+            <div id="settingsWidget" onclick="toggleSettings();">
+                <img src="../static/media/settings.svg" alt="Settings" width="50" height="auto" />
+            </div>
+        </div>
+
+        <!-- Haupt-Einstellungen Panel -->
+        <div id="settings" class="settings-panel" style="display: none;">
+            <div class="menu-column">
+                    <div class="menu-item" onclick="openSubPanel('System')">
+                        <img src="../static/media/system-settings.svg" alt="System" />
+                        <span>System</span>
+                    </div>
+
+                    <div class="menu-item" onclick="openSubPanel('Verbindungen')">
+                        <img src="../static/media/connection.svg" alt="Connection">
+                        <span>Verbindungen</span>
+                    </div>
+
+                    <div class="menu-item" onclick="openSubPanel('Widgets')">
+                        <img src="../static/media/widget-settings.svg" alt="Widgets" />
+                        <span>Widget</span>
+                    </div>
+                    
+            </div>
+            <div class="sub-panel" id="subPanel">
+                <h2 id="settingsHeadline">Einstellungsmenü:</h2>
+                <system-widget style="display: none;"></system-widget>
+                <wifi-setup-widget style="width: 100%; display: none;"></wifi-setup-widget>
+                <bt-setup-widget style="width: 95%; display: none;"></bt-setup-widget>
+                <vsettings-widget style="display: none;"></vsettings-widget>
+            </div>
+        </div>
+
     </div>
 
 

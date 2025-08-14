@@ -79,6 +79,8 @@ body {
 }
 
 
+
+
 #settingsWidget {
     width: 250px;
     height: 95%;
@@ -86,42 +88,67 @@ body {
     align-items: center;
     justify-content: space-around;
 }
-
+    
 #settingsWidget img {
     width: 60%;
 }
 
-#settings {
+.settings-panel {
     display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    padding: 1rem;
+    gap: 1rem;
     background: rgba(30, 30, 30, 0.9);
+    background: rgba(18, 25, 33, 0.95); /*Neu*/
     border-radius: 16px;
-    opacity: 0;
-    transform: translateX(-75px);
+    padding: 1rem;
+    width: auto;
     transition: transform 0.4s ease, opacity 0.4s ease;
+    opacity: 0;
+    transform: translateX(75px);
 }
 
-#settings.show {
+.settings-panel.show {
     opacity: 1;
     transform: translateX(0);
 }
 
-#settings .settings-column {
+.menu-column {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.settings-column {
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex: 1 1 0;
-    min-width: 0;
+.menu-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    color: #d0d7de; /* helles, weiches Grau */
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s ease;
 }
 
-.settings-column::-webkit-scrollbar, 
-.settings-column::-webkit-scrollbar-thumb {
-    display: none;
+.menu-item img{
+    width: 2rem;
+}
+
+.sub-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    color: white;
+    flex: 2;
+    background: #111;
+    color: #cbd5e1; /*neu*/
+    background: #1e293b; /*neu*/
+    border-radius: 8px;
+    padding: 1rem;
+    min-width: 500px;
+    max-height: 80vh;
+    gap: 5%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }

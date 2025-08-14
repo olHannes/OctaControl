@@ -29,7 +29,6 @@ class VolumeWidget extends HTMLElement {
      * inits the slider value
      */
     async initWidget() {
-        console.log("init widget volume slider");
         const data = await this.get();
 
         let volume = 10;
@@ -37,7 +36,6 @@ class VolumeWidget extends HTMLElement {
             volume = data.volume;
         }
 
-        console.log("volume: " + volume);
         this.shadowRoot.querySelector("#volumeSlider").value = volume;
     }
 
