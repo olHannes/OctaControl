@@ -29,11 +29,18 @@ class VolumeWidget extends HTMLElement {
      * inits the slider value
      */
     async initWidget() {
+        console.log("init widget volume slider");
         const data = await this.get();
-        if (!data) return;
-        const volume = data.volume ?? 0;
+
+        let volume = 10;
+        if (data && data.volume !== undefined) {
+            volume = data.volume;
+        }
+
+        console.log("volume: " + volume);
         this.shadowRoot.querySelector("#volumeSlider").value = volume;
     }
+
 
 
     /**
@@ -48,6 +55,7 @@ class VolumeWidget extends HTMLElement {
             return data;
         } catch (error) {
             console.error(`Failed to get Volume: ${error}`);
+            return null;
         }
     }
 
@@ -122,7 +130,7 @@ class VolumeWidget extends HTMLElement {
         const html = `
             <div class="volume-container">
                 <div class="volume-slider">
-                    <input type="range" id="volumeSlider" min="0" max="100" step="2" orient="vertical">
+                    <input type="range" id="volumeSlider" min="0" max="100" step="2" orient="vertical" value=0>
                 </div>
             </div>
         `;
