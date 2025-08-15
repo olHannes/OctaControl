@@ -15,7 +15,6 @@ relaisApiTag = "RelaisApi"
 DEVICE_PINS = {
     "park-assistent": 17,
     "trunk": 27,
-    "light": 22
 }
 
 
@@ -26,8 +25,11 @@ def init_GPIO():
     log.verbose(relaisApiTag, "/init GPIO pins")
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    for pin in DEVICE_PINS.values():
-        GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+    for name, pin in DEVICE_PINS.items():
+        if name == "trunk":
+            GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
+        else:
+            GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
 
 @relais_api.route("/init", methods=["GET"])

@@ -1,0 +1,66 @@
+V1:
+from pydbus import SystemBus
+import time
+
+bus = SystemBus()
+manager = bus.get("org.bluez", "/")
+
+# Finde den ersten Adapter (z.B. hci0)
+mngr_objs = manager.GetManagedObjects()
+adapter_path = None
+for path, interfaces in mngr_objs.items():
+    if "org.bluez.Adapter1" in interfaces:
+        adapter_path = path
+        break
+
+adapter = bus.get("org.bluez", adapter_path)
+
+# 5. Bluetooth an/aus schalten
+adapter.Powered = True  # an
+time.sleep(1)
+adapter.Powered = False  # aus
+
+# 6. Sichtbarkeit an/aus
+adapter.Discoverable = True
+time.sleep(5)
+adapter.Discoverable = False
+
+# 2. Scannen starten
+adapter.StartDiscovery()
+time.sleep(10)  # 10 Sekunden scannen
+adapter.StopDiscovery()
+
+# 1. gepairte Geräte auslesen
+for path, interfaces in mngr_objs.items():
+    dev = interfaces.get("org.bluez.Device1")
+    if dev and dev.get("Paired", False):
+        print(f"Gepairtes Gerät: {dev['Name']} [{dev['Address']}]")
+
+# 3. Verbinden mit einem Gerät (beispielsweise erst das erste gepairte)
+for path, interfaces in mngr_objs.items():
+    dev = interfaces.get("org.bluez.Device1")
+    if dev and dev.get("Paired", False):
+        device = bus.get("org.bluez", path)
+        device.Connect()
+        print(f"Verbunden mit {dev['Name']}")
+        break
+
+# 4. Koppeln mit einem neuen Gerät (z.B. erstes nicht gepairte während Scan)
+for path, interfaces in mngr_objs.items():
+    dev = interfaces.get("org.bluez.Device1")
+    if dev and not dev.get("Paired", False):
+        device = bus.get("org.bluez", path)
+        device.Pair()
+        print(f"Paare mit {dev['Name']}")
+        break
+
+
+v2:
+bluetoothctl devices   # gepairte Geräte anzeigen
+bluetoothctl scan on    # scan starten
+bluetoothctl pair XX:XX:XX:XX:XX:XX   # koppeln
+bluetoothctl connect XX:XX:XX:XX:XX:XX   # verbinden
+bluetoothctl power on/off
+bluetoothctl discoverable on/off
+
+

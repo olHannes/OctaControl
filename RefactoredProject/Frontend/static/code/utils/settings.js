@@ -5,6 +5,7 @@
  */
 export const StorageKeys = Object.freeze({
     // Widgets visible?
+    SIDEBAR_WIDGET: "sidebarWidget",
     AUDIO_WIDGET: "audioWidget",
     MAP_WIDGET: "mapWidget",
     TIMER_WIDGET: "timerWidget",
