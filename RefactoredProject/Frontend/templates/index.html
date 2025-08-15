@@ -7,12 +7,15 @@
     <title>OctaControl</title>
 </head>
 <body>
-
+    <!--Left Sidebar-->
     <div id="leftSidebar">
         <volume-widget></volume-widget>
     </div>
 
+
+    <!--Main Widgets-Container-->
     <div id="widget-container" class="widget-container">
+        
         <!--Collection 1-->
         <div class="widget-collection">
             <bt-audio-widget style="width: 550px; height: 27%;" id="audio-widget"></bt-audio-widget>
@@ -31,57 +34,29 @@
             <climate-widget id="climate-widget"></climate-widget>
         </div>
         
-        
-        <!-- Settings
-        <div class="widget-collection">
-            <div id="settingsWidget" onclick="toggleSettings();">
-                <img src="../static/media/settings.svg" alt="Settings" width="50" height="auto">
-            </div>
-        </div>
-        
-        <div class="widget-collection" id="settings" style="display: none;">
-            
-            <div class="settings-column" style="gap: 5rem;">
-                <wifi-setup-widget></wifi-setup-widget>
-                <bt-setup-widget style="width: 600px; height: 100%;"></bt-setup-widget>
-            </div>
-            
-            <div class="settings-column">
-                <div class="empty-widget" style="width: 280px; height: 46%;">Infotainment Settins<br><br>- Toggle of visibility for the widgets<br>- Setup of position for every widget<br>- load and save user-specific data in a database<br>- Widget for climate Data (remote and local)</div>
-                <system-widget id="system-widget"></system-widget>
-            </div>
-            
-            <div class="settings-column">
-                <vsettings-widget></vsettings-widget>
-            </div>
-            
-        </div>
-        -->
 
 
 
-
-        <!-- Settings-Icon -->
+        <!-- Settings -->
         <div class="widget-collection">
             <div id="settingsWidget" onclick="toggleSettings();">
                 <img src="../static/media/settings.svg" alt="Settings" width="50" height="auto" />
             </div>
         </div>
 
-        <!-- Haupt-Einstellungen Panel -->
         <div id="settings" class="settings-panel" style="display: none;">
             <div class="menu-column">
-                    <div class="menu-item" onclick="openSubPanel('System')">
+                    <div class="menu-item" onclick="openSubPanel('System', this)">
                         <img src="../static/media/system-settings.svg" alt="System" />
                         <span>System</span>
                     </div>
 
-                    <div class="menu-item" onclick="openSubPanel('Verbindungen')">
+                    <div class="menu-item" onclick="openSubPanel('Verbindungen', this)">
                         <img src="../static/media/connection.svg" alt="Connection">
                         <span>Verbindungen</span>
                     </div>
 
-                    <div class="menu-item" onclick="openSubPanel('Widgets')">
+                    <div class="menu-item" onclick="openSubPanel('Widgets', this)">
                         <img src="../static/media/widget-settings.svg" alt="Widgets" />
                         <span>Widget</span>
                     </div>
@@ -99,6 +74,9 @@
     </div>
 
 
+
+
+    <!--external Code and Widgets-->
     <script src="../static/code/code.js"></script>
 
     <script src="../static/code/api/volume_widget.js" type="module"></script>

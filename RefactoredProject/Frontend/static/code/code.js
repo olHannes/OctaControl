@@ -56,8 +56,7 @@ function toggleSettings() {
 /**
  * opens a subpanel (makes a specific list of items visible)
  */
-function openSubPanel(type) {
-    const subPanel = document.getElementById('subPanel');
+function openSubPanel(type, pItem) {
     const headline = document.getElementById('settingsHeadline');
 
     Object.values(widgets).forEach(widget => {
@@ -73,4 +72,9 @@ function openSubPanel(type) {
         if(widgets.vsettings) widgets.vsettings.style.display="block";
     }
     headline.innerText = type;
+
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => item.classList.remove('active'));
+
+    if(pItem) pItem.classList.add('active');
 }

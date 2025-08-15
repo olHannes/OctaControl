@@ -96,8 +96,7 @@ body {
 .settings-panel {
     display: flex;
     gap: 1rem;
-    background: rgba(30, 30, 30, 0.9);
-    background: rgba(18, 25, 33, 0.95); /*Neu*/
+    background: rgba(18, 25, 33, 0.95);
     border-radius: 16px;
     padding: 1rem;
     width: auto;
@@ -123,11 +122,15 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: white;
-    color: #d0d7de; /* helles, weiches Grau */
+    color: #d0d7de;
     padding: 0.5rem;
     border-radius: 8px;
     transition: background 0.2s ease;
+}
+
+.menu-item.active {
+    font-weight: bold;
+    background-color: #053e33;
 }
 
 .menu-item img{
@@ -139,11 +142,9 @@ body {
     align-items: center;
     justify-content: space-around;
     flex-direction: column;
-    color: white;
     flex: 2;
-    background: #111;
-    color: #cbd5e1; /*neu*/
-    background: #1e293b; /*neu*/
+    color: #cbd5e1;
+    background: #1e293b;
     border-radius: 8px;
     padding: 1rem;
     min-width: 500px;
