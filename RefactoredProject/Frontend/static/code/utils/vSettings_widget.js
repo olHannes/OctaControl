@@ -1,3 +1,5 @@
+import { save, load } from "./settings.js";
+
 class VisibleSettings extends HTMLElement {
     constructor() {
         super();
@@ -5,23 +7,55 @@ class VisibleSettings extends HTMLElement {
         this.apiPath = "http://127.0.0.1:5000";
 
         this.widgets = [
-        { id: "audio-widget", label: "Audio" },
-        { id: "map-widget", label: "Map" },
-        { id: "time-widget", label: "Time" },
-        { id: "clock-widget", label: "Clock" },
-        { id: "relais-widget", label: "Relais" },
-        { id: "climate-widget", label: "Klima" },
-        { id: "leftSidebar", label: "Sidebar" },
+        { id: "audio-widget", label: "Audio", storageKey: "AUDIO_WIDGET" },
+        { id: "map-widget", label: "Map", storageKey: "MAP_WIDGET" },
+        { id: "time-widget", label: "Time", storageKey: "TIMER_WIDGET" },
+        { id: "clock-widget", label: "Clock", storageKey: "CLOCK_WIDGET" },
+        { id: "relais-widget", label: "Relais", storageKey: "RELAIS_WIDGET" },
+        { id: "climate-widget", label: "Klima", storageKey: "WEATHER_WIDGET" },
+        { id: "leftSidebar", label: "Sidebar", storageKey: "SIDEBAR_WIDGET" },
         ];
     }
 
+
+    /**
+     * connected Callback
+     */
     connectedCallback() {
         this.render();
+        this.setupInitialVisibility();
         this.setupListeners();
     }
 
+
+    /**
+     * setup initial visibility
+     * sets the visibility based on the saved values
+     */
+    setupInitialVisibility(){
+        this.widgets.forEach(({id, storageKey }) => {
+            const btn = this.shadowRoot.getElementById(`btn-${id}`);
+            const widgetElem = document.getElementById(id);
+
+            if(!btn || !widgetElem) return;
+
+            let visible = true;
+            if (storageKey){
+                const saved = load(storageKey);
+                if(typeof saved === "boolean") visible = saved;
+            }
+            widgetElem.style.display= visible ? "block": "none";
+            btn.classList.toggle("active", visible);
+        });
+    }
+
+
+    /**
+     * setup Listeners
+     * sets the listeners to the buttons and handles the action
+     */
     setupListeners() {
-        this.widgets.forEach(({ id }) => {
+        this.widgets.forEach(({ id, storageKey }) => {
             const btn = this.shadowRoot.getElementById(`btn-${id}`);
             if (!btn) return;
 
@@ -29,20 +63,26 @@ class VisibleSettings extends HTMLElement {
                 const widgetElem = document.getElementById(id);
                 if (!widgetElem) return;
 
-                if (widgetElem.style.display === "none") {
-                    widgetElem.style.display = "block";
-                    btn.classList.add("active");
-                    if(id === "leftSidebar"){document.getElementById("widget-container").style.width="95%";}
-                
-                } else {
-                    widgetElem.style.display = "none";
-                    btn.classList.remove("active");
-                    if(id === "leftSidebar"){document.getElementById("widget-container").style.width="100%";}
-                }
+                const currentlyVisible = widgetElem.style.display !== "none";
+                const newVisible = !currentlyVisible;
+
+                widgetElem.style.display= newVisible? "block": "none";
+                btn.classList.toggle("active", newVisible);
+
+                if(id === "leftSidebar")
+                    document.getElementById("widget-container").style.width = newVisible ? "95%" : "100%";
+
+                if(storageKey)
+                    save(storageKey, newVisible);
             });
         });
     }
 
+
+    /**
+     * render
+     * setup of html and css
+     */
     render() {
         const style = `
         <style>
