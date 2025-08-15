@@ -78,3 +78,35 @@ function openSubPanel(type, pItem) {
 
     if(pItem) pItem.classList.add('active');
 }
+
+
+
+
+
+
+function updateInternetIcon(isOnline) {
+    const icon = document.getElementById("internetStatus");
+    if (!icon) return;
+
+    if(isOnline){
+        icon.classList.remove("offline");
+    }else{
+        icon.classList.add("offline");
+    }
+}
+
+async function checkInternetConnection() {
+    try {
+        const response = await fetch("https://www.google.com/favicon.ico", {
+            method: "HEAD",
+            cache: "no-store",
+            mode: "no-cors"
+        });
+        updateInternetIcon(true);
+    } catch (err) {
+        updateInternetIcon(false);
+    }
+}
+
+setInterval(checkInternetConnection, 5000);
+checkInternetConnection();

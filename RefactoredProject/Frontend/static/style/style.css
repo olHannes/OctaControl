@@ -14,6 +14,22 @@ body {
     box-shadow: 7px 2px 20px 0px #053e33;
 }
 
+.internet-icon {
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    top: 54%;
+    transition: background-color 0.3s ease;
+}
+.internet-icon.offline {
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+
 .widget-container {
     position: fixed;
     top: 0;
