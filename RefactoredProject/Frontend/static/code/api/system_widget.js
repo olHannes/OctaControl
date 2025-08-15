@@ -209,18 +209,26 @@ class SystemWidget extends HTMLElement {
 
         const html = `
             <div class="system-widget">
+                <button class="btn" data-action="reload">
+                    <img src="../static/media/update.svg" alt="Reload Icon">
+                    Reload
+                </button>
+
                 <button class="btn" data-action="update">
                     <img src="../static/media/update.svg" alt="Update Icon">
                     Update
                 </button>
+                
                 <button class="btn" data-action="reboot">
                     <img src="../static/media/reboot.svg" alt="Reboot Icon">
                     Reboot
                 </button>
+                
                 <button class="btn" data-action="shutdown">
                     <img src="../static/media/shutdown.svg" alt="Shutdown Icon">
                     Shutdown
                 </button>
+                
                 <div class="feedback-div">
                     <span class="loader"></span>
                     <p id="msg"></p>
@@ -244,6 +252,8 @@ class SystemWidget extends HTMLElement {
                 const action = btn.getAttribute("data-action");
                 if (action === "update") {
                     this.callApi(action);
+                } else if(action === "reload"){
+                    window.location.reload();
                 } else {
                     this.showConfirmation(action);
                 }
