@@ -8,8 +8,10 @@ body {
     height: 100dvh;
     width: 5%;
     position: fixed;
+    z-index: 10;
     left: 0;
     top: 0;
+    box-shadow: 7px 2px 20px 0px #053e33;
 }
 
 .widget-container {

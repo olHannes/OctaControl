@@ -1,4 +1,3 @@
-//code/api/volume_widget.js
 class VolumeWidget extends HTMLElement {
     constructor() {
         super();
@@ -9,42 +8,26 @@ class VolumeWidget extends HTMLElement {
             get: `${this.apiPath}/get`,
             set: `${this.apiPath}/set`,
         };
+
+        this.volume = 10;
     }
 
-
-    /**
-     * connected Callback
-     */
     connectedCallback() {
         this.render();
         this.initWidget();
 
-        this.shadowRoot.querySelector("#volumeSlider")
-            .addEventListener("input", () => this.set());
+        this.shadowRoot.querySelector("#btnUp").addEventListener("click", () => this.adjustVolume(5));
+        this.shadowRoot.querySelector("#btnDown").addEventListener("click", () => this.adjustVolume(-5));
     }
 
-
-    /**
-     * init Widget
-     * inits the slider value
-     */
     async initWidget() {
         const data = await this.get();
-
-        let volume = 10;
         if (data && data.volume !== undefined) {
-            volume = data.volume;
+            this.volume = data.volume;
+            this.updateDisplay();
         }
-
-        this.shadowRoot.querySelector("#volumeSlider").value = volume;
     }
 
-
-
-    /**
-     * get
-     * calls the get api to read the volume value
-     */
     async get() {
         try {
             const res = await fetch(this.volumeApis.get, { method: "GET" });
@@ -57,79 +40,89 @@ class VolumeWidget extends HTMLElement {
         }
     }
 
-
-    /**
-     * set
-     * reads the slider value und tries to set the volume value
-     */
-    async set() {
+    async set(volume) {
         try {
-            const newValue = this.shadowRoot.querySelector("#volumeSlider").value;
-            await fetch(this.volumeApis.set, {
+            const res = await fetch(this.volumeApis.set, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ volume: Number(newValue) })
+                body: JSON.stringify({ volume: Number(volume) })
             });
+
+            if (!res.ok) throw new Error("API set failed");
+
+            this.volume = volume;
+            this.updateDisplay();
         } catch (error) {
             console.error(`Failed to update Volume: ${error}`);
         }
     }
 
+    adjustVolume(delta) {
+        const newVolume = Math.min(100, Math.max(0, this.volume + delta));
+        this.set(newVolume); // updateDisplay() wird nur bei Erfolg aufgerufen
+    }
 
-    /**
-     * render
-     * setup of html and css
-     */
+    updateDisplay() {
+        const display = this.shadowRoot.querySelector("#volumeValue");
+        if (display) {
+            display.textContent = `${this.volume}%`;
+        }
+    }
+
     render() {
         const style = `
             <style>
-                .volume-container {
-                    position: fixed;
-                    left: 0;
-                    top: 0;
-                    width: 5%;
-                    height: 69vh;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 1000;
-                    border-bottom: 1px solid black;
-                }
-                
-                .volume-slider {
+                :host {
+                    display: block;
                     width: 100%;
-                    height: 66vh;
-                    display: flex;
-                    justify-content: center;
-                    padding: 20px 0;
-                }
-                
-                input[type="range"] {
-                    -webkit-appearance: slider-vertical;
-                    width: 40px;
                     height: 100%;
-                    padding: 0 10px;
                 }
-                
-                input[type="range"]::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    appearance: none;
-                    width: 30px;
-                    height: 30px;
-                    background: url("../static/media/volume_thumb.svg") no-repeat center;
-                    background-size: contain;
+
+                .volume-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    width: 100%;
+                    padding: 1rem 0;
+                    box-sizing: border-box;
+                }
+
+                .volume-button {
+                    width: 48px;
+                    height: 60px;
+                    margin: 0.5rem 0;
+                    font-size: 24px;
+                    font-weight: bold;
                     border: none;
+                    border-radius: 12px;
+                    background: linear-gradient(145deg, #064c3e, #042f27);
+                    color: #fff;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
                     cursor: pointer;
+                    transition: all 0.2s ease-in-out;
                 }
-                
+
+                .volume-button:active {
+                    transform: scale(0.95);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+                }
+
+                .volume-value {
+                    margin-top: 0.5rem;
+                    font-size: 18px;
+                    color: #fff;
+                    font-weight: 500;
+                }
             </style>
         `;
 
         const html = `
             <div class="volume-container">
-                <div class="volume-slider">
-                    <input type="range" id="volumeSlider" min="0" max="100" step="2" orient="vertical" value=0>
-                </div>
+                <button class="volume-button" id="btnUp">+</button>
+                <button class="volume-button" id="btnDown">−</button>
+                <div class="volume-value" id="volumeValue">--%</div>
             </div>
         `;
 
