@@ -97,7 +97,7 @@ class VolumeWidget extends HTMLElement {
                     font-weight: bold;
                     border: none;
                     border-radius: 12px;
-                    background: linear-gradient(145deg, #064c3e, #042f27);
+                    background: linear-gradient(145deg, #4092bb, #04152f);
                     color: #fff;
                     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
                     cursor: pointer;
