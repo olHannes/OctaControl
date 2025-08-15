@@ -2,7 +2,8 @@
 
 # Arbeitsverzeichnis auf das Projektverzeichnis setzen
 PROJECT_DIR="/home/hannes/Documents/OctaControl/RefactoredProject"
-PYTHON_COMMAND="python3 $PROJECT_DIR/app.py"
+PYTHON_COMMAND="$PROJECT_DIR/venv/bin/python $PROJECT_DIR/app.py"
+
 BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --start-fullscreen \
                  --disable-session-crashed-bubble \
