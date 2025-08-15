@@ -10,7 +10,7 @@ volumeApiTag = "VolumeApi"
 mixer_name = 'Master'
 
 
-@system_api.route("/get", methods=["GET"])
+@volume_api.route("/get", methods=["GET"])
 def get_volume():
     """
     Reads and returns the volume and the muted status
@@ -33,7 +33,7 @@ def get_volume():
         return jsonify({"error": str(e)}), 500
 
 
-@system_api.route("/set", methods=["POST"])
+@volume_api.route("/set", methods=["POST"])
 def set_volume():
     """
     sets the volume of the pi based on the given parameter
