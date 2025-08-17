@@ -8,7 +8,7 @@ log = Logger()
 
 @bt_meta_api.route("/all", methods=["GET"])
 def all_data():
-    log.verbose(blApiTag, "GET /all received")
+    #log.verbose(blApiTag, "GET /all received")
     try:
         meta = get_metadata()
         progress = get_progress()
