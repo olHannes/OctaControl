@@ -1,9 +1,15 @@
 from flask import Blueprint, jsonify, request
 from utils.Logger import Logger
 from utils.climate_reader import start, stop
-import RPi.GPIO as GPIO
 import os
 import json
+try:
+    import RPi.GPIO as GPIO
+    mock = True
+except (ImportError, RuntimeError):
+    from utils.gpio_mock import MockGPIO
+    GPIO = MockGPIO()
+    mock = True
 
 climate_api = Blueprint("climate_api", __name__, url_prefix="/api/climate")
 
@@ -14,17 +20,22 @@ DEVICE_PINS = {
     "climateReader": 20
 }
 
+BASE_DIR = os.path.join(os.path.expanduser("~"), "Documents", "OctaControl", "RefactoredProject", "Backend", "utils")
+CLIMATE_FILE = os.path.join(BASE_DIR, "climate_data.json")
+
 
 def init_GPIO():
     """
     inits the general gpio settings and sets every used pin to low
     """
+    global mock
+    if mock:
+        return
     log.verbose(climateApiTag, "/init GPIO pins")
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     for pin in DEVICE_PINS.values():
         GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
-
 
 @climate_api.route("/init", methods=["GET"])
 def initPins():
@@ -35,13 +46,10 @@ def initPins():
     try:
         init_GPIO()
 
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.normpath(os.path.join(base_dir, "../../utils/climate_data.js"))
-
-        if not os.path.exists(file_path):
-            with open(file_path, "w") as f:
-                json.dump({"temperature": None, "humidity": None}, f)
-            log.verbose(climateApiTag, "climate_data.json wurde initial erstellt")    
+        if not os.path.exists(CLIMATE_FILE):
+            with open(CLIMATE_FILE, "w") as f:
+                json.dump({"temperature": 0.1, "humidity": 0.1}, f)
+            log.verbose(climateApiTag, "climate_data.json wurde initial erstellt")  
         
         return jsonify({"status": "success"}), 200
     except Exception as e:
@@ -57,11 +65,7 @@ def getData():
     """
     log.verbose(climateApiTag, "GET /get received")
     try:
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(base_dir, "../../utils/climate_data.json")
-        file_path = os.path.normpath(file_path)
-
-        with open(file_path, "r") as file:
+        with open(CLIMATE_FILE, "r") as file:
             data = json.load(file)
 
         temperature = data.get("temperature")

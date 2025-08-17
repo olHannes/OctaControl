@@ -62,8 +62,9 @@ class ClimateWidget extends HTMLElement {
             const newTemp = data.temperature;
             const newHumi = data.humidity;
 
-            this.shadowRoot.querySelector("").textContent = `${newTemp}°C`;
-            this.shadowRoot.querySelector("").textContent = `${newHumi}%`;
+            this.shadowRoot.querySelector("#tempValue").textContent = `${newTemp}°C`;
+            this.shadowRoot.querySelector("#humValue").textContent = `${newHumi}%`;
+
         } catch (error) {
             console.error(`Failed to load local data: ${error}`);   
         }
@@ -95,7 +96,7 @@ class ClimateWidget extends HTMLElement {
             this.shadowRoot.querySelector("#toggleBtn").textContent = "Start";
             this.shadowRoot.querySelector("#toggleBtn").style.background = "#00800061";
         } else {
-            this.pollingIntervall = setInterval(() => this.getLocal(), 20000);
+            this.pollingIntervall = setInterval(() => this.getLocal(), 5000);
 
             this.shadowRoot.querySelector("#toggleBtn").textContent = "Stop";
             this.shadowRoot.querySelector("#toggleBtn").style.background = "#80000061";

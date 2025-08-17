@@ -9,7 +9,7 @@ from api.bluetooth.audio_metadata import bt_meta_api
 from services.relais_control import relais_api
 from services.system import system_api
 from services.volume_control import volume_api
-from services.climate import climate_api
+from services.climate_api import climate_api
 
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")

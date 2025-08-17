@@ -18,10 +18,14 @@ try:
     ht_device = adafruit_dht.DHT11(board.D25)
     ON_RPI = True
 except (ImportError, AttributeError, RuntimeError):
+    pTemp = 0
+    pHum = 0
     log.verbose(TAG, "Raspberry Pi Hardware nicht gefunden, benutze Dummy-Werte")
 
 
-FILE_PATH = os.path.join(os.path.dirname(__file__), "climate_data.json")
+BASE_DIR = os.path.join(os.path.expanduser("~"),"Documents","OctaControl","RefactoredProject","Backend","utils")
+FILE_PATH = os.path.join(BASE_DIR, "climate_data.json")
+
 
 reader_thread = None
 stop_event = threading.Event()
@@ -44,16 +48,22 @@ def save_climate_data(temperature, humidity):
 
 def climate_worker():
     log.verbose(TAG, "climate worker has been started")
+
     while not stop_event.is_set():
         try:
             if ON_RPI:
                 temperature = ht_device.temperature
                 humidity = ht_device.humidity
             else:
-                temperature = 0.1
-                humidity = 0.1
+                global pTemp, pHum
+                temperature = pTemp
+                humidity = pHum
+                pTemp+=0.1
+                pHum+=0.1
 
             if temperature is not None and humidity is not None:
+                temperature = round(temperature, 1)
+                humidity = round(humidity, 1)
                 save_climate_data(temperature, humidity)
             else:
                 log.error(TAG, "no climate data available")
