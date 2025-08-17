@@ -2,7 +2,7 @@ class VolumeWidget extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        this.apiPath = "http://127.0.0.1:5000";
+        this.apiPath = "http://127.0.0.1:5000/api/system/volume";
 
         this.volumeApis = {
             get: `${this.apiPath}/get`,
@@ -59,7 +59,7 @@ class VolumeWidget extends HTMLElement {
 
     adjustVolume(delta) {
         const newVolume = Math.min(100, Math.max(0, this.volume + delta));
-        this.set(newVolume); // updateDisplay() wird nur bei Erfolg aufgerufen
+        this.set(newVolume);
     }
 
     updateDisplay() {
