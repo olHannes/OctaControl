@@ -136,8 +136,8 @@ class RelaisWidget extends HTMLElement {
      * save Settings
      */
     saveSettings() {
-        save(StorageKeys.TRUNK_ACTIVE, this.state.trunk);
-        save(StorageKeys.ASSISTANT, this.state["park-assistent"]);
+        save("TRUNK_ACTIVE", this.state.trunk);
+        save("ASSISTANT", this.state["park-assistent"]);
     }
 
 
@@ -145,8 +145,8 @@ class RelaisWidget extends HTMLElement {
      * load Settings
      */
     loadSettings() {
-        const trunk = load(StorageKeys.TRUNK_ACTIVE);
-        const assistant = load(StorageKeys.ASSISTANT);
+        const trunk = load("TRUNK_ACTIVE");
+        const assistant = load("ASSISTANT");
 
         if (trunk !== null) {
             if((trunk && !this.state.trunk) || (!trunk && this.state.trunk)){
