@@ -506,6 +506,8 @@ class WifiSetupWidget extends HTMLElement {
                     color: white;
                     border-radius: 12px;
                     width: 100%;
+                    max-height: 415px;
+                    overflow-y: auto;
                     box-sizing: border-box;
                 }
 
