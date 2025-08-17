@@ -2,9 +2,11 @@ from flask import Blueprint, jsonify, request
 from utils.Logger import Logger
 try:
     import RPi.GPIO as GPIO
+    mock = False
 except (ImportError, RuntimeError):
     from utils.gpio_mock import MockGPIO
     GPIO = MockGPIO()
+    mock = True
 
 
 relais_api = Blueprint("relais_api", __name__, url_prefix="/api/system/relais")
@@ -23,13 +25,14 @@ def init_GPIO():
     inits the general gpio settings and sets every used pin to low
     """
     log.verbose(relaisApiTag, "/init GPIO pins")
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    for name, pin in DEVICE_PINS.items():
-        if name == "trunk":
-            GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-        else:
-            GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+    if mock == False:
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        for name, pin in DEVICE_PINS.items():
+            if name == "trunk":
+                GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
+            else:
+                GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
 
 @relais_api.route("/init", methods=["GET"])
