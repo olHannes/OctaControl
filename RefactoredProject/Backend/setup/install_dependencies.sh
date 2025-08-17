@@ -2,36 +2,29 @@
 
 set -e
 
+PROJECT_DIR="$HOME/Documents/OctaControl/RefactoredProject"
+VENV_DIR="$PROJECT_DIR/.venv"
+
 echo "Systempakete installieren..."
 sudo apt-get update
 
 sudo apt-get install -y \
-    python3-gi \
     python3-gi-cairo \
     gir1.2-glib-2.0 \
     libdbus-1-dev \
     libdbus-glib-1-dev \
-    python3-rpi.gpio \
-    python3-pip \
-    python3-setuptools \
+    python3-venv \
     unclutter
 
-echo "Systempakete wurden installiert."
+echo "Virtuelle Umgebung erstellen..."
+
+if [ ! -d "$VENV_DIR" ]; then
+    python3 -m venv "$VENV_DIR"
+fi
 
 echo "Python-Pakete installieren..."
-
-pip3 install --user --upgrade pip setuptools
-
-pip3 install --user \
-    flask \
-    flask-cors \
-    adafruit-circuitpython-dht \
-    adafruit-blinka \
-    pyalsaaudio \
-    pydbus \
-    pillow \
-    RPi.GPIO
-
-echo "Python-Pakete wurden installiert."
+source "$VENV_DIR/bin/activate"
+pip install --upgrade pip setuptools wheel
+pip install -r "$PROJECT_DIR/Backend/setup/requirements.txt"
 
 echo "Installation abgeschlossen!"

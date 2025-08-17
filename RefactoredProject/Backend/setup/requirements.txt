@@ -1,0 +1,7 @@
+flask
+flask-cors
+adafruit-circuitpython-dht
+adafruit-blinka
+pyalsaaudio
+pydbus
+pillow
