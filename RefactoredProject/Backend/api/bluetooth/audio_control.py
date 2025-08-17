@@ -42,9 +42,9 @@ def stop():
         return jsonify({"error": str(e)}), 500
 
 
-@bt_control_api.route("/next", methods=["POST"])
+@bt_control_api.route("/skip", methods=["POST"])
 def next_track():
-    log.verbose(blApiTag, "POST /next received")
+    log.verbose(blApiTag, "POST /skip received")
     try:
         player = BluetoothController()
         player.next()

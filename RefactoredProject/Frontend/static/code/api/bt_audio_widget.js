@@ -17,10 +17,12 @@ class BluetoothAudioWidget extends HTMLElement {
         this.btnPrev = null;
         this.btnNext = null;
         this.btnPlayPause = null;
-        this.progressBar = null;
-        this.cover = null;
-        this.title = null;
-        this.artist = null;
+        this.pProgressBar = null;
+        this.pCover = null;
+        this.pTitle = null;
+        this.pArtist = null;
+
+        this.updateIntervall = null;
     }
 
 
@@ -44,6 +46,11 @@ class BluetoothAudioWidget extends HTMLElement {
         this.btnPrev.disabled = activate;
         this.btnNext.disabled = activate;
         this.btnPlayPause.disabled = activate;
+
+        this.shadowRoot.querySelector(".audio-widget").classList.add("loading");
+        setTimeout(() => {
+            this.shadowRoot.querySelector(".audio-widget").classList.remove("loading");
+        }, 1000);
     }
 
 
@@ -54,7 +61,7 @@ class BluetoothAudioWidget extends HTMLElement {
      */
     async update(){
         try {
-            const res = await fetch(`${this.audioApis.all}`, method = "GET");
+            const res = await fetch(`${this.audioApis.all}`, {method: "GET"});
             if(!res.ok) throw new Error("Failed to call /all api");
 
             const data = await res.json();
@@ -72,15 +79,19 @@ class BluetoothAudioWidget extends HTMLElement {
      * togglePlay
      * plays or pauses the current track
      */
-    async togglePlay(){
+    async togglePlay() {
         try {
-            
+            const action = this.btnPlayPause.dataset.playing === "true" ? "pause" : "play";
+            const res = await fetch(this.audioApis[action], { method: "POST" });
+            if (!res.ok) throw new Error(`Failed to ${action} track`);
+            await this.update();
         } catch (error) {
-            
+            console.error(error);
         } finally {
-            this.toggleButtons();
+            this.toggleButtons(false);
         }
     }
+
 
 
     /**
@@ -89,11 +100,13 @@ class BluetoothAudioWidget extends HTMLElement {
      */
     async skip(){
         try {
-            
+            const res = await fetch(this.audioApis.skip, { method: "POST" });
+            if (!res.ok) throw new Error("Failed to skip track");
+            await this.update();
         } catch (error) {
-            
+            console.error(error);
         } finally {
-            this.toggleButtons();
+            this.toggleButtons(false);
         }
     }
 
@@ -104,11 +117,13 @@ class BluetoothAudioWidget extends HTMLElement {
      */
     async previous(){
         try {
-            
+            const res = await fetch(this.audioApis.previous, { method: "POST" });
+            if (!res.ok) throw new Error("Failed to play previous track");
+            await this.update();
         } catch (error) {
-            
+            console.error(error);
         } finally {
-            this.toggleButtons();
+            this.toggleButtons(false);
         }
     }
 
@@ -118,20 +133,24 @@ class BluetoothAudioWidget extends HTMLElement {
      * updates the widget based on the metadata
      */
     updateUI(pMeta){
-        device = pMeta.device || "Unbekannt";
-        is_playing = pMeta.is_playing || false;
-        progress = pMeta.progress || 0;
-        title = pMeta.title || "-";
-        artist = pMeta.artist || "-";
-        album = pMeta.album || "-";
+        const device = pMeta.device || "Unbekannt";
+        const is_playing = pMeta.is_playing || false;
+        const progress = pMeta.progress || 0;
+        const title = pMeta.title || "-";
+        const artist = pMeta.artist || "-";
+        const album = pMeta.album || "-";
 
         if(is_playing == true){
-            //update play-pause btn
+            this.btnPlayPause.dataset.playing = "true";
+            this.btnPlayPause.querySelector("img").src = "../static/media/pause.svg";
+        } else {
+            this.btnPlayPause.dataset.playing = "false";
+            this.btnPlayPause.querySelector("img").src = "../static/media/play.svg";
         }
-        //update progressBar
+        this.pProgressBar.style.width = `${progress}%`;
         
-        this.title.innerText = title;
-        this.artist.innerText = artist;
+        this.pTitle.innerText = title;
+        this.pArtist.innerText = artist;
     }
 
     
@@ -144,10 +163,10 @@ class BluetoothAudioWidget extends HTMLElement {
         this.btnPrev = root.querySelector("#prev");
         this.btnNext = root.querySelector("#next");
         this.btnPlayPause = root.querySelector("#play-pause");
-        this.progressBar = root.querySelector("#progress-bar");
-        this.cover = root.querySelector("#cover");
-        this.title = root.querySelector("#title");
-        this.artist = root.querySelector("#artist");
+        this.pProgressBar = root.querySelector("#progress-bar");
+        this.pCover = root.querySelector("#cover");
+        this.pTitle = root.querySelector("#title");
+        this.pArtist = root.querySelector("#artist");
     }
 
 
@@ -170,6 +189,10 @@ class BluetoothAudioWidget extends HTMLElement {
             this.toggleButtons(true);
             this.togglePlay();
         });
+
+        this.updateIntervall = setInterval(() => {
+            this.update();
+        }, 1000);
     }
 
 
@@ -189,8 +212,8 @@ class BluetoothAudioWidget extends HTMLElement {
 
                 .audio-widget {
                     position: relative;
-                    width: 550px;
-                    height: 150px;
+                    width: 100%;
+                    height: 100%;
                     border-radius: 15px;
                     overflow: hidden;
                     color: white;
