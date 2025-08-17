@@ -40,3 +40,12 @@ class Logger:
 
     def verbose(self, tag, msg):
         self._log(tag, msg, "GREEN")
+
+    def clear_file(self):
+        if self.toFile:
+            try:
+                with open(self.logFile, "w") as f:
+                    f.truncate(0)
+                self.verbose("Logger", "Log-Datei wurde geleert")
+            except Exception as e:
+                print(f"Logger file clear error: {e}")

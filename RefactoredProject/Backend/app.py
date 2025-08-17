@@ -29,5 +29,8 @@ def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
+    log = Logger()
+    log.clear_file()
+
     log.verbose("App", "Starte Flask Server")
     app.run(host="0.0.0.0", port=5000, debug=True)
