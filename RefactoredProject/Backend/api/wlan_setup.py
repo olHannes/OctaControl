@@ -101,15 +101,24 @@ def scan_wifi():
             stderr=subprocess.STDOUT
         ).decode("utf-8").strip().splitlines()
 
-        networks = []
+        network_map = {}
         for line in result:
             if not line:
                 continue
             ssid, signal = line.split(":", 1)
-            networks.append({
-                "ssid": ssid if ssid else "<hidden>",
-                "signal": signal
-            })
+            ssid = ssid if ssid else "<hidden>"
+            
+            if not signal.isdigit():
+                continue
+
+            signal_val = int(signal)
+            if ssid in network_map:
+                if signal_val > int(network_map[ssid]["signal"]):
+                    network_map[ssid] = {"ssid": ssid, "signal": str(signal_val)}
+            else:
+                network_map[ssid] = {"ssid": ssid, "signal": str(signal_val)}
+    
+        networks = list(network_map.values())
         return jsonify({ "networks": networks }), 200
 
     except subprocess.CalledProcessError as e:
