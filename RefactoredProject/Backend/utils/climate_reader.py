@@ -3,16 +3,23 @@ import threading
 import json
 import os
 
-import adafruit_dht
-import board
-
-from Backend.utils.Logger import Logger
+from .Logger import Logger
 
 log = Logger()
 TAG = "ClimateReader"
 
-dht_device = adafruit_dht.DHT11(board.D25)
 update_interval = 5
+
+ON_RPI = False
+try:
+    import board
+    import adafruit_dht
+
+    ht_device = adafruit_dht.DHT11(board.D25)
+    ON_RPI = True
+except (ImportError, AttributeError, RuntimeError):
+    log.verbose(TAG, "Raspberry Pi Hardware nicht gefunden, benutze Dummy-Werte")
+
 
 FILE_PATH = os.path.join(os.path.dirname(__file__), "climate_data.json")
 
@@ -39,8 +46,12 @@ def climate_worker():
     log.verbose(TAG, "climate worker has been started")
     while not stop_event.is_set():
         try:
-            temperature = dht_device.temperature
-            humidity = dht_device.humidity
+            if ON_RPI:
+                temperature = ht_device.temperature
+                humidity = ht_device.humidity
+            else:
+                temperature = 0.1
+                humidity = 0.1
 
             if temperature is not None and humidity is not None:
                 save_climate_data(temperature, humidity)
@@ -65,12 +76,14 @@ def start():
         log.verbose(TAG, "Reader thread is already active")
         return "Reader is already active"
 
+
 def stop():
     global reader_thread
     stop_event.set()
     if reader_thread is not None:
         reader_thread.join(timeout=2)
     try:
-        dht_device.exit()
+        if ON_RPI:
+            ht_device.exit()
     except Exception as e:
         log.error(TAG, f"Error while releasing the sensor: {e}")
