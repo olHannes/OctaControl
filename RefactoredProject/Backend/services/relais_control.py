@@ -1,6 +1,11 @@
 from flask import Blueprint, jsonify, request
 from utils.Logger import Logger
-import RPi.GPIO as GPIO
+try:
+    import RPi.GPIO as GPIO
+except (ImportError, RuntimeError):
+    from utils.gpio_mock import MockGPIO
+    GPIO = MockGPIO()
+
 
 relais_api = Blueprint("relais_api", __name__, url_prefix="/api/system/relais")
 

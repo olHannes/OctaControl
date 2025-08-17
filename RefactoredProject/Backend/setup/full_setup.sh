@@ -11,7 +11,7 @@ echo "Starte Autostart-Konfiguration..."
 ./add_autostart.sh
 
 echo "Starte Installation der Abhängigkeiten..."
-sudo ./install_dependencies.sh
+./install_dependencies.sh
 
 echo "Alle Schritte abgeschlossen!"
 

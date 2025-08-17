@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 PROJECT_DIR="$HOME/Documents/OctaControl/RefactoredProject"
@@ -7,7 +6,6 @@ VENV_DIR="$PROJECT_DIR/.venv"
 
 echo "Systempakete installieren..."
 sudo apt-get update
-
 sudo apt-get install -y \
     python3-gi-cairo \
     gir1.2-glib-2.0 \
