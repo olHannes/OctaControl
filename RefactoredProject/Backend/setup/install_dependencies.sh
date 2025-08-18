@@ -8,25 +8,27 @@ echo "Systempakete installieren..."
 sudo apt-get update && sudo apt upgrade -y
 
 sudo apt-get install -y \
+    python3-venv \
+    python3.12-dev \
+    python3-dev \
     python3-gi \
     python3-gi-cairo \
     gir1.2-glib-2.0 \
     libdbus-1-dev \
     libdbus-glib-1-dev \
-    python3-venv \
-    python3-rpi.gpio \
-    unclutter \
     libcairo2-dev \
     libgirepository1.0-dev \
+    python3-rpi.gpio \
     libgpiod2 \
-    pkg-config \
-    python3-dev \
     i2c-tools \
     python3-smbus \
+    libasound2-dev \
     bluetooth \
     bluez \
     bluez-tools \
-    libbluetooth-dev
+    libbluetooth-dev \
+    unclutter \
+    pkg-config
 
 
 echo "Virtuelle Umgebung erstellen..."
