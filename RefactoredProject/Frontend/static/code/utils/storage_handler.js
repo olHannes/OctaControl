@@ -16,6 +16,9 @@ export const StorageKeys = Object.freeze({
     //Toggled Relais
     TRUNK_ACTIVE: "trunkPower",
     ASSISTANT: "assistant",
+
+    BRIGHTNESS: "brightness",
+    CONTRAST: "contrast",
 });
 
 

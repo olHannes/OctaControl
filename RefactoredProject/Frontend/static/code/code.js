@@ -11,6 +11,7 @@ const widgets = {
         wifi: subPanel.querySelector('wifi-setup-widget'),
         bt: subPanel.querySelector('bt-setup-widget'),
         vsettings: subPanel.querySelector('vsettings-widget'),
+        display: subPanel.querySelector('display-widget'),
 };
 
 /**
@@ -65,6 +66,7 @@ function openSubPanel(type, pItem) {
     
     if(type === "System"){
         if(widgets.system) widgets.system.style.display="block";
+        if(widgets.display) widgets.display.style.display="block";
     } else if (type === "Verbindungen"){
         if(widgets.wifi) widgets.wifi.style.display="block";
         if(widgets.bt) widgets.bt.style.display="block";
