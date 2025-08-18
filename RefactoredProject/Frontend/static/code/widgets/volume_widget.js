@@ -1,3 +1,5 @@
+//code/widgets/volume_widget.js
+
 class VolumeWidget extends HTMLElement {
     constructor() {
         super();
@@ -8,10 +10,13 @@ class VolumeWidget extends HTMLElement {
             get: `${this.apiPath}/get`,
             set: `${this.apiPath}/set`,
         };
-
         this.volume = 10;
     }
 
+
+    /**
+     * connected Callback
+     */
     connectedCallback() {
         this.render();
         this.initWidget();
@@ -20,6 +25,11 @@ class VolumeWidget extends HTMLElement {
         this.shadowRoot.querySelector("#btnDown").addEventListener("click", () => this.adjustVolume(-5));
     }
 
+
+    /**
+     * init Widget
+     * inits the widget based on the system volume
+     */
     async initWidget() {
         const data = await this.get();
         if (data && data.volume !== undefined) {
@@ -28,6 +38,11 @@ class VolumeWidget extends HTMLElement {
         }
     }
 
+
+    /**
+     * get
+     * returns null of the system volume [0-100]
+     */
     async get() {
         try {
             const res = await fetch(this.volumeApis.get, { method: "GET" });
@@ -40,6 +55,11 @@ class VolumeWidget extends HTMLElement {
         }
     }
 
+
+    /**
+     * set
+     * sets the volume of the system to the given value
+     */
     async set(volume) {
         try {
             const res = await fetch(this.volumeApis.set, {
@@ -57,11 +77,21 @@ class VolumeWidget extends HTMLElement {
         }
     }
 
+
+    /**
+     * adjust volume
+     * updates the volume based on the delta value
+     */
     adjustVolume(delta) {
         const newVolume = Math.min(100, Math.max(0, this.volume + delta));
         this.set(newVolume);
     }
 
+
+    /**
+     * update Display
+     * update of the UI
+     */
     updateDisplay() {
         const display = this.shadowRoot.querySelector("#volumeValue");
         if (display) {
@@ -69,6 +99,11 @@ class VolumeWidget extends HTMLElement {
         }
     }
 
+
+    /**
+     * render
+     * setup of html and css
+     */
     render() {
         const style = `
             <style>

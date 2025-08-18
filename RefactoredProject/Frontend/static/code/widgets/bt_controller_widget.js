@@ -1,4 +1,4 @@
-// code/api/bt_controller_widget.js
+// code/widgets/bt_controller_widget.js
 
 class BtSetupWidget extends HTMLElement {
     constructor() {

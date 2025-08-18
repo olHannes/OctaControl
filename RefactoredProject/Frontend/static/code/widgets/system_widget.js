@@ -1,4 +1,5 @@
-//code/api/system_widget.js
+//code/widgets/system_widget.js
+
 class SystemWidget extends HTMLElement {
     constructor() {
         super();
@@ -15,6 +16,7 @@ class SystemWidget extends HTMLElement {
         this.pendingAction = null;
     }
 
+    
     /**
      * connected Callback
      * setup of widget

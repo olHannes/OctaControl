@@ -1,4 +1,5 @@
-//code/api/map_widget.js
+//code/widgets/map_widget.js
+
 class MapWidget extends HTMLElement {
     constructor() {
         super();

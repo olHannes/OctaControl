@@ -1,4 +1,5 @@
-import { save, load } from "./settings.js";
+//code/widgets/display_settings.js
+import { save, load } from "../utils/storage_handler.js";
 
 class VisibleSettings extends HTMLElement {
     constructor() {
@@ -7,13 +8,13 @@ class VisibleSettings extends HTMLElement {
         this.apiPath = "http://127.0.0.1:5000";
 
         this.widgets = [
-        { id: "audio-widget", label: "Audio", storageKey: "AUDIO_WIDGET" },
-        { id: "map-widget", label: "Map", storageKey: "MAP_WIDGET" },
-        { id: "time-widget", label: "Time", storageKey: "TIMER_WIDGET" },
-        { id: "clock-widget", label: "Clock", storageKey: "CLOCK_WIDGET" },
-        { id: "relais-widget", label: "Relais", storageKey: "RELAIS_WIDGET" },
-        { id: "climate-widget", label: "Klima", storageKey: "WEATHER_WIDGET" },
-        { id: "leftSidebar", label: "Sidebar", storageKey: "SIDEBAR_WIDGET" },
+            { id: "audio-widget", label: "Audio", storageKey: "AUDIO_WIDGET" },
+            { id: "map-widget", label: "Map", storageKey: "MAP_WIDGET" },
+            { id: "time-widget", label: "Time", storageKey: "TIMER_WIDGET" },
+            { id: "clock-widget", label: "Clock", storageKey: "CLOCK_WIDGET" },
+            { id: "relais-widget", label: "Relais", storageKey: "RELAIS_WIDGET" },
+            { id: "climate-widget", label: "Klima", storageKey: "WEATHER_WIDGET" },
+            { id: "leftSidebar", label: "Sidebar", storageKey: "SIDEBAR_WIDGET" },
         ];
     }
 

@@ -1,4 +1,4 @@
-// code/api/wifi_controller_widget.js
+// code/widgets/bt_audio_widget.js
 
 class BluetoothAudioWidget extends HTMLElement {
     constructor() {

@@ -1,5 +1,5 @@
-
 // code/widgets/time_widgets.js
+
 class TimeWidget extends HTMLElement {
     constructor() {
         super();
@@ -7,20 +7,28 @@ class TimeWidget extends HTMLElement {
         this.mode = "stopwatch";
         this.stopwatchInterval = null;
         this.timerInterval = null;
-        this.stopwatchTime = 0; // ms
-        this.timerTime = 0; // ms (restzeit / preset)
+        this.stopwatchTime = 0;
+        this.timerTime = 0;
     }
 
+
+    /**
+     * connected Callback
+     */
     connectedCallback() {
         this.render();
         this.setupElements();
         this.showMode(this.mode);
     }
 
+
+    /**
+     * setup Elements
+     * setup of elements and add eventlisteners
+     */
     setupElements() {
         this.header = this.shadowRoot.querySelector("#title");
         this.content = this.shadowRoot.querySelector("#content");
-        // Tabs: wir lesen sie als NodeList und nutzen data-mode
         this.tabs = Array.from(this.shadowRoot.querySelectorAll(".tab"));
 
         this.tabs.forEach(tab => {
@@ -28,8 +36,13 @@ class TimeWidget extends HTMLElement {
         });
     }
 
+
+    /**
+     * show Mode
+     * toggle widget
+     * @param mode: type of new mode (stopwatch / timer)
+     */
     showMode(mode) {
-        // stoppe laufende intervals (aber bewahre die Zeit-Werte)
         if (this.stopwatchInterval) {
             clearInterval(this.stopwatchInterval);
             this.stopwatchInterval = null;
@@ -50,7 +63,6 @@ class TimeWidget extends HTMLElement {
             this.renderTimer();
         }
 
-        // Tab-Styles & accessibility
         this.tabs.forEach(tab => {
             const active = tab.dataset.mode === mode;
             tab.classList.toggle("active", active);
@@ -58,6 +70,11 @@ class TimeWidget extends HTMLElement {
         });
     }
 
+
+    /**
+     * render stopwatch
+     * update of stopwatch-UI
+     */
     renderStopwatch() {
         const wrapper = document.createElement("div");
         wrapper.classList.add("stopwatch");
@@ -86,12 +103,10 @@ class TimeWidget extends HTMLElement {
 
         btnStart.addEventListener("click", () => {
             if (this.stopwatchInterval) {
-                // Pause
                 clearInterval(this.stopwatchInterval);
                 this.stopwatchInterval = null;
                 btnStart.textContent = "Start";
             } else {
-                // Start / Resume
                 startTime = Date.now() - this.stopwatchTime;
                 this.stopwatchInterval = setInterval(() => {
                     this.stopwatchTime = Date.now() - startTime;
@@ -112,12 +127,16 @@ class TimeWidget extends HTMLElement {
         this.content.appendChild(wrapper);
     }
 
+
+    /**
+     * render Timer
+     * update timer-UI
+     */
     renderTimer() {
         const wrapper = document.createElement("div");
         wrapper.classList.add("timer");
-
-        // preset / verbleibende Zeit initial aus dem gespeicherten Wert
-        let timeLeft = this.timerTime || 0; // ms
+        
+        let timeLeft = this.timerTime || 0;
         let endTime = null;
 
         const timeDisplay = document.createElement("div");
@@ -125,7 +144,6 @@ class TimeWidget extends HTMLElement {
         timeDisplay.textContent = this._formatMinutesSeconds(timeLeft);
         wrapper.appendChild(timeDisplay);
 
-        // Adjust-Buttons (touch-freundlich)
         const adjust = document.createElement("div");
         adjust.classList.add("adjust-controls");
 
@@ -156,7 +174,6 @@ class TimeWidget extends HTMLElement {
 
         wrapper.appendChild(adjust);
 
-        // Start / Reset Buttons
         const controls = document.createElement("div");
         controls.classList.add("controls");
 
@@ -176,13 +193,10 @@ class TimeWidget extends HTMLElement {
             timeDisplay.textContent = timeLeft > 0 ? this._formatMinutesSeconds(timeLeft) : "00:00";
         };
 
-        // Adjust handlers
         const adjustHandler = (evt) => {
             const delta = parseInt(evt.currentTarget.dataset.add, 10) || 0;
             timeLeft = Math.max(0, timeLeft + delta);
-            // persist preset
             this.timerTime = timeLeft;
-            // if running, update endTime to reflect new remaining time
             if (this.timerInterval) {
                 endTime = Date.now() + timeLeft;
             }
@@ -191,17 +205,14 @@ class TimeWidget extends HTMLElement {
 
         [btnPlus10, btnPlus60, btnMinus10, btnMinus60].forEach(b => b.addEventListener("click", adjustHandler));
 
-        // Start / Pause
         btnStart.addEventListener("click", () => {
             if (this.timerInterval) {
-                // Pause
                 clearInterval(this.timerInterval);
                 this.timerInterval = null;
                 btnStart.textContent = "Start";
-                // persist remaining time
                 this.timerTime = timeLeft;
             } else {
-                if (timeLeft <= 0) return; // nothing to start
+                if (timeLeft <= 0) return;
                 endTime = Date.now() + timeLeft;
                 this.timerInterval = setInterval(() => {
                     const remaining = endTime - Date.now();
@@ -235,12 +246,21 @@ class TimeWidget extends HTMLElement {
         this.content.appendChild(wrapper);
     }
 
+
+    /**
+     * update timer display
+     * sets the given parameter to the display
+     */
     updateTimerDisplay(display, ms) {
         // fallback compatibility (falls irgendwo noch genutzt)
         display.textContent = this._formatMinutesSeconds(ms);
     }
 
-    // helper: format stopwatch mm:ss.hh
+
+    /**
+     * format stopwatch
+     * formats a given ms value
+     */
     formatStopwatch(ms) {
         const totalSeconds = Math.floor(ms / 1000);
         const minutes = Math.floor(totalSeconds / 60);
@@ -249,7 +269,11 @@ class TimeWidget extends HTMLElement {
         return `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}.${String(hundredths).padStart(2,"0")}`;
     }
 
-    // helper: format mm:ss
+    
+    /**
+     * format minutes seconds
+     * another format of ms values
+     */
     _formatMinutesSeconds(ms) {
         const totalSeconds = Math.ceil(ms / 1000);
         const m = Math.floor(totalSeconds / 60);
@@ -257,6 +281,11 @@ class TimeWidget extends HTMLElement {
         return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
     }
 
+
+    /**
+     * render
+     * setup of html and css
+     */
     render() {
         const style = `
             <style>

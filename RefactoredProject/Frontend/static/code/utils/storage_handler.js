@@ -1,4 +1,4 @@
-//code/utils/settings.js
+//code/utils/storage_handler.js
 
 /**
  * enum for different type of settings

@@ -1,4 +1,4 @@
-//code/api/climate_widget.js
+//code/widgets/climate_widget.js
 class ClimateWidget extends HTMLElement {
     constructor() {
         super();

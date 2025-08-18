@@ -1,6 +1,6 @@
-//code/api/relais_widget.js
+//code/widgets/relais_widget.js
 
-import {save, load, StorageKeys } from '../utils/settings.js';
+import {save, load, StorageKeys } from '../utils/storage_handler.js';
 
 class RelaisWidget extends HTMLElement {
     constructor() {
