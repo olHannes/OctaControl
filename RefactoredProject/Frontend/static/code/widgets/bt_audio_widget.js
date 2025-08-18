@@ -22,7 +22,8 @@ class BluetoothAudioWidget extends HTMLElement {
         this.pTitle = null;
         this.pArtist = null;
 
-        this.updateIntervall = null;
+        this.updateInterval = null;
+        this.updateDelay = 1000;
     }
 
 
@@ -35,6 +36,51 @@ class BluetoothAudioWidget extends HTMLElement {
         this.render();
         this.setupElements();
         this.setupListeners();
+        this.startUpdateInterval(this.updateDelay);
+    }
+        
+        
+    /**
+     * stop update intervall
+     */
+    disconnectedCallback(){
+        this.stopUpdateInterval();
+    }
+
+
+    /**
+     * start Update Interval
+     * @param ms: intervall delay
+     */
+    startUpdateInterval(ms){
+        this.stopUpdateInterval();
+        this.updateDelay = ms;
+        this.updateInterval = setInterval(() => this.update(), this.updateDelay);
+    }
+
+
+    /**
+     * stop update interval
+     */
+    stopUpdateInterval(){
+        if(this.updateInterval){
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
+        }
+    }
+
+
+    /**
+     * toggle update interval
+     * @param on: set inverval {true | false}
+     * @param ms: inverval-delay
+     */
+    toggleUpdateInterval(on = true, ms = 1000){
+        if(on){
+            this.startUpdateInterval(ms);
+        } else {
+            this.stopUpdateInterval();
+        }
     }
 
 
@@ -68,9 +114,16 @@ class BluetoothAudioWidget extends HTMLElement {
             if(data.error) throw new Error(data.error);
             
             this.updateUI(data);
+            if(this.updateDelay !== 1000){
+                this.startUpdateInterval(1000);
+            }
 
         } catch (error) {
             console.error(error);
+
+            if(this.updateDelay !== 10000){
+                this.startUpdateInterval(10000);
+            }
         }
     }
 
@@ -189,10 +242,6 @@ class BluetoothAudioWidget extends HTMLElement {
             this.toggleButtons(true);
             this.togglePlay();
         });
-
-        this.updateIntervall = setInterval(() => {
-            this.update();
-        }, 1000);
     }
 
 
