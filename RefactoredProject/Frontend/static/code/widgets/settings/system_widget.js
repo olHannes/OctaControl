@@ -9,7 +9,8 @@ class SystemWidget extends HTMLElement {
         this.systemApis = {
             update: `${this.apiPath}/update`,
             reboot: `${this.apiPath}/reboot`,
-            shutdown: `${this.apiPath}/shutdown`
+            shutdown: `${this.apiPath}/shutdown`,
+            version: `${this.apiPath}/version`,
         };
 
         this.loading = false;
@@ -23,6 +24,31 @@ class SystemWidget extends HTMLElement {
      */
     connectedCallback() {
         this.render();
+        this.initWidget();
+    }
+
+
+    /**
+     * init widget
+     * calls the version api
+     */
+    async initWidget(){
+        this.setLoading(true);
+        try {
+            const res = await fetch(this.systemApis.version);
+            if(!res.ok) throw new Error("Error while fetching version");
+
+            const data = await res.json();
+            const version = data.version ||"n/a";
+            const versionTag = this.shadowRoot.querySelector("header p");
+            if(versionTag) versionTag.textContent = version;
+
+        } catch (error) {
+            console.error("Failed to load version:", error);
+            this.showMsg("Versionsfehler", 3000, "red");            
+        } finally {
+            this.setLoading(false);
+        }
     }
 
 
@@ -220,7 +246,7 @@ class SystemWidget extends HTMLElement {
             <div class="system-widget">
                 <header>
                     <h2>Version</h2>
-                    <p>xx.xx.xx</p>
+                    <p>--.--.----</p>
                 </header>
 
                 <button class="btn" data-action="reload">
