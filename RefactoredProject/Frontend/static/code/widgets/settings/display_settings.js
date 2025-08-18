@@ -11,6 +11,8 @@ class DisplaySettings extends HTMLElement {
 
         this.brightnessSlider = null;
         this.contrastSlider = null;
+        this.saturation = null;
+        this.grayscale = null;
     }
 
 
@@ -31,15 +33,23 @@ class DisplaySettings extends HTMLElement {
     initWidget(){
         this.brightnessSlider = this.shadowRoot.querySelector("#brightnessSlider");
         this.contrastSlider = this.shadowRoot.querySelector("#contrastSlider");
+        this.saturationSlider = this.shadowRoot.querySelector("#saturationSlider");
+        this.grayscaleSlider = this.shadowRoot.querySelector("#grayscaleSlider");
 
         const savedBrightness = load("BRIGHTNESS") ?? 1;
         const savedContrast = load("CONTRAST") ?? 1;
+        const savedSaturation = load("SATURATION") ?? 1;
+        const savedGrayscale = load("GRAYSCALE") ?? 1;
 
         this.brightnessSlider.value = savedBrightness;
-        this.contrastSlider.value = savedContrast;  
+        this.contrastSlider.value = savedContrast;
+        this.saturationSlider.value = savedSaturation;
+        this.grayscaleSlider.value = savedGrayscale;  
         
         this.updateStyle("brightness", savedBrightness);
         this.updateStyle("contrast", savedContrast);
+        this.updateStyle("saturation", savedSaturation);
+        this.updateStyle("grayscale", savedGrayscale);
 
         this.brightnessSlider.addEventListener("input", (e) => {
             this.updateStyle("brightness", e.target.value);
@@ -47,6 +57,14 @@ class DisplaySettings extends HTMLElement {
 
         this.contrastSlider.addEventListener("input", (e) => {
             this.updateStyle("contrast", e.target.value);
+        })
+
+        this.saturationSlider.addEventListener("input", (e) => {
+            this.updateStyle("saturation", e.target.value);
+        })
+
+        this.grayscaleSlider.addEventListener("input", (e) => {
+            this.updateStyle("grayscale", e.target.value);
         })
 
         this.shadowRoot.querySelector("#reset").addEventListener("click", () => {
@@ -69,6 +87,14 @@ class DisplaySettings extends HTMLElement {
             this.contrast = value;
             document.documentElement.style.setProperty("--global-contrast", value);
             save("CONTRAST", value);
+        }else if (type==="saturation"){
+            this.saturation = value;
+            document.documentElement.style.setProperty("--global-saturation", value);
+            save("SATURATION", value);
+        }else if (type==="grayscale"){
+            this.grayscale = value;
+            document.documentElement.style.setProperty("--global-grayscale", value),
+            save("GRAYSCALE", value);
         }
     }
 
@@ -80,9 +106,13 @@ class DisplaySettings extends HTMLElement {
     reset(){
         this.updateStyle("brightness", 1);
         this.updateStyle("contrast", 1);
+        this.updateStyle("saturation", 1);
+        this.updateStyle("grayscale", 0);
 
         this.brightnessSlider.value = this.brightness;
-        this.contrastSlider.value = this.contrast; 
+        this.contrastSlider.value = this.contrast;
+        this.saturationSlider.value = this.saturation; 
+        this.grayscaleSlider.value = this.grayscale; 
     }
 
     
@@ -205,7 +235,14 @@ class DisplaySettings extends HTMLElement {
                 <div>
                     <label id="contrastLabel">Kontrast</label>
                     <input type="range" id="contrastSlider" min="0.1" max="3" step="0.01" value="1"></input>
-        
+                </div>
+                <div>
+                    <label id="saturationLabel">Sättigung</label>
+                    <input type="range" id="saturationSlider" min="0" max="3" step="0.01" value="1"></input>
+                </div>
+                <div>
+                    <label id="grayscaleLabel">Grayscale</label>
+                    <input type="range" id="grayscaleSlider" min="0" max="1" step="0.01" value="0"></input>
                 </div>
             </div>
         `;

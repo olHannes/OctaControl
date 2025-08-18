@@ -3,7 +3,9 @@ body {
     background-color: #053e33;
     filter:
         brightness(var(--global-brightness, 1))
-        contrast(var(--global-contrast, 1));
+        contrast(var(--global-contrast, 1))
+        saturate(var(--global-saturation, 1))
+        grayscale(var(--global-grayscale, 1));
     transition: filter 0.3s ease;
 
     overflow: hidden;

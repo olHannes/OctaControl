@@ -19,6 +19,8 @@ export const StorageKeys = Object.freeze({
 
     BRIGHTNESS: "brightness",
     CONTRAST: "contrast",
+    SATURATION: "saturation",
+    GRAYSCALE: "grayscale",
 });
 
 
