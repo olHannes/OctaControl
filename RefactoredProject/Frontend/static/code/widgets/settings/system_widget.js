@@ -135,6 +135,15 @@ class SystemWidget extends HTMLElement {
                     opacity: 0.5;
                     pointer-events: none;
                 }
+
+                header {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+
                 .btn {
                     display: flex;
                     align-items: center;
@@ -209,6 +218,11 @@ class SystemWidget extends HTMLElement {
 
         const html = `
             <div class="system-widget">
+                <header>
+                    <h2>Version</h2>
+                    <p>xx.xx.xx</p>
+                </header>
+
                 <button class="btn" data-action="reload">
                     <img src="../static/media/update.svg" alt="Reload Icon">
                     Reload

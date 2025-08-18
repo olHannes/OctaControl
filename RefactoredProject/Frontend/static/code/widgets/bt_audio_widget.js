@@ -401,20 +401,20 @@ class BluetoothAudioWidget extends HTMLElement {
                     </div>
                     <div class="play-pause">
                     <button id="play-pause" title="Play">
-                        <img src="../static/media/play.svg" alt="Play" width="24" height="24" />
+                        <img rel="preload" src="../static/media/play.svg" alt="Play" width="24" height="24" />
                     </button>
                     </div>
                 </div>
 
                 <div class="bottom-controls">
                     <button id="prev" title="Vorheriger">
-                        <img src="../static/media/previous.svg" alt="Previous" width="20" height="20" />
+                        <img rel="preload" src="../static/media/previous.svg" alt="Previous" width="20" height="20" />
                     </button>
                     <div class="progress-bar-container" aria-label="Fortschritt Lied">
                     <div class="progress-bar" id="progress-bar"></div>
                     </div>
                     <button id="next" title="Nächster">
-                        <img src="../static/media/previous.svg" alt="Skip" width="20" height="20" />
+                        <img rel="preload" src="../static/media/previous.svg" alt="Skip" width="20" height="20" />
                     </button>
                 </div>
             </div>

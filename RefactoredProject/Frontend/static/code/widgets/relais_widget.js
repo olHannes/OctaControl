@@ -257,11 +257,11 @@ class RelaisWidget extends HTMLElement {
                 <header>Relais Steuerung</header>
                 <main>
                     <div class="device on" data-device="trunk">
-                        <div class="icon"><img src="../static/media/trunk-relais.svg" alt="Audio Icon"></img></div>
+                        <div class="icon"><img rel="preload" src="../static/media/trunk-relais.svg" alt="Audio Icon"></img></div>
                         <div class="label">Audio</div>
                     </div>
                     <div class="device" data-device="park-assistent">
-                        <div class="icon"><img src="../static/media/park-sensor.svg" alt="Assistant icon"></img></div>
+                        <div class="icon"><img rel="preload" src="../static/media/park-sensor.svg" alt="Assistant icon"></img></div>
                         <div class="label">Assistent</div>
                     </div>
                 </main>
