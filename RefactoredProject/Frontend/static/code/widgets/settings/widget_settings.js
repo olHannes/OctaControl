@@ -1,5 +1,5 @@
 //code/widgets/display_settings.js
-import { save, load } from "../utils/storage_handler.js";
+import { save, load } from "../../utils/storage_handler.js";
 
 class VisibleSettings extends HTMLElement {
     constructor() {
