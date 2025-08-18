@@ -117,7 +117,6 @@ class SystemWidget extends HTMLElement {
                     --muted: rgba(255,255,255,0.7);
                     display: block;
                     width: 100%;
-                    height: 40%;
                     font-family: Inter, system-ui, sans-serif;
                     position: relative;
                 }
@@ -126,10 +125,9 @@ class SystemWidget extends HTMLElement {
                     flex-direction: column;
                     gap: 0.6rem;
                     height: 100%;
-                    width: 89%;
+                    width: 100%;
                     background: rgba(255,255,255,0.02);
                     border-radius: 8px;
-                    padding: 1rem;
                     transition: opacity 0.2s;
                     padding-bottom: 5px;
                 }
