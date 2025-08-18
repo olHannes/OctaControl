@@ -6,10 +6,10 @@ from api.wlan_setup import wlan_api
 from api.bluetooth.bluetooth_setup import bt_setup_api
 from api.bluetooth.audio_control import bt_control_api
 from api.bluetooth.audio_metadata import bt_meta_api
-from services.relais_control import relais_api
-from services.system import system_api
-from services.volume_control import volume_api
-from services.climate_api import climate_api
+from api.relais_control import relais_api
+from api.system import system_api
+from api.volume_control import volume_api
+from api.climate_api import climate_api
 
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
