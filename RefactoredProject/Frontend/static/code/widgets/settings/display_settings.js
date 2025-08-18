@@ -182,6 +182,7 @@ class DisplaySettings extends HTMLElement {
 
                 div {
                     width: 90%;
+                    touch-action: none;
                 }
 
                 label {
@@ -230,7 +231,7 @@ class DisplaySettings extends HTMLElement {
 
                 <div>
                     <label id="brightnessLabel">Helligkeit</label>
-                    <input type="range" id="brightnessSlider" min="0.1" max="2" step="0.01" value="1"></input>
+                    <input type="range" id="brightnessSlider" min="0.5" max="2" step="0.01" value="1"></input>
                 </div>
                 <div>
                     <label id="contrastLabel">Kontrast</label>
