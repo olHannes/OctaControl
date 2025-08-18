@@ -5,7 +5,8 @@ PROJECT_DIR="$HOME/Documents/OctaControl/RefactoredProject"
 VENV_DIR="$PROJECT_DIR/.venv"
 
 echo "Systempakete installieren..."
-sudo apt-get update
+sudo apt-get update && sudo apt upgrade -y
+
 sudo apt-get install -y \
     python3-gi \
     python3-gi-cairo \
@@ -13,11 +14,19 @@ sudo apt-get install -y \
     libdbus-1-dev \
     libdbus-glib-1-dev \
     python3-venv \
+    python3-rpi.gpio \
     unclutter \
     libcairo2-dev \
     libgirepository1.0-dev \
+    libgpiod2 \
     pkg-config \
-    python3-dev
+    python3-dev \
+    i2c-tools \
+    python3-smbus \
+    bluetooth \
+    bluez \
+    bluez-tools \
+    libbluetooth-dev
 
 
 echo "Virtuelle Umgebung erstellen..."
@@ -30,5 +39,8 @@ echo "Python-Pakete installieren..."
 source "$VENV_DIR/bin/activate"
 pip install --upgrade pip setuptools wheel
 pip install -r "$PROJECT_DIR/Backend/setup/requirements.txt"
+
+sudo apt-get autoremove -y
+sudo apt-get clean
 
 echo "Installation abgeschlossen!"

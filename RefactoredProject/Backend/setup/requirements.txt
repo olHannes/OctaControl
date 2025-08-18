@@ -1,7 +1,13 @@
 flask
+flask-socketio
+eventlet
 flask-cors
+RPi.GPIO
 adafruit-circuitpython-dht
 adafruit-blinka
 pyalsaaudio
 pydbus
 pillow
+smbus2
+systemd-python
+pybluez

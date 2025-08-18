@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 from utils.Logger import Logger
 import os
 
@@ -11,8 +12,13 @@ from api.system import system_api
 from api.volume_control import volume_api
 from api.climate_api import climate_api
 
+USE_SOCKET = False
+
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
+
+if USE_SOCKET:
+    socketio = SocketIO(app, cors_allowed_origins="*")
 
 app.register_blueprint(system_api)
 app.register_blueprint(volume_api)
@@ -33,4 +39,8 @@ if __name__ == "__main__":
     log.clear_file()
 
     log.verbose("App", "Starte Flask Server")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    
+    if USE_SOCKET:
+        socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    else:
+        app.run(host="0.0.0.0", port=5000, debug=True)

@@ -1,3 +1,9 @@
+
+export const socket = io();
+socket.on("connect", () => {
+    console.log("Connected with Server");
+});
+
 const items = {
     "audio": document.getElementById('audio-widget'),
     "map": document.getElementById('map-widget'),
