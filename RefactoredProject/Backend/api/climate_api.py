@@ -3,10 +3,12 @@ import os
 import json
 from utils.Logger import Logger
 from utils.climate_reader import start, stop
-try:
+import config
+
+if config.SYSTEM_RPI:
     import RPi.GPIO as GPIO
-    mock = True
-except (ImportError, RuntimeError):
+    mock = False
+else:
     from utils.gpio_mock import MockGPIO
     GPIO = MockGPIO()
     mock = True
@@ -15,45 +17,24 @@ climate_api = Blueprint("climate_api", __name__, url_prefix="/api/climate")
 
 log = Logger()
 climateApiTag = "ClimateData"
+CLIMATE_FILE = os.path.expanduser(config.CLIMATE["FILE_PATH"])
 
-DEVICE_PINS = {
-    "climateReader": 20
-}
-
-BASE_DIR = os.path.join(os.path.expanduser("~"), "Documents", "OctaControl", "RefactoredProject", "Backend", "utils")
-CLIMATE_FILE = os.path.join(BASE_DIR, "climate_data.json")
-
-
-def init_GPIO():
-    """
-    inits the general gpio settings and sets every used pin to low
-    """
-    global mock
-    if mock:
-        return
-    log.verbose(climateApiTag, "/init GPIO pins")
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    for pin in DEVICE_PINS.values():
-        GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
 @climate_api.route("/init", methods=["GET"])
 def initPins():
     """
-    Trys to init the used gpio pins
+    Trys to init the used .json file
     """
     log.verbose(climateApiTag, "GET /init received")
     try:
-        init_GPIO()
-
         if not os.path.exists(CLIMATE_FILE):
             with open(CLIMATE_FILE, "w") as f:
-                json.dump({"temperature": 0.1, "humidity": 0.1}, f)
+                json.dump({"temperature": -0.1, "humidity": -0.1}, f)
             log.verbose(climateApiTag, "climate_data.json wurde initial erstellt")  
         
         return jsonify({"status": "success"}), 200
     except Exception as e:
-        log.error(climateApiTag, f"/initPins: {e}")
+        log.error(climateApiTag, f"/init: {e}")
         return jsonify({"error": str(e)}), 500
 
 

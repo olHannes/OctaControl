@@ -1,5 +1,6 @@
 import time
 import sys
+import config
 
 class Logger:
     COLORS = {
@@ -11,9 +12,9 @@ class Logger:
     }
 
     def __init__(self):
-        self.enable = True
-        self.toFile = True
-        self.logFile = "app.log"
+        self.enable = config.LOGGER["LOGGING"]
+        self.toFile = config.LOGGER["TO_FILE"]
+        self.logFile = config.LOGGER["FILE"]
 
     def _log(self, tag, msg, color):
         if not self.enable:

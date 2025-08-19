@@ -1,7 +1,8 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
-from utils.Logger import Logger
 import os
+import config
+from utils.Logger import Logger
 
 from api.wlan_setup import wlan_api
 from api.bluetooth.bluetooth_setup import bt_setup_api
@@ -12,12 +13,10 @@ from api.system import system_api
 from api.volume_control import volume_api
 from api.climate_api import climate_api
 
-USE_SOCKET = False
-
 log = Logger()
 app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
 
-if USE_SOCKET:
+if config.USE_SOCKETS:
     socketio = SocketIO(app, cors_allowed_origins="*")
 
 app.register_blueprint(system_api)
@@ -40,7 +39,7 @@ if __name__ == "__main__":
 
     log.verbose("App", "Starte Flask Server")
     
-    if USE_SOCKET:
+    if config.USE_SOCKETS:
         socketio.run(app, host="0.0.0.0", port=5000, debug=True)
     else:
         app.run(host="0.0.0.0", port=5000, debug=True)

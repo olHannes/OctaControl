@@ -12,10 +12,6 @@ class BluetoothController:
             if 'org.bluez.MediaPlayer1' in interface:
                 self.player = self.bus.get('org.bluez', path)
                 break
-        #for obj in manager.GetManagedObjects():
-        #    if obj.endswith('/player0'):
-        #        self.player = self.bus.get('org.bluez', obj)
-        #        break
 
     def _ensure_player(self):
         if not self.player:

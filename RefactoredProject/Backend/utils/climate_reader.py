@@ -4,30 +4,23 @@ import json
 import os
 
 from .Logger import Logger
+import config
 
 log = Logger()
 TAG = "ClimateReader"
 
-update_interval = 5
-
-ON_RPI = False
-try:
+if config.SYSTEM_RPI:
     import board
     import adafruit_dht
-
-    ht_device = adafruit_dht.DHT11(board.D25)
-    ON_RPI = True
-except (ImportError, AttributeError, RuntimeError):
+    ht_device = adafruit_dht.DHT11(getattr(board, f"D{config.CLIMATE["SENSOR"]}"))
+else:
+    log.verbose(TAG, "Raspberry Pi Hardware nicht gefunden, benutze Dummy-Werte")
     pTemp = 0
     pHum = 0
-    log.verbose(TAG, "Raspberry Pi Hardware nicht gefunden, benutze Dummy-Werte")
-
-
-BASE_DIR = os.path.join(os.path.expanduser("~"),"Documents","OctaControl","RefactoredProject","Backend","utils")
-FILE_PATH = os.path.join(BASE_DIR, "climate_data.json")
 
 
 reader_thread = None
+FILE_PATH = os.path.expanduser(config.CLIMATE["FILE_PATH"])
 stop_event = threading.Event()
 climate_lock = threading.Lock()
 
@@ -51,7 +44,7 @@ def climate_worker():
 
     while not stop_event.is_set():
         try:
-            if ON_RPI:
+            if config.SYSTEM_RPI:
                 temperature = ht_device.temperature
                 humidity = ht_device.humidity
             else:
@@ -71,7 +64,7 @@ def climate_worker():
         except Exception as e:
             log.error(TAG, f"failed to read sensor: {e}")
         
-        time.sleep(update_interval)
+        time.sleep(config.CLIMATE["UPDATE_INTERVAL"])
     log.verbose(TAG, "climate worker has been stopped")
 
 
@@ -93,7 +86,7 @@ def stop():
     if reader_thread is not None:
         reader_thread.join(timeout=2)
     try:
-        if ON_RPI:
+        if config.SYSTEM_RPI:
             ht_device.exit()
     except Exception as e:
         log.error(TAG, f"Error while releasing the sensor: {e}")

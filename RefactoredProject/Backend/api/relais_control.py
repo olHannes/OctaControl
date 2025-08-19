@@ -1,23 +1,23 @@
 from flask import Blueprint, jsonify, request
 from utils.Logger import Logger
-try:
+import config
+import atexit
+
+if config.SYSTEM_RPI:
     import RPi.GPIO as GPIO
     mock = False
-except (ImportError, RuntimeError):
+else:
     from utils.gpio_mock import MockGPIO
     GPIO = MockGPIO()
     mock = True
-
 
 relais_api = Blueprint("relais_api", __name__, url_prefix="/api/system/relais")
 
 log = Logger()
 relaisApiTag = "RelaisApi"
 
-DEVICE_PINS = {
-    "park-assistent": 17,
-    "trunk": 27,
-}
+DEVICE_PINS = config.RELAIS_PINS
+DEFAULTS = config.RELAIS_DEFAULTS
 
 
 def init_GPIO():
@@ -25,14 +25,15 @@ def init_GPIO():
     inits the general gpio settings and sets every used pin to low
     """
     log.verbose(relaisApiTag, "/init GPIO pins")
-    if mock == False:
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        for name, pin in DEVICE_PINS.items():
-            if name == "trunk":
-                GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-            else:
-                GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+    if mock:
+        return
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+
+    for name, pin in DEVICE_PINS.items():
+        default = DEFAULTS.get(name, "LOW")
+        initial = GPIO.HIGH if default == "HIGH" else GPIO.LOW
+        GPIO.setup(pin, GPIO.OUT, initial=initial)
 
 
 @relais_api.route("/init", methods=["GET"])
@@ -63,18 +64,17 @@ def toggleRelais():
         return jsonify({"error": "Missing 'type' or 'newState' in request body"}), 400
     
     device_type = data["type"]
-    state = data["newState"]
+    state = bool(data["newState"])
 
     if device_type not in DEVICE_PINS:
         log.error(relaisApiTag, "/toggleRelais: unknown type")
         return jsonify({"error": f"Unknown type '{device_type}'"}), 400
-    pin = DEVICE_PINS[device_type]
     
-    if state:
-        GPIO.output(pin, GPIO.HIGH)
-    else: 
-        GPIO.output(pin, GPIO.LOW)
-    return jsonify({"status": "toggled", "type": device_type})
+    pin = DEVICE_PINS[device_type]
+    GPIO.output(pin, GPIO.HIGH if state else GPIO.LOW)
+
+    status = "on" if GPIO.input(pin) == GPIO.HIGH else "off"
+    return jsonify({"status": status, "type": device_type})
 
 
 @relais_api.route("/status", methods=["GET"])
@@ -102,3 +102,6 @@ def getStatus():
         "status": status,
         "pin": pin
     })
+
+if not mock:
+    atexit.register(GPIO.cleanup)
