@@ -17,6 +17,7 @@
         </div>
     </div>
 
+    <notification-widget id="notification-widget"></notification-widget>
 
     <!--Main Widgets-Container-->
     <div id="widget-container" class="widget-container">
@@ -83,6 +84,8 @@
 
     <!--external Code and Widgets-->
     <script src="../static/code/code.js"></script>
+    
+    <script src="../static/code/widgets/settings/notification_widget.js" type="module"></script>
 
     <script src="../static/code/widgets/volume_widget.js" type="module"></script>
     
@@ -100,6 +103,22 @@
     <script src="../static/code/widgets/settings/widget_settings.js" type="module"></script>
     <script src="../static/code/widgets/settings/wifi_controller_widget.js" type="module"></script>
     <script src="../static/code/widgets/settings/bt_controller_widget.js" type="module"></script>
+
+
+    <script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const notify = document.getElementById("notification-widget");
+        if (notify) {
+            notify.showGlobalNotification(
+                "System initialisiert!",
+                "Alle Inhalte wurden geladen.",
+                "../static/media/notification/info.svg",
+                "",
+                3500
+            );
+        }
+    });
+</script>
 
 </body>
 </html>
