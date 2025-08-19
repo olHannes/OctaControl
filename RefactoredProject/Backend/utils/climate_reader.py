@@ -12,11 +12,12 @@ TAG = "ClimateReader"
 if config.SYSTEM_RPI:
     import board
     import adafruit_dht
-    ht_device = adafruit_dht.DHT11(getattr(board, f"D{config.CLIMATE["SENSOR"]}"))
+    ht_device = adafruit_dht.DHT11(getattr(board, f"D{config.CLIMATE['SENSOR']}"))
 else:
     log.verbose(TAG, "Raspberry Pi Hardware nicht gefunden, benutze Dummy-Werte")
-    pTemp = 0
-    pHum = 0
+
+if config.USE_SOCKETS:
+    from extension import socketio
 
 
 reader_thread = None
@@ -31,6 +32,8 @@ def save_climate_data(temperature, humidity):
             "temperature": temperature,
             "humidity": humidity
         }
+        if config.USE_SOCKETS:
+            socketio.emit("climate_update", data)
         try:
             with open(FILE_PATH, "w") as f:
                 json.dump(data, f)
@@ -48,11 +51,8 @@ def climate_worker():
                 temperature = ht_device.temperature
                 humidity = ht_device.humidity
             else:
-                global pTemp, pHum
-                temperature = pTemp
-                humidity = pHum
-                pTemp+=0.1
-                pHum+=0.1
+                temperature = -1
+                humidity = -1
 
             if temperature is not None and humidity is not None:
                 temperature = round(temperature, 1)
@@ -88,5 +88,6 @@ def stop():
     try:
         if config.SYSTEM_RPI:
             ht_device.exit()
+            ht_device = None
     except Exception as e:
         log.error(TAG, f"Error while releasing the sensor: {e}")

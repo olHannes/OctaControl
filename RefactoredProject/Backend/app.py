@@ -4,6 +4,17 @@ import os
 import config
 from utils.Logger import Logger
 
+if config.USE_SOCKETS:
+    from extension import socketio
+    
+
+
+log = Logger()
+app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
+
+if config.USE_SOCKETS:
+    socketio.init_app(app)
+
 from api.wlan_setup import wlan_api
 from api.bluetooth.bluetooth_setup import bt_setup_api
 from api.bluetooth.audio_control import bt_control_api
@@ -12,12 +23,6 @@ from api.relais_control import relais_api
 from api.system import system_api
 from api.volume_control import volume_api
 from api.climate_api import climate_api
-
-log = Logger()
-app = Flask(__name__, template_folder="../Frontend/templates", static_folder="../Frontend/static")
-
-if config.USE_SOCKETS:
-    socketio = SocketIO(app, cors_allowed_origins="*")
 
 app.register_blueprint(system_api)
 app.register_blueprint(volume_api)
