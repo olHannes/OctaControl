@@ -113,3 +113,61 @@ async function checkInternetConnection() {
 
 setInterval(checkInternetConnection, 5000);
 checkInternetConnection();
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("leftSidebar");
+
+    let startX = 0;
+    let currentX = 0;
+    let endX = 0;
+    let isSwipingSidebar = false;
+
+    document.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        currentX = startX;
+
+        if (sidebar.classList.contains("active")) {
+            isSwipingSidebar = true;
+        }
+    });
+
+    document.addEventListener("touchmove", (e) => {
+        if (isSwipingSidebar) {
+            currentX = e.touches[0].clientX;
+
+            if (currentX < startX) {
+                e.preventDefault();
+            }
+        }
+    }, { passive: false });
+
+    document.addEventListener("touchend", (e) => {
+        endX = e.changedTouches[0].clientX;
+        handleSwipe();
+        isSwipingSidebar = false;
+    });
+
+    function openSidebar() {
+        sidebar.classList.add("active");
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove("active");
+    }
+
+    function handleSwipe() {
+        let diffX = endX - startX;
+        console.log(`handleSwipe: von ${startX} bis ${endX} diff ${diffX}`);
+
+        if (startX < 50 && diffX > 80) {
+            openSidebar();
+        }
+
+        if (diffX < -80 && sidebar.classList.contains("active")) {
+            closeSidebar();
+        }
+    }
+});

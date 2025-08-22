@@ -79,6 +79,7 @@ class ClockWidget extends HTMLElement {
                     font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
                     display: block;
                     width: 300px;
+                    height: auto;
                 }
 
                 .clock-widget {
@@ -91,7 +92,7 @@ class ClockWidget extends HTMLElement {
                     gap: 0.75rem;
                     align-items: center;
                     justify-items: center;
-                    box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+                    box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);    
                 }
 
                 .clock-wrap {

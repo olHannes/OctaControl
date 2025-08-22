@@ -14,7 +14,6 @@ class VisibleSettings extends HTMLElement {
             { id: "clock-widget", label: "Clock", storageKey: "CLOCK_WIDGET" },
             { id: "relais-widget", label: "Relais", storageKey: "RELAIS_WIDGET" },
             { id: "climate-widget", label: "Klima", storageKey: "WEATHER_WIDGET" },
-            { id: "leftSidebar", label: "Sidebar", storageKey: "SIDEBAR_WIDGET" },
         ];
     }
 
@@ -70,8 +69,8 @@ class VisibleSettings extends HTMLElement {
                 widgetElem.style.display= newVisible? "block": "none";
                 btn.classList.toggle("active", newVisible);
 
-                if(id === "leftSidebar")
-                    document.getElementById("widget-container").style.width = newVisible ? "95%" : "100%";
+//                if(id === "leftSidebar")
+//                    document.getElementById("widget-container").style.width = newVisible ? "95%" : "100%";
 
                 if(storageKey)
                     save(storageKey, newVisible);
