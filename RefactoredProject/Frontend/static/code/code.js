@@ -14,6 +14,7 @@ const widgets = {
         bt: subPanel.querySelector('bt-setup-widget'),
         vsettings: subPanel.querySelector('vsettings-widget'),
         display: subPanel.querySelector('display-widget'),
+        audio: subPanel.querySelector('audio-widget'),
 };
 
 /**
@@ -76,7 +77,10 @@ export function openSubPanel(type, pItem) {
         if(widgets.bt) widgets.bt.style.display="block";
     } else if (type === "Widgets"){
         if(widgets.vsettings) widgets.vsettings.style.display="block";
+    } else if (type === "Audio"){
+        if(widgets.audio) widgets.audio.style.display="block";
     }
+
     headline.innerText = type;
 
     const menuItems = document.querySelectorAll('.menu-item');
@@ -206,3 +210,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
+/**
+ * play welcome audio
+ */
+let audio;
+
+document.addEventListener("DOMContentLoaded", () => {
+    audio = new Audio("../static/sounds/startup.mp3");
+    audio.muted = true;
+
+    const enabled = load("WELCOME_SOUND");
+    const volume = load("WELCOME_VOLUME") ?? 50;
+
+    if (enabled) {
+        audio.volume = volume / 100;
+        audio.play().catch(err => console.log("Preload blockiert:", err));
+    }
+});
+
+
+document.addEventListener("click", () => {
+    if (audio) {
+        audio.muted = false;
+        audio.currentTime = 0;
+    }
+}, { once: true });

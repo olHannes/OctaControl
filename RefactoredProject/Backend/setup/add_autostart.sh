@@ -6,6 +6,7 @@ VENV_DIR="$PROJECT_DIR/.venv"
 PYTHON_COMMAND="$VENV_DIR/bin/python $PROJECT_DIR/Backend/app.py"
 BROWSER_COMMAND="chromium-browser --new-window http://127.0.0.1:5000 \
                  --start-fullscreen \
+                 --autoplay-policy=no-user-gesture-required \
                  --disable-session-crashed-bubble \
                  --disable-infobars \
                  --disable-popup-blocking \

@@ -17,10 +17,16 @@ export const StorageKeys = Object.freeze({
     TRUNK_ACTIVE: "trunkPower",
     ASSISTANT: "assistant",
 
+    //Display Data
     BRIGHTNESS: "brightness",
     CONTRAST: "contrast",
     SATURATION: "saturation",
     GRAYSCALE: "grayscale",
+
+    //Sound Effects
+    WELCOME_SOUND: "welcome_sound",
+    WELCOME_VOLUME: "welcome_volume",
+    SYSTEM_VOLUME: "system_volume",
 });
 
 

@@ -66,15 +66,21 @@
                         <img src="../static/media/widget-settings.svg" alt="Widgets" />
                         <span>Widget</span>
                     </div>
+
+                    <div class="menu-item" onclick="openSubPanel('Audio', this)">
+                        <img src="../static/media/audio.svg" alt="Audio" />
+                        <span>Audio</span>
+                    </div>
                     
             </div>
             <div class="sub-panel" id="subPanel">
                 <h2 id="settingsHeadline">Einstellungsmenü:</h2>
                 <display-widget style="width: 100%; display: none;"></display-widget>
                 <system-widget style="display: none;"></system-widget>
+                <audio-widget style="display: none;"></audio-widget>
                 <wifi-setup-widget style="width: 100%; display: none;"></wifi-setup-widget>
                 <bt-setup-widget style="width: 95%; display: none;"></bt-setup-widget>
-                <vsettings-widget style="display: none;"></vsettings-widget>
+                <vsettings-widget style="display: none; position: relative; top: -10%;"></vsettings-widget>
             </div>
         </div>
     </div>
@@ -88,7 +94,8 @@
     <script src="../static/code/widgets/settings/notification_widget.js" type="module"></script>
 
     <script src="../static/code/widgets/volume_widget.js" type="module"></script>
-    
+    <script src="../static/code/widgets/settings/audio_widget.js" type="module"></script>
+
     <script src="../static/code/widgets/clock_widget.js" type="module"></script>
     <script src="../static/code/widgets/time_widgets.js" type="module"></script>
     
