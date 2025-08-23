@@ -1,3 +1,4 @@
+import { load, save } from "./utils/storage_handler.js";
 
 const items = {
     "audio": document.getElementById('audio-widget'),
@@ -20,16 +21,17 @@ const widgets = {
  * @param elementKey: name of the item <items-member>
  * @param show: display of hide the widget
  */
-function toggleItemVisibility(elementKey, show = false) {
+export function toggleItemVisibility(elementKey, show = false) {
     if (!items[elementKey]) return;
     items[elementKey].style.display = show ? "flex" : "none";
 }
+window.toggleItemVisibility = toggleItemVisibility;
 
 
 /**
  * toggles the settings-container
  */
-function toggleSettings() {
+export function toggleSettings() {
     const panel = document.getElementById('settings');
     const isVisible = panel.classList.contains('show');
 
@@ -53,12 +55,13 @@ function toggleSettings() {
         document.getElementById("settingsHeadline").innerText = "Einstellungsmenü:";
     }
 }
+window.toggleSettings = toggleSettings;
 
 
 /**
  * opens a subpanel (makes a specific list of items visible)
  */
-function openSubPanel(type, pItem) {
+export function openSubPanel(type, pItem) {
     const headline = document.getElementById('settingsHeadline');
 
     Object.values(widgets).forEach(widget => {
@@ -81,12 +84,12 @@ function openSubPanel(type, pItem) {
 
     if(pItem) pItem.classList.add('active');
 }
+window.openSubPanel = openSubPanel;
 
 
-
-
-
-
+/**
+ * updates the Internet Icon
+ */
 function updateInternetIcon(isOnline) {
     const icon = document.getElementById("internetStatus");
     if (!icon) return;
@@ -110,13 +113,14 @@ async function checkInternetConnection() {
         updateInternetIcon(false);
     }
 }
-
 setInterval(checkInternetConnection, 5000);
 checkInternetConnection();
 
 
 
-
+/**
+ * handles touch gestures and opens / closes the sidebar
+ */
 document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("leftSidebar");
 
@@ -160,7 +164,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleSwipe() {
         let diffX = endX - startX;
-        console.log(`handleSwipe: von ${startX} bis ${endX} diff ${diffX}`);
 
         if (startX < 50 && diffX > 80) {
             openSidebar();
@@ -170,4 +173,36 @@ document.addEventListener("DOMContentLoaded", () => {
             closeSidebar();
         }
     }
+});
+
+
+
+/**
+ * setup of time / clock toggle 
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    const clock = document.getElementById("clock-widget");
+    const time = document.getElementById("time-widget");
+
+    let expanded = load("TIMER_WIDGET");
+
+    if(!expanded){
+        clock.style.height = "96%";
+        time.classList.remove("visible");
+    } else {
+        clock.style.height = "51%";
+        time.classList.add("visible");
+    }
+
+    clock.addEventListener("click", () => {
+        expanded = !expanded;
+        save("TIMER_WIDGET", expanded);
+        if (expanded) {
+            clock.style.height = "51%";
+            time.classList.add("visible");
+        } else {
+            clock.style.height = "96%";
+            time.classList.remove("visible");
+        }
+    });
 });

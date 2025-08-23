@@ -84,8 +84,9 @@ class ClockWidget extends HTMLElement {
 
                 .clock-widget {
                     width: 90%;
-                    height: 90%;
-                    padding: 1rem;
+                    height: 100%;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
                     background: var(--card);
                     border-radius: 18px;
                     display: grid;
@@ -98,6 +99,7 @@ class ClockWidget extends HTMLElement {
                 .clock-wrap {
                     width: 82%;
                     height: 100%;
+                    max-height: 220px;
                     aspect-ratio: 1 / 1;
                     border-radius: 50%;
                     display: grid;
