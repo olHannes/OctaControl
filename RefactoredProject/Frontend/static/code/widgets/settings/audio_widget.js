@@ -1,3 +1,4 @@
+//code/widgets/settings/audio_widgets.js
 import { save, load } from "../../utils/storage_handler.js";
 
 class AudioWidget extends HTMLElement {
@@ -20,7 +21,6 @@ class AudioWidget extends HTMLElement {
         const systemSlider = this.shadowRoot.querySelector("#system-volume-slider");
         const systemValue = this.shadowRoot.querySelector("#system-volume-value");
 
-        // --- Initial state aus storage ---
         const welcomeEnabled = load("WELCOME_SOUND") ?? false;
         const welcomeVolume = load("WELCOME_VOLUME") ?? 100;
         const systemVolume = load("SYSTEM_VOLUME") ?? 75;
@@ -33,19 +33,17 @@ class AudioWidget extends HTMLElement {
         systemSlider.value = systemVolume;
         systemValue.textContent = systemVolume;
 
-        // --- Toggle Welcome Audio ---
+
         toggle.addEventListener("change", () => {
             save("WELCOME_SOUND", toggle.checked);
         });
 
-        // --- Welcome-Volume Slider ---
         welcomeSlider.addEventListener("input", () => {
             const val = parseInt(welcomeSlider.value, 10);
             welcomeValue.textContent = val;
             save("WELCOME_VOLUME", val);
         });
 
-        // --- System-Volume Slider ---
         systemSlider.addEventListener("input", () => {
             const val = parseInt(systemSlider.value, 10);
             systemValue.textContent = val;
