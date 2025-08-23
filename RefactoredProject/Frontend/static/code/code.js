@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * play welcome audio
  */
 let audio;
+let touchAudioBuffer = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     audio = new Audio("../static/sounds/startup.mp3");
@@ -228,7 +229,11 @@ document.addEventListener("DOMContentLoaded", () => {
         audio.volume = volume / 100;
         audio.play().catch(err => console.log("Preload blockiert:", err));
     }
+
+    touchAudioBuffer = new Audio("../static/sounds/touch.mp3");
+    touchAudioBuffer.preload = "auto";
 });
+
 
 
 document.addEventListener("click", () => {
@@ -237,3 +242,14 @@ document.addEventListener("click", () => {
         audio.currentTime = 0;
     }
 }, { once: true });
+
+
+document.addEventListener("click", () => {
+    if (!touchAudioBuffer) return;
+
+    const touchAudio = touchAudioBuffer.cloneNode(true);
+    const systemVolume = load("SYSTEM_VOLUME") ?? 50;
+    touchAudio.volume = systemVolume / 100;
+
+    touchAudio.play().catch(err => console.log("Touch-Sound blockiert:", err));
+});
