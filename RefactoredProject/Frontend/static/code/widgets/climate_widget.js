@@ -118,10 +118,9 @@ class ClimateWidget extends HTMLElement {
 
                 .climate-container {
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    background: --card;
                     border-radius: 8px;
-                    width: 220px;
-                    padding: 16px;
+                    width: 100%;
+                    height: 100%;
                     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
                     color: white;
                     user-select: none;
@@ -136,7 +135,7 @@ class ClimateWidget extends HTMLElement {
 
                 .data-row {
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: space-around;
                     margin-bottom: 12px;
                     font-size: 1.1rem;
                 }
