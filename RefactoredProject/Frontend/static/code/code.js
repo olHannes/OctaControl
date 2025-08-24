@@ -15,7 +15,9 @@ const widgets = {
         vsettings: subPanel.querySelector('vsettings-widget'),
         display: subPanel.querySelector('display-widget'),
         audio: subPanel.querySelector('audio-widget'),
+        color: subPanel.querySelector('color-widget'),
 };
+
 
 /**
  * toggles the visibility of an widget
@@ -48,7 +50,6 @@ export function toggleSettings() {
         panel.classList.remove('show');
         setTimeout(() => {
             panel.style.display = 'none';
-            clearSubPanel();
         }, 400);
         Object.values(widgets).forEach(widget => {
             if(widget) widget.style.display="none";
@@ -71,6 +72,7 @@ export function openSubPanel(type, pItem) {
     
     if(type === "System"){
         if(widgets.system) widgets.system.style.display="block";
+        if(widgets.color) widgets.color.style.display="block";
         if(widgets.display) widgets.display.style.display="block";
     } else if (type === "Verbindungen"){
         if(widgets.wifi) widgets.wifi.style.display="block";

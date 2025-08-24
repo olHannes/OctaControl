@@ -4,7 +4,7 @@
  * enum for different type of settings
  */
 export const StorageKeys = Object.freeze({
-    // Widgets visible?
+    // Widgets visible
     SIDEBAR_WIDGET: "sidebarWidget",
     AUDIO_WIDGET: "audioWidget",
     MAP_WIDGET: "mapWidget",
@@ -23,10 +23,13 @@ export const StorageKeys = Object.freeze({
     SATURATION: "saturation",
     GRAYSCALE: "grayscale",
 
+    BG_COLOR: "background_color",
+
     //Sound Effects
     WELCOME_SOUND: "welcome_sound",
     WELCOME_VOLUME: "welcome_volume",
     SYSTEM_VOLUME: "system_volume",
+
 });
 
 
