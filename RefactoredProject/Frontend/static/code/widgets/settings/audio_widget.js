@@ -1,4 +1,4 @@
-//code/widgets/settings/audio_widgets.js
+// code/widgets/settings/audio_widgets.js
 import { save, load } from "../../utils/storage_handler.js";
 
 class AudioWidget extends HTMLElement {
@@ -24,6 +24,7 @@ class AudioWidget extends HTMLElement {
         const welcomeEnabled = load("WELCOME_SOUND") ?? false;
         const welcomeVolume = load("WELCOME_VOLUME") ?? 100;
         const systemVolume = load("SYSTEM_VOLUME") ?? 75;
+        const touchSoundIndex = load("TOUCH_SOUND") ?? 0;
 
         toggle.checked = welcomeEnabled;
 
@@ -32,7 +33,6 @@ class AudioWidget extends HTMLElement {
 
         systemSlider.value = systemVolume;
         systemValue.textContent = systemVolume;
-
 
         toggle.addEventListener("change", () => {
             save("WELCOME_SOUND", toggle.checked);
@@ -48,6 +48,24 @@ class AudioWidget extends HTMLElement {
             const val = parseInt(systemSlider.value, 10);
             systemValue.textContent = val;
             save("SYSTEM_VOLUME", val);
+        });
+
+        // 🎵 Touch Sound Auswahl
+        const soundButtons = this.shadowRoot.querySelectorAll(".sound-option");
+        soundButtons.forEach((btn, idx) => {
+            if (idx === touchSoundIndex) {
+                btn.classList.add("active");
+            }
+            btn.addEventListener("click", () => {
+                save("TOUCH_SOUND", idx);
+                soundButtons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                // Probehören
+                const preview = new Audio(`../static/sounds/touch_${idx + 1}.mp3`);
+                preview.volume = (load("SYSTEM_VOLUME") ?? 50) / 100;
+                preview.play().catch(err => console.log("Preview blockiert:", err));
+            });
         });
     }
 
@@ -162,6 +180,39 @@ class AudioWidget extends HTMLElement {
                     color: var(--muted);
                     font-weight: 500;
                 }
+
+                /* Touch-Sound Auswahl */
+                .sound-picker {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.6rem;
+                }
+                .sound-options {
+                    display: flex;
+                    gap: 0.6rem;
+                    flex-wrap: wrap;
+                }
+                .sound-option {
+                    flex: 1;
+                    min-width: 80px;
+                    padding: 0.5rem 1rem;
+                    border-radius: 10px;
+                    background: rgba(255,255,255,0.08);
+                    color: var(--muted);
+                    font-weight: 500;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: background 0.2s, color 0.2s;
+                }
+                .sound-option:hover {
+                    background: rgba(255,255,255,0.2);
+                    color: white;
+                }
+                .sound-option.active {
+                    background: var(--accent);
+                    color: black;
+                    font-weight: 600;
+                }
             </style>
         `;
 
@@ -189,6 +240,16 @@ class AudioWidget extends HTMLElement {
                         <span class="value" id="system-volume-value">50</span>
                     </div>
                     <input type="range" min="0" max="100" value="50" id="system-volume-slider">
+                </div>
+
+                <!-- 🎵 Touch-Sound Auswahl -->
+                <div class="sound-picker">
+                    <span style="color:white;font-weight:600;">Touch-Sound</span>
+                    <div class="sound-options">
+                        <div class="sound-option">Sound 1</div>
+                        <div class="sound-option">Sound 2</div>
+                        <div class="sound-option">Sound 3</div>
+                    </div>
                 </div>
             </div>
         `;

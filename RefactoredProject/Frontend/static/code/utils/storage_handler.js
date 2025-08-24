@@ -29,6 +29,7 @@ export const StorageKeys = Object.freeze({
     WELCOME_SOUND: "welcome_sound",
     WELCOME_VOLUME: "welcome_volume",
     SYSTEM_VOLUME: "system_volume",
+    TOUCH_SOUND: "touch_sound",
 
 });
 

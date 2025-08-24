@@ -217,41 +217,46 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * play welcome audio
  */
-let audio;
-let touchAudioBuffer = null;
+let welcomeAudio;
+let touchAudioBuffer = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    audio = new Audio("../static/sounds/startup.mp3");
-    audio.muted = true;
+    welcomeAudio = new Audio("../static/sounds/startup.mp3");
+    welcomeAudio.muted = true;
 
     const enabled = load("WELCOME_SOUND");
     const volume = load("WELCOME_VOLUME") ?? 50;
 
     if (enabled) {
-        audio.volume = volume / 100;
-        audio.play().catch(err => console.log("Preload blockiert:", err));
+        welcomeAudio.volume = volume / 100;
+        welcomeAudio.play().catch(err => console.log("Preload blockiert:", err));
     }
 
-    touchAudioBuffer = new Audio("../static/sounds/touch.mp3");
-    touchAudioBuffer.preload = "auto";
+    const soundFiles = ["touch_1.mp3", "touch_2.mp3", "touch_3.mp3"];
+    soundFiles.forEach(file => {
+        const audio = new Audio(`../static/sounds/${file}`);
+        audio.preload = "auto";
+        touchAudioBuffer.push(audio);
+    });
 });
 
 
 
 document.addEventListener("click", () => {
-    if (audio) {
-        audio.muted = false;
-        audio.currentTime = 0;
+    if (welcomeAudio) {
+        welcomeAudio.muted = false;
+        welcomeAudio.currentTime = 0;
     }
 }, { once: true });
 
 
 document.addEventListener("click", () => {
-    if (!touchAudioBuffer) return;
-
-    const touchAudio = touchAudioBuffer.cloneNode(true);
+    const index = load("TOUCH_SOUND") ?? 0;
     const systemVolume = load("SYSTEM_VOLUME") ?? 50;
-    touchAudio.volume = systemVolume / 100;
 
-    touchAudio.play().catch(err => console.log("Touch-Sound blockiert:", err));
+    if (touchAudioBuffer[index]) {
+        const touchAudio = touchAudioBuffer[index].cloneNode(true);
+        touchAudio.volume = systemVolume / 100;
+        touchAudio.play().catch(err => console.log("Touch-Sound blockiert:", err));
+    }
 });
