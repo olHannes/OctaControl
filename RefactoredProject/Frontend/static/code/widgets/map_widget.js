@@ -1,5 +1,7 @@
 //code/widgets/map_widget.js
 
+import {save, load } from '../utils/storage_handler.js';
+
 class MapWidget extends HTMLElement {
     constructor() {
         super();
@@ -41,6 +43,8 @@ class MapWidget extends HTMLElement {
     initMap() {
         const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {attribution: '&copy; CartoDB'});
         const normalLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap contributors'});
+        const savedLayer = load("MAP_STYLE") ?? 0;
+
         const defaultCoords = [52.5200, 13.4050];
         const myIcon = L.icon({
             iconUrl: '../static/media/pos_marker.svg',
@@ -52,7 +56,7 @@ class MapWidget extends HTMLElement {
         this.map = L.map(this.shadowRoot.querySelector("#map"), {
             center: defaultCoords,
             zoom: 13,
-            layers: [normalLayer]
+            layers: [savedLayer == 0 ? normalLayer : darkLayer]
         });
 
         this.marker = L.marker(defaultCoords, {icon: myIcon}).addTo(this.map)
@@ -94,10 +98,12 @@ class MapWidget extends HTMLElement {
                         map.removeLayer(normalLayer);
                         map.addLayer(darkLayer);
                         invertMarker(this.marker, true);
+                        save("MAP_STYLE", 1);
                     } else {
                         map.removeLayer(darkLayer);
                         map.addLayer(normalLayer);
                         invertMarker(this.marker, false);
+                        save("MAP_STYLE", 0);
                     }
                 };
                 return container;

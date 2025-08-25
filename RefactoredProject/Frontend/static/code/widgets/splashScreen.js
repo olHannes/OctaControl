@@ -32,6 +32,7 @@ class SplashScreen extends HTMLElement {
         .logo {
             width: 200px;
             opacity: 0;
+            z-index: 2;
         }
 
         .title {

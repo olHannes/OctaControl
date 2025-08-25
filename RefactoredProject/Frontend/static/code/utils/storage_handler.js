@@ -31,6 +31,9 @@ export const StorageKeys = Object.freeze({
     SYSTEM_VOLUME: "system_volume",
     TOUCH_SOUND: "touch_sound",
 
+    //Map Style
+    MAP_STYLE: "map_style",
+
 });
 
 
