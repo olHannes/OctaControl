@@ -129,6 +129,7 @@ checkInternetConnection();
  */
 document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("leftSidebar");
+    const widgetContainer = document.getElementById("widget-container");
 
     let startX = 0;
     let currentX = 0;
@@ -162,10 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function openSidebar() {
         sidebar.classList.add("active");
+        widgetContainer.style.filter = "blur(5px)";
     }
-
+    
     function closeSidebar() {
         sidebar.classList.remove("active");
+        widgetContainer.style.filter = "blur(0px)";
     }
 
     function handleSwipe() {
