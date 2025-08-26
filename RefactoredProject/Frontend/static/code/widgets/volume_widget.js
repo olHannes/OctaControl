@@ -125,14 +125,14 @@ class VolumeWidget extends HTMLElement {
                 }
 
                 .volume-button {
-                    width: 48px;
-                    height: 60px;
+                    width: 80%;
+                    height: 70px;
                     margin: 0.5rem 0;
                     font-size: 24px;
                     font-weight: bold;
                     border: none;
                     border-radius: 12px;
-                    background: linear-gradient(145deg, #4092bb, #04152f);
+                    background: linear-gradient(145deg, #4092bb, #061d3fff);
                     color: #fff;
                     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
                     cursor: pointer;
@@ -144,20 +144,38 @@ class VolumeWidget extends HTMLElement {
                     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
                 }
 
+                .volume-button:hover {
+                    width: 82%;
+                }
+
+                .volume-button img {
+                    width: 35px;
+                    background: none;
+                }
+
                 .volume-value {
                     margin-top: 0.5rem;
                     font-size: 18px;
                     color: #fff;
                     font-weight: 500;
+                    width: 50%;
+                    text-align: center;
+                    background: #05202b;
+                    padding: 5px;
+                    border-radius: 32px;
                 }
             </style>
         `;
 
         const html = `
             <div class="volume-container">
-                <button class="volume-button" id="btnUp">+</button>
-                <button class="volume-button" id="btnDown">−</button>
-                <div class="volume-value" id="volumeValue">--%</div>
+                <div class="volume-value" id="volumeValue">0%</div>
+                <button class="volume-button" id="btnUp">
+                    <img src="../static/media/volume_up.svg" alt="+">
+                </button>
+                <button class="volume-button" id="btnDown">
+                    <img src="../static/media/volume_down.svg" alt="-">
+                </button>
             </div>
         `;
 
