@@ -26,9 +26,22 @@ class ClimateWidget extends HTMLElement {
         this.render();
         this.initWidget();
     
-        socket.on("climate_update", (data) => {
+        this._climateListener = (data) => {
             this.updateDisplay(data.temperature, data.humidity);
-        });
+        };
+
+        socket.on("climate_update", this._climateListener);
+    }
+
+
+    /**
+     * disconnected Callback
+     */
+    disconnectedCallback() {
+        if(this._climateListener) {
+            socket.off("climate_update", this._climateListener);
+            this._climateListener = null;
+        }
     }
 
 
