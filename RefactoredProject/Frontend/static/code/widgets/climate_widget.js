@@ -1,4 +1,7 @@
 //code/widgets/climate_widget.js
+
+import { socket } from "../utils/socket.js"
+
 class ClimateWidget extends HTMLElement {
     constructor() {
         super();
@@ -22,6 +25,10 @@ class ClimateWidget extends HTMLElement {
     connectedCallback() {
         this.render();
         this.initWidget();
+    
+        socket.on("climate_update", (data) => {
+            this.updateDisplay(data.temperature, data.humidity);
+        });
     }
 
 
@@ -62,13 +69,22 @@ class ClimateWidget extends HTMLElement {
             const newTemp = data.temperature;
             const newHumi = data.humidity;
 
-            this.shadowRoot.querySelector("#tempValue").textContent = `${newTemp}°C`;
-            this.shadowRoot.querySelector("#humValue").textContent = `${newHumi}%`;
-
+            this.updateDisplay(newTemp, newHumi);
+            
         } catch (error) {
             console.error(`Failed to load local data: ${error}`);   
         }
         this.shadowRoot.querySelector("#updateBtn").classList.remove("disabled");
+    }
+    
+    
+    /**
+     * update Display
+     * setup temp and hum to ui
+     */
+    updateDisplay(temp, hum) {
+        this.shadowRoot.querySelector("#tempValue").textContent = `${newTemp}°C`;
+        this.shadowRoot.querySelector("#humValue").textContent = `${newHumi}%`;
     }
 
 
@@ -193,7 +209,7 @@ class ClimateWidget extends HTMLElement {
                     <div id="humValue" class="value">-- %</div>
                 </div>
                 <div class="buttons">
-                    <button id="toggleBtn" type="button">Start</button>
+                    <button id="toggleBtn" type="button">Polling</button>
                     <button id="updateBtn" type="button">Update</button>
                 </div>
             </div>
