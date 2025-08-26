@@ -23,3 +23,7 @@ CLIMATE = {
     "UPDATE_INTERVAL": 5,
     "FILE_PATH": "~/Documents/OctaControl/RefactoredProject/Backend/utils/climate_data.json",
 }
+
+AUDIO = {
+    "UPDATE_INTERVAL": 1,
+}

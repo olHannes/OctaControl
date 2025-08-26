@@ -8,8 +8,11 @@ class MediaPlayer:
         manager = bus.get('org.bluez', '/')
 
         for obj_path in manager.GetManagedObjects():
-            if obj_path.endswith('/player0'):
+            if 'org.bluez.MediaPlayer1' in manager.GetManagedObjects()[obj_path]:
                 return bus.get('org.bluez', obj_path)
+
+            #if obj_path.endswith('/player0'):
+                #return bus.get('org.bluez', obj_path)
 
         raise MediaPlayer.DeviceNotFoundError
 
@@ -37,6 +40,38 @@ def get_metadata():
             "genre": None,
             "error": "No Bluetooth device connected"
         }
+
+
+def get_playback_status():
+    try:
+        player = MediaPlayer()
+        return {
+            "status": player.Status,
+            "repeat": getattr(player, "Repeat", None),
+            "shuffle": getattr(player, "Shuffle", None),
+        }
+    except MediaPlayer.DeviceNotFoundError:
+        return {"status": None, "repeat": None, "shuffle": None, "error": "No Bluetooth device connected"}
+
+
+def get_device_info():
+    bus = SystemBus()
+    manager = bus.get('org.bluez', '/')
+
+    for path, interfaces in manager.GetManagedObjects().items():
+        if 'org.bluez.Device1' in interfaces:
+            device = bus.get('org.bluez', path)
+            if device.Connected:
+                return {
+                    "name": device.Name,
+                    "address": device.Address,
+                    "rssi": getattr(device, "RSSI", None),
+                    "paired": device.Paired,
+                    "connected": device.Connected,
+                    "uuids": device.UUIDs
+                }
+    return {"name": None, "connected": False, "error": "No connected device"}
+
 
 def get_player_device_name():
     bus = SystemBus()
