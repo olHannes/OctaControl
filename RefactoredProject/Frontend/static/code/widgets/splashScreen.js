@@ -21,6 +21,7 @@ class SplashScreen extends HTMLElement {
             position: fixed;
             inset: 0;
             background: white;
+            background: black;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -85,13 +86,16 @@ class SplashScreen extends HTMLElement {
         @keyframes lineGrow {
             0% { width: 0%; opacity: 0; }
             50% { width: 70%; opacity: 1; background-color: rgb(0, 0, 0); }
+            50% { width: 70%; opacity: 1; background-color: rgba(166, 193, 172, 1); }
             100% { width: 0%; opacity: 0; }
         }
 
         </style>
 
         <div id="splash">
-            <img src="../static/media/skoda_logo.svg" alt="Skoda Logo" class="logo">
+            <!-- <img src="../static/media/skoda_logo.svg" alt="Skoda Logo" class="logo"> -->
+            <img src="../static/media/skoda_logo_light.png" alt="Skoda Logo" class="logo">
+
             <div class="title">
             <span>O</span><span>C</span><span>T</span><span>A</span><span>V</span><span>I</span><span>A</span>
             </div>
