@@ -31,6 +31,7 @@ export function toggleItemVisibility(elementKey, show = false) {
 window.toggleItemVisibility = toggleItemVisibility;
 
 
+
 /**
  * toggles the settings-container
  */
@@ -58,6 +59,7 @@ export function toggleSettings() {
     }
 }
 window.toggleSettings = toggleSettings;
+
 
 
 /**
@@ -91,6 +93,7 @@ export function openSubPanel(type, pItem) {
     if(pItem) pItem.classList.add('active');
 }
 window.openSubPanel = openSubPanel;
+
 
 
 /**
@@ -127,10 +130,19 @@ checkInternetConnection();
 /**
  * handles touch gestures and opens / closes the sidebar
  */
+
+function openSidebar() {
+    document.getElementById("leftSidebar").classList.add("active");
+    document.getElementById("widget-container").style.filter = "blur(5px)";
+}
+
+function closeSidebar() {
+    document.getElementById("leftSidebar").classList.remove("active");
+    document.getElementById("widget-container").style.filter = "blur(0px)";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("leftSidebar");
-    const widgetContainer = document.getElementById("widget-container");
-
     let startX = 0;
     let currentX = 0;
     let endX = 0;
@@ -144,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
             isSwipingSidebar = true;
         }
     });
-
     document.addEventListener("touchmove", (e) => {
         if (isSwipingSidebar) {
             currentX = e.touches[0].clientX;
@@ -154,22 +165,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }, { passive: false });
-
     document.addEventListener("touchend", (e) => {
         endX = e.changedTouches[0].clientX;
         handleSwipe();
         isSwipingSidebar = false;
     });
-
-    function openSidebar() {
-        sidebar.classList.add("active");
-        widgetContainer.style.filter = "blur(5px)";
-    }
-    
-    function closeSidebar() {
-        sidebar.classList.remove("active");
-        widgetContainer.style.filter = "blur(0px)";
-    }
 
     function handleSwipe() {
         let diffX = endX - startX;
@@ -182,6 +182,23 @@ document.addEventListener("DOMContentLoaded", () => {
             closeSidebar();
         }
     }
+
+
+    //setup inner sidebar listeners
+    const wifiIcon = document.getElementById('internetStatus');
+    if(wifiIcon) 
+        wifiIcon.addEventListener("click", () => {
+            toggleSettings(); 
+            openSubPanel('Verbindungen'); 
+            closeSidebar();
+        });
+    const btIcon = document.getElementById('bt_indicator');
+    if(btIcon)
+        btIcon.addEventListener("click", () => {
+            toggleSettings();
+            openSubPanel('Verbindungen');
+            closeSidebar();
+        });
 });
 
 
@@ -218,23 +235,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /**
- * play welcome audio
+ * play touch audio
  */
-let welcomeAudio;
 let touchAudioBuffer = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    welcomeAudio = new Audio("../static/sounds/startup.mp3");
-    welcomeAudio.muted = true;
-
-    const enabled = load("WELCOME_SOUND");
-    const volume = load("WELCOME_VOLUME") ?? 50;
-
-    if (enabled) {
-        welcomeAudio.volume = volume / 100;
-        welcomeAudio.play().catch(err => console.log("Preload blockiert:", err));
-    }
-
     const soundFiles = ["touch_1.mp3", "touch_2.mp3", "touch_3.mp3"];
     soundFiles.forEach(file => {
         const audio = new Audio(`../static/sounds/${file}`);
@@ -242,15 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
         touchAudioBuffer.push(audio);
     });
 });
-
-
-
-document.addEventListener("click", () => {
-    if (welcomeAudio) {
-        welcomeAudio.muted = false;
-        welcomeAudio.currentTime = 0;
-    }
-}, { once: true });
 
 
 document.addEventListener("click", () => {
