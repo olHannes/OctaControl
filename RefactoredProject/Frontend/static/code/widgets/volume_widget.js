@@ -11,6 +11,8 @@ class VolumeWidget extends HTMLElement {
             set: `${this.apiPath}/set`,
         };
         this.volume = 10;
+        this.isMuted = false;
+        this.lastVolume = this.volume;
     }
 
 
@@ -23,6 +25,7 @@ class VolumeWidget extends HTMLElement {
 
         this.shadowRoot.querySelector("#btnUp").addEventListener("click", () => this.adjustVolume(5));
         this.shadowRoot.querySelector("#btnDown").addEventListener("click", () => this.adjustVolume(-5));
+        this.shadowRoot.querySelector("#btnMute").addEventListener("click", () => {this.adjustVolume(0, true)});
     }
 
 
@@ -82,9 +85,23 @@ class VolumeWidget extends HTMLElement {
      * adjust volume
      * updates the volume based on the delta value
      */
-    adjustVolume(delta) {
+    adjustVolume(delta, mute = false) {
+        if(mute){
+            if(!this.isMuted){
+                this.lastVolume = this.volume > 0 ? this.volume : this.lastVolume;
+                this.set(0);
+                this.isMuted = true;
+            }else {
+                this.set(this.lastVolume);
+                this.isMuted = false;
+            }
+            this.updateDisplay();
+            return;
+        }
         const newVolume = Math.min(100, Math.max(0, this.volume + delta));
         this.set(newVolume);
+        this.isMuted = (newVolume === 0);
+        this.updateDisplay();
     }
 
 
@@ -96,6 +113,15 @@ class VolumeWidget extends HTMLElement {
         const display = this.shadowRoot.querySelector("#volumeValue");
         if (display) {
             display.textContent = `${this.volume}%`;
+        }
+
+        const muteBtn = this.shadowRoot.querySelector("#btnMute");
+        if(muteBtn){
+            if(this.isMuted){
+                muteBtn.style.background = "linear-gradient(145deg, #4092bb, #061d3fff)";
+            }else {
+                muteBtn.style.background = "linear-gradient(145deg, #4092bb, #3f0606ff)";
+            }
         }
     }
 
@@ -175,6 +201,9 @@ class VolumeWidget extends HTMLElement {
                 </button>
                 <button class="volume-button" id="btnDown">
                     <img src="../static/media/volume_down.svg" alt="-">
+                </button>
+                <button class="volume-button" id="btnMute">
+                    <img src="../static/media/volume_none.svg" alt="/">
                 </button>
             </div>
         `;
