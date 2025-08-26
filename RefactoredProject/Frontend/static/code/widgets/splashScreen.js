@@ -21,7 +21,7 @@ class SplashScreen extends HTMLElement {
             position: fixed;
             inset: 0;
             background: white;
-            background: black;
+            background: #030214;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -42,6 +42,7 @@ class SplashScreen extends HTMLElement {
             font-size: 5.5rem;
             font-weight: 600;
             color: #003521;
+            color: #7ad3b0ff;
             z-index: 2;
         }
 
