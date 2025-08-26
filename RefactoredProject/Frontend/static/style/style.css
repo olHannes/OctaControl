@@ -13,10 +13,11 @@ body {
     padding: 0;
     margin: 0;
     overflow: hidden;
+    font-family: Arial, sans-serif;
 }
 
 #leftSidebar {
-    background-color: #053e33;
+    background-color: #1f2d2a;
     height: 100dvh;
     width: 250px;
     position: fixed;
@@ -31,11 +32,17 @@ body {
     left: 0;
 }
 
-.internet-icon {
+#leftSidebar footer {
     display: flex;
-    justify-content: space-around;
-    position: relative;
-    top: 54%;
+    position: absolute;
+    bottom: 5px;
+    width: 95%;
+    align-items: center;
+    justify-content: space-evenly;
+    border-top: dashed 1px lightslategray;
+}
+
+.internet-icon {
     transition: background-color 0.3s ease;
 }
 .internet-icon.offline {
@@ -45,6 +52,16 @@ body {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
+}
+
+#leftSidebar footer p {
+    color: white;
+    background-color: #03201b;
+    padding: 9px;
+    border-radius: 10px;
+    max-width: 80%;
+    min-width: 50%;
+    text-align: center;
 }
 
 

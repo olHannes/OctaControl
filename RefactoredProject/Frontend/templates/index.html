@@ -14,9 +14,16 @@
     <div id="leftSidebar">
         <volume-widget style="height: 40%;"></volume-widget>
 
-        <div id="internetStatus" class="internet-icon">
-            <img src="../static/media/internet.svg" width="23" height="23">
-        </div>
+
+        <footer>
+            <div id="internetStatus" class="internet-icon">
+                <img rel="preload" src="../static/media/internet.svg" width="23" height="23">
+            </div>
+
+            <img rel="preload" src="../static/media/bt_off.svg" alt="bt off" height="25" id="bt_indicator">
+
+            <p id="connected-device">no device connected</p>
+        </footer>
     </div>
 
     <notification-widget id="notification-widget"></notification-widget>

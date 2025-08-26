@@ -238,6 +238,7 @@ class BluetoothAudioWidget extends HTMLElement {
         const device_res = data.device || {};
         const metadata_res = data.metadata || {};
 
+        //update bt-audio widget
         const mapped = {
             device: device_res.name || "Unbekannt",
             is_playing: playback_res.status === "playing",
@@ -247,6 +248,13 @@ class BluetoothAudioWidget extends HTMLElement {
             album: metadata_res.album || "-",
         };
         this.updateUI(mapped);
+
+
+        //setup name in sidebar
+        const devName = device_res.name || "-";
+        document.getElementById('connected-device').innerText = devName;
+    
+        
     }
 
 

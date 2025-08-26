@@ -127,6 +127,9 @@ class BtSetupWidget extends HTMLElement {
             const pTxtColor = newPowerStatus === "AUS" ? "red" : "green";
             const btToggleBtn = this.shadowRoot.querySelector("#togglePower");
             btToggleBtn.innerHTML = "Blutooth " + `<p style="color: ${pTxtColor}; margin: 0;">${newPowerStatus}</p>`;
+                //setup of sidebar icon
+                const sidebarIcon = document.getElementById('bt_indicator');
+                if(sidebarIcon) sidebarIcon.src = powerStatus ? `../static/media/bt_on.svg` : `../static/media/bt_off.svg`;
 
             //Discoverable Status
             const discoverableStatus = data.discoverable === "yes" ? "EIN" : "AUS";
