@@ -128,7 +128,7 @@ class MapWidget extends HTMLElement {
                     margin: 0 auto;
                 }
                 #map {
-                    min-height: 350px;
+                    min-height: 200px;
                     min-width: 350px;
                     width: 100%;
                     height: 100%;

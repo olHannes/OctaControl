@@ -185,20 +185,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     //setup inner sidebar listeners
-    const wifiIcon = document.getElementById('internetStatus');
-    if(wifiIcon) 
-        wifiIcon.addEventListener("click", () => {
+    const footer = document.querySelector("#leftSidebar footer");
+    if(footer){
+        footer.addEventListener("click", () => {
             toggleSettings(); 
             openSubPanel('Verbindungen'); 
             closeSidebar();
         });
-    const btIcon = document.getElementById('bt_indicator');
-    if(btIcon)
-        btIcon.addEventListener("click", () => {
-            toggleSettings();
-            openSubPanel('Verbindungen');
-            closeSidebar();
-        });
+    }
+        
 });
 
 

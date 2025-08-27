@@ -70,6 +70,9 @@ class ColorSettings extends HTMLElement {
                     border-radius: 18px;
                     background-color: #121921;
                     padding: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 7px;
                 }
 
                 label {
