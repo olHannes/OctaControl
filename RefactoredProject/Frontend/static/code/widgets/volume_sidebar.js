@@ -1,6 +1,6 @@
-//code/widgets/volume_widget.js
+//code/widgets/volume_sidebar.js
 
-class VolumeWidget extends HTMLElement {
+class VolumeSidebar extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -212,4 +212,4 @@ class VolumeWidget extends HTMLElement {
     }
 }
 
-customElements.define("volume-widget", VolumeWidget);
+customElements.define("volume-sidebar", VolumeSidebar);
