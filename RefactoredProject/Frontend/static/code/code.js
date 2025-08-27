@@ -13,6 +13,7 @@ const widgets = {
         wifi: subPanel.querySelector('wifi-setup-widget'),
         bt: subPanel.querySelector('bt-setup-widget'),
         vsettings: subPanel.querySelector('vsettings-widget'),
+        order: subPanel.querySelector('order-widget'),
         display: subPanel.querySelector('display-widget'),
         audio: subPanel.querySelector('audio-widget'),
         color: subPanel.querySelector('color-widget'),
@@ -81,6 +82,7 @@ export function openSubPanel(type, pItem) {
         if(widgets.bt) widgets.bt.style.display="block";
     } else if (type === "Widgets"){
         if(widgets.vsettings) widgets.vsettings.style.display="block";
+        if(widgets.order) widgets.order.style.display="block";
     } else if (type === "Audio"){
         if(widgets.audio) widgets.audio.style.display="block";
     }

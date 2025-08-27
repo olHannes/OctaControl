@@ -4,7 +4,7 @@
  * enum for different type of settings
  */
 export const StorageKeys = Object.freeze({
-    // Widgets visible
+    //Widgets visible
     SIDEBAR_WIDGET: "sidebarWidget",
     AUDIO_WIDGET: "audioWidget",
     MAP_WIDGET: "mapWidget",
@@ -13,6 +13,9 @@ export const StorageKeys = Object.freeze({
     RELAIS_WIDGET: "relaisWidget",
     WEATHER_WIDGET: "weatherWidget",
 
+    //Widget Order
+    WIDGET_ORDER: "widget_order",
+    
     //Toggled Relais
     TRUNK_ACTIVE: "trunkPower",
     ASSISTANT: "assistant",
