@@ -97,13 +97,20 @@ class OrderSettings extends HTMLElement {
      * new order should be applied to the DOM-object
      */
     applyOrderToDOM() {
+        return;
         const container = document.getElementById("widget-container");
         if (!container) return;
 
+        const settingsPanel = document.getElementById("settingsWidget")?.parentElement;
+        const settings = document.getElementById("settings");
+
         this.order.forEach(id => {
             const el = document.getElementById(id);
-            if (el) container.appendChild(el);
+            if (el && el !== this) container.appendChild(el);
         });
+
+        if(settingsPanel) container.appendChild(settingsPanel);
+        if(settings) container.appendChild(settings);
     }
 
 

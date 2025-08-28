@@ -34,19 +34,19 @@
     <div id="widget-container" class="widget-container">
         
         <!--Collection 1-->
-        <div class="widget-collection">
+        <div class="widget-collection" id="audio_map">
             <bt-audio-widget style="width: 550px; height: 33%;" id="audio-widget"></bt-audio-widget>
             <map-widget style="width: 550px; height: 60%;" id="map-widget"></map-widget>
         </div>
         
         <!--Collection 2-->
-        <div class="widget-collection">
+        <div class="widget-collection" id="clock_time">
             <clock-widget style="height: 55%;" id="clock-widget"></clock-widget>
             <time-widget style="height: 42%;" id="time-widget"></time-widget>
         </div>
         
         <!--Collection 3-->
-        <div class="widget-collection">
+        <div class="widget-collection" id="hardware">
             <relais-widget id="relais-widget"></relais-widget>
             <climate-widget id="climate-widget"></climate-widget>
         </div>
@@ -93,7 +93,7 @@
                 <wifi-setup-widget style="width: 100%; display: none;"></wifi-setup-widget>
                 <bt-setup-widget style="width: 95%; display: none;"></bt-setup-widget>
                 <vsettings-widget style="display: none; position: relative; top: -10%;"></vsettings-widget>
-                <order-widget style="display: none; width: 90%"></order-widget>
+                <!-- <order-widget style="display: none; width: 90%"></order-widget> -->
             </div>
         </div>
     </div>
