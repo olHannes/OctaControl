@@ -1,5 +1,7 @@
 //code/widgets/volume_sidebar.js
 
+import { emitVolumeChange, listenVolumeChange } from "../utils/volumeEvents.js";
+
 class VolumeSidebar extends HTMLElement {
     constructor() {
         super();
@@ -22,6 +24,14 @@ class VolumeSidebar extends HTMLElement {
     connectedCallback() {
         this.render();
         this.initWidget();
+
+        listenVolumeChange(({volume, muted}) => {
+            if(volume !== this.volume || muted !== this.isMuted) {
+                this.volume = volume;
+                this.isMuted = muted;
+                this.updateDisplay();
+            }
+        });
 
         this.shadowRoot.querySelector("#btnUp").addEventListener("click", () => this.adjustVolume(5));
         this.shadowRoot.querySelector("#btnDown").addEventListener("click", () => this.adjustVolume(-5));
@@ -75,6 +85,7 @@ class VolumeSidebar extends HTMLElement {
 
             this.volume = volume;
             this.updateDisplay();
+            emitVolumeChange(this.volume, this.isMuted);
         } catch (error) {
             console.error(`Failed to update Volume: ${error}`);
         }
