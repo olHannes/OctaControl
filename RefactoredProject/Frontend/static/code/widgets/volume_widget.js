@@ -25,8 +25,7 @@ class VolumeMain extends HTMLElement {
 
         muteBtn.addEventListener("click", () => this.toggleMute());
 
-        // 🔄 zuhören auf Events anderer Widgets
-        listenVolumeChange(({volume, muted}) => {
+        listenVolumeChange(({ volume, muted }) => {
             this.volume = volume;
             this.isMuted = muted;
             this.updateDisplay();
@@ -46,8 +45,7 @@ class VolumeMain extends HTMLElement {
         try {
             const res = await fetch(this.volumeApis.get, { method: "GET" });
             if (!res.ok) throw new Error("Failed to Load Volume");
-            const data = await res.json();
-            return data;
+            return await res.json();
         } catch (error) {
             console.error(`Failed to get Volume: ${error}`);
             return null;
@@ -62,7 +60,7 @@ class VolumeMain extends HTMLElement {
                 body: JSON.stringify({ volume })
             });
             if (!res.ok) throw new Error("API failed");
-            
+
             this.volume = volume;
             this.isMuted = (volume === 0);
             this.updateDisplay();
@@ -76,42 +74,119 @@ class VolumeMain extends HTMLElement {
 
     toggleMute() {
         if (!this.isMuted) {
-            this.lastVolume = this.volume || 10;
+            this.lastVolume = this.volume || 50;
             this.set(0);
         } else {
             this.set(this.lastVolume);
         }
+        this.updateDisplay();
     }
 
     updateDisplay() {
         this.shadowRoot.querySelector("#volumeSlider").value = this.volume;
-        this.shadowRoot.querySelector("#volumeValue").textContent = `${this.volume}%`;
-        this.shadowRoot.querySelector("#btnMute").style.background =
-            this.isMuted ? "red" : "green";
+        const btn = this.shadowRoot.querySelector("#btnMute");
+        const label = this.shadowRoot.querySelector("#volumeValue");
+        
+        label.textContent = `${this.volume}%`;
+
+        btn.classList.toggle("muted", this.isMuted);
+
+        if(this.volume > 75){
+            label.style.color="red";
+        }else if(this.volume > 45) {
+            label.style.color="orange";
+        } else {
+            label.style.color="green";
+        }
     }
 
     render() {
         this.shadowRoot.innerHTML = `
             <style>
-                .container {
-                    display:flex;
-                    flex-direction:column;
-                    align-items:center;
-                    justify-content:center;
+                .volume-widget {
+                    height: 100%;
+                    width: 100%;
+                    max-width: 250px;
+                    overflow-x: hidden;
+                    position: relative;
                 }
+
+                h2 {
+                    text-align: center;
+                    border-bottom: 1px solid gray;
+                }
+
+                .volume-content {
+                    display: flex;
+                    flex-direction: column;
+
+                    align-items: center;
+                    justify-content: space-around;
+                }
+
                 #volumeSlider {
-                    writing-mode: bt-lr; /* vertikal */
-                    transform: rotate(270deg);
-                    width: 200px;
-                    height: 50px;
+                    cursor: none;
+                    width: 41dvh;
+                    /**rotate: -90deg;
+                    position: relative;
+                    top: 41dvh;**/
                 }
-                .value { margin: 1rem; color:white; }
-                button { padding:0.5rem 1rem; }
+
+                footer {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-around;
+                    align-items: center;
+                    position: absolute;
+                    bottom: 10px;
+                    border-top: 1px solid gray;
+                    padding-top: 5px;
+                }
+
+                .value { 
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                    color: #333;
+                    letter-spacing: 0.5px;
+                    margin: 0.5rem 0;
+                    padding: 0.25rem 0.75rem;
+                    background: #f5f5f5;
+                    border-radius: 0.5rem;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+                    transition: all 0.2s ease;
+                }
+                .value:hover {
+                    background: #eaeaea;
+                }
+
+                button { 
+                    padding: 0.5rem 1rem; 
+                    border-radius: 0.25rem; 
+                    cursor: pointer; 
+                    color: red; 
+                    border: none; 
+                }
+                
+                button:not(.muted) {
+                    background: #f5f5f5;
+                    color: red;
+                }
+                button.muted {
+                    background: red;
+                    color: #f5f5f5;
+                }
+
             </style>
-            <div class="container">
-                <input type="range" min="0" max="100" value="0" id="volumeSlider"/>
-                <div class="value" id="volumeValue">0%</div>
-                <button id="btnMute">Mute</button>
+
+            <div class="volume-widget">
+                <h2>Lautstärke</h2>
+                <div class="volume-content">
+                    <input type="range" min="0" max="100" value="0" step="2" id="volumeSlider" oninput="this.set(this.value);"/>
+                    <footer>
+                        <div class="value" id="volumeValue">0%</div>
+                        <button id="btnMute">Mute</button>
+                    </footer>
+                </div>
             </div>
         `;
     }
