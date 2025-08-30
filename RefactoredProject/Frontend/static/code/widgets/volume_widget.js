@@ -124,12 +124,15 @@ class VolumeMain extends HTMLElement {
     expandWidget() {
         const widget = document.querySelector("volume-main");
         const btn = this.shadowRoot.querySelector("#expand");
+        const volumeSlider = this.shadowRoot.querySelector("#volumeSlider");
         if(widget.style.width > "300px"){
             widget.style.width = "250px";
             btn.style.transform = "rotate(0deg)";
+            volumeSlider.style.left = "-35%";
         }else {
             widget.style.width = "550px";
             btn.style.transform = "rotate(180deg)";
+            volumeSlider.style.left = "-15%";
         }
     }
 
@@ -161,7 +164,6 @@ class VolumeMain extends HTMLElement {
                 .volume-widget {
                     height: 100%;
                     width: 100%;
-                    max-width: 250px;
                     overflow-x: hidden;
                     position: relative;
                 }
@@ -187,7 +189,7 @@ class VolumeMain extends HTMLElement {
                     rotate: -90deg;
                     position: absolute;
                     bottom: 51%;
-                    left: -37%;
+                    left: -35%;
                     background: none;
                 }
 
