@@ -16,7 +16,7 @@ class SplashScreen extends HTMLElement {
             document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(() => {
                     this.startAnimation();
-                }, 1000);
+                }, 1500);
             });
 
             const panel = this.shadowRoot.querySelector("#splash");

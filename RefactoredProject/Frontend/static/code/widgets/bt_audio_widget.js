@@ -431,11 +431,12 @@ class BluetoothAudioWidget extends HTMLElement {
                     position: relative;
                     overflow: hidden;
                 }
-
+                
                 .progress-bar {
                     height: 100%;
-                    width: 40%;
+                    width: 30%;
                     background: #1db954;
+                    background: linear-gradient(90deg, #021609ff, #17a047ff);
                     border-radius: 5px 0 0 5px;
                     transition: width 0.2s ease;
                 }
