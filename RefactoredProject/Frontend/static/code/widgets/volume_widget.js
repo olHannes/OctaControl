@@ -17,13 +17,47 @@ class VolumeMain extends HTMLElement {
 
         const slider = this.shadowRoot.querySelector("#volumeSlider");
         const muteBtn = this.shadowRoot.querySelector("#btnMute");
-
-        slider.addEventListener("input", e => {
-            const val = Number(e.target.value);
-            this.set(val);
-        });
+        const expandBtn = this.shadowRoot.querySelector("#expand");
 
         muteBtn.addEventListener("click", () => this.toggleMute());
+        expandBtn.addEventListener("click", () => this.expandWidget());
+
+        const updateFromPointer = (clientY) => {
+            const rect = slider.getBoundingClientRect();
+            let percent = 1 - (clientY - rect.top) / rect.height;
+            percent = Math.max(0, Math.min(1, percent));
+            const newVal = Math.round(percent * 100);
+            slider.value = newVal;
+            this.set(newVal);
+        };
+
+        let isDragging = false;
+
+        slider.addEventListener("mousedown", e => {
+            isDragging = true;
+            updateFromPointer(e.clientY);
+        });
+        window.addEventListener("mousemove", e => {
+            if (isDragging) updateFromPointer(e.clientY);
+        });
+        window.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        slider.addEventListener("touchstart", e => {
+            isDragging = true;
+            updateFromPointer(e.touches[0].clientY);
+            e.preventDefault();
+        });
+        slider.addEventListener("touchmove", e => {
+            if (isDragging) {
+                updateFromPointer(e.touches[0].clientY);
+                e.preventDefault();
+            }
+        });
+        slider.addEventListener("touchend", () => {
+            isDragging = false;
+        });
 
         listenVolumeChange(({ volume, muted }) => {
             this.volume = volume;
@@ -31,6 +65,7 @@ class VolumeMain extends HTMLElement {
             this.updateDisplay();
         });
     }
+
 
     async initWidget() {
         const data = await this.get();
@@ -40,6 +75,7 @@ class VolumeMain extends HTMLElement {
             this.updateDisplay();
         }
     }
+
 
     async get() {
         try {
@@ -51,6 +87,7 @@ class VolumeMain extends HTMLElement {
             return null;
         }
     }
+
 
     async set(volume) {
         try {
@@ -72,6 +109,7 @@ class VolumeMain extends HTMLElement {
         }
     }
 
+
     toggleMute() {
         if (!this.isMuted) {
             this.lastVolume = this.volume || 50;
@@ -82,23 +120,40 @@ class VolumeMain extends HTMLElement {
         this.updateDisplay();
     }
 
+
+    expandWidget() {
+        const widget = document.querySelector("volume-main");
+        const btn = this.shadowRoot.querySelector("#expand");
+        if(widget.style.width > "300px"){
+            widget.style.width = "250px";
+            btn.style.transform = "rotate(0deg)";
+        }else {
+            widget.style.width = "550px";
+            btn.style.transform = "rotate(180deg)";
+        }
+    }
+
+
     updateDisplay() {
-        this.shadowRoot.querySelector("#volumeSlider").value = this.volume;
+        const slider = this.shadowRoot.querySelector("#volumeSlider");
+        slider.value = this.volume;
+
         const btn = this.shadowRoot.querySelector("#btnMute");
         const label = this.shadowRoot.querySelector("#volumeValue");
-        
+
         label.textContent = `${this.volume}%`;
 
         btn.classList.toggle("muted", this.isMuted);
 
-        if(this.volume > 75){
-            label.style.color="red";
-        }else if(this.volume > 45) {
-            label.style.color="orange";
+        if (this.volume > 75) {
+            label.style.color = "red";
+        } else if (this.volume > 45) {
+            label.style.color = "orange";
         } else {
-            label.style.color="green";
+            label.style.color = "green";
         }
     }
+
 
     render() {
         this.shadowRoot.innerHTML = `
@@ -125,11 +180,37 @@ class VolumeMain extends HTMLElement {
                 }
 
                 #volumeSlider {
-                    cursor: none;
-                    width: 41dvh;
-                    /**rotate: -90deg;
-                    position: relative;
-                    top: 41dvh;**/
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 53dvh;
+                    height: 40px;
+                    rotate: -90deg;
+                    position: absolute;
+                    bottom: 51%;
+                    left: -37%;
+                    background: none;
+                }
+
+                #volumeSlider::-webkit-slider-runnable-track {
+                    height: 15px;
+                    backround: none;
+                    border-radius: 14px;
+                    border: none;
+                    background: linear-gradient(90deg, #021609ff, #17a047ff);
+                }
+                
+                #volumeSlider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 6rem;
+                    height: 3rem;
+                    background: url("../static/media/slider_thumb.png") no-repeat center center;
+                    background-size: contain;
+                    border: 0;
+                    border-radius: 10px;
+                    margin-top: -1.4rem;
+                    margin-top: calc((15px - 3rem) / 2);
+                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
                 }
 
                 footer {
@@ -176,12 +257,22 @@ class VolumeMain extends HTMLElement {
                     color: #f5f5f5;
                 }
 
+                .expand {
+                    position: absolute;
+                    top: 50%;
+                    right: 5px;
+                    height: 5rem;
+                    transform: translateY(-50%);
+                    opacity: 0.01;
+                }
+
             </style>
 
             <div class="volume-widget">
                 <h2>Lautstärke</h2>
                 <div class="volume-content">
-                    <input type="range" min="0" max="100" value="0" step="2" id="volumeSlider" oninput="this.set(this.value);"/>
+                    <img class="expand" id="expand" src="../static/media/expand_arrow.svg" alt"expand"></img>
+                    <input type="range" min="0" max="100" value="0" step="2" id="volumeSlider"/>
                     <footer>
                         <div class="value" id="volumeValue">0%</div>
                         <button id="btnMute">Mute</button>
