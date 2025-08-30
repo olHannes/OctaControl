@@ -176,11 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleSwipe() {
         let diffX = endX - startX;
 
-        if (startX < 50 && diffX > 80) {
+        if (startX < 50 && diffX > 50) {
             openSidebar();
         }
 
-        if (diffX < -80 && sidebar.classList.contains("active")) {
+        if (diffX < -50 && sidebar.classList.contains("active")) {
             closeSidebar();
         }
     }
