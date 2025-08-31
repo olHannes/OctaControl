@@ -70,6 +70,7 @@ def startThread():
     """
     Trys to start the climate_reader Thread
     """
+    log.verbose(climateApiTag, "POST /start received")
     res = start()
     return jsonify({"status": "success", "message": res}), 200
 
@@ -79,5 +80,6 @@ def stopThread():
     """
     Trys to stop the climate_reader Thread
     """
+    log.verbose(climateApiTag, "POST /stop received")
     stop()
     return jsonify({"status": "success"}), 200

@@ -9,7 +9,6 @@ sudo apt-get update && sudo apt upgrade -y
 
 sudo apt-get install -y \
     python3-venv \
-    python3.12-dev \
     python3-dev \
     python3-gi \
     python3-gi-cairo \
