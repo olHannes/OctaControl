@@ -265,7 +265,7 @@ class VolumeMain extends HTMLElement {
                     right: 5px;
                     height: 5rem;
                     transform: translateY(-50%);
-                    opacity: 0.01;
+                    opacity: 0.02;
                 }
 
             </style>
