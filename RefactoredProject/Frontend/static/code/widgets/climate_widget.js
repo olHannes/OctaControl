@@ -96,8 +96,8 @@ class ClimateWidget extends HTMLElement {
      * setup temp and hum to ui
      */
     updateDisplay(temp, hum) {
-        this.shadowRoot.querySelector("#tempValue").textContent = `${newTemp}°C`;
-        this.shadowRoot.querySelector("#humValue").textContent = `${newHumi}%`;
+        this.shadowRoot.querySelector("#tempValue").textContent = `${temp}°C`;
+        this.shadowRoot.querySelector("#humValue").textContent = `${hum}%`;
     }
 
 
