@@ -1,4 +1,7 @@
 //code/widgets/climate_widget.js
+
+import { socket } from "../utils/socket.js"
+
 class ClimateWidget extends HTMLElement {
     constructor() {
         super();
@@ -22,6 +25,23 @@ class ClimateWidget extends HTMLElement {
     connectedCallback() {
         this.render();
         this.initWidget();
+    
+        this._climateListener = (data) => {
+            this.updateDisplay(data.temperature, data.humidity);
+        };
+
+        socket.on("climate_update", this._climateListener);
+    }
+
+
+    /**
+     * disconnected Callback
+     */
+    disconnectedCallback() {
+        if(this._climateListener) {
+            socket.off("climate_update", this._climateListener);
+            this._climateListener = null;
+        }
     }
 
 
@@ -62,13 +82,22 @@ class ClimateWidget extends HTMLElement {
             const newTemp = data.temperature;
             const newHumi = data.humidity;
 
-            this.shadowRoot.querySelector("#tempValue").textContent = `${newTemp}°C`;
-            this.shadowRoot.querySelector("#humValue").textContent = `${newHumi}%`;
-
+            this.updateDisplay(newTemp, newHumi);
+            
         } catch (error) {
             console.error(`Failed to load local data: ${error}`);   
         }
         this.shadowRoot.querySelector("#updateBtn").classList.remove("disabled");
+    }
+    
+    
+    /**
+     * update Display
+     * setup temp and hum to ui
+     */
+    updateDisplay(temp, hum) {
+        this.shadowRoot.querySelector("#tempValue").textContent = `${temp}°C`;
+        this.shadowRoot.querySelector("#humValue").textContent = `${hum}%`;
     }
 
 
@@ -118,10 +147,9 @@ class ClimateWidget extends HTMLElement {
 
                 .climate-container {
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    background: --card;
                     border-radius: 8px;
-                    width: 220px;
-                    padding: 16px;
+                    width: 100%;
+                    height: 100%;
                     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
                     color: white;
                     user-select: none;
@@ -136,7 +164,7 @@ class ClimateWidget extends HTMLElement {
 
                 .data-row {
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: space-around;
                     margin-bottom: 12px;
                     font-size: 1.1rem;
                 }
@@ -194,7 +222,7 @@ class ClimateWidget extends HTMLElement {
                     <div id="humValue" class="value">-- %</div>
                 </div>
                 <div class="buttons">
-                    <button id="toggleBtn" type="button">Start</button>
+                    <button id="toggleBtn" type="button">Polling</button>
                     <button id="updateBtn" type="button">Update</button>
                 </div>
             </div>

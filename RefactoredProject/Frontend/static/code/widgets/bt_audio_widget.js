@@ -1,5 +1,7 @@
 // code/widgets/bt_audio_widget.js
 
+import { socket } from "../utils/socket.js";
+
 class BluetoothAudioWidget extends HTMLElement {
     constructor() {
         super();
@@ -36,7 +38,22 @@ class BluetoothAudioWidget extends HTMLElement {
         this.render();
         this.setupElements();
         this.setupListeners();
-        this.startUpdateInterval(this.updateDelay);
+
+        this._audioListener = (data) => {
+            this.updateUI_socket(data);
+        };
+
+        try {
+            if(socket && typeof socket.on === "function") {
+                socket.on("audio_update", this._audioListener);
+            }else {
+                throw new Error("Socket not available");
+            }
+        } catch (error) {
+            console.warn("Socket not connected, falling back to polling: ", error);
+            this.startUpdateInterval(this.updateDelay);            
+        }
+        this.update();
     }
         
         
@@ -44,6 +61,10 @@ class BluetoothAudioWidget extends HTMLElement {
      * stop update intervall
      */
     disconnectedCallback(){
+        if(this._audioListener){
+            socket.off("audio_update", this._audioListener);
+            this._audioListener = null;
+        }
         this.stopUpdateInterval();
     }
 
@@ -207,6 +228,36 @@ class BluetoothAudioWidget extends HTMLElement {
     }
 
     
+    /**
+     * receives the data by the socket and calls the update UI function
+     */
+    updateUI_socket(data){
+        if(!data) return;
+
+        const playback_res = data.playback || {};
+        const device_res = data.device || {};
+        const metadata_res = data.metadata || {};
+
+        //update bt-audio widget
+        const mapped = {
+            device: device_res.name || "Unbekannt",
+            is_playing: playback_res.status === "playing",
+            progress: metadata_res.progress || 0,
+            title: metadata_res.title || "-",
+            artist: metadata_res.artist || "-",
+            album: metadata_res.album || "-",
+        };
+        this.updateUI(mapped);
+
+
+        //setup name in sidebar
+        const devName = device_res.name || "-";
+        document.getElementById('connected-device').innerText = devName;
+    
+        
+    }
+
+
     /**
      * setup Elements
      * sets all the global items
@@ -380,11 +431,12 @@ class BluetoothAudioWidget extends HTMLElement {
                     position: relative;
                     overflow: hidden;
                 }
-
+                
                 .progress-bar {
                     height: 100%;
-                    width: 40%;
+                    width: 30%;
                     background: #1db954;
+                    background: linear-gradient(90deg, #021609ff, #17a047ff);
                     border-radius: 5px 0 0 5px;
                     transition: width 0.2s ease;
                 }

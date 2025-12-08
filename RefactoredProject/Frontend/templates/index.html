@@ -8,13 +8,24 @@
     <title>OctaControl</title>
 </head>
 <body>
+
+    <div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; background-color: rgb(0, 0, 74);"></div>
+    <splash-screen style="position: absolute; left: 0; top: 0; z-index: 1000; width: 100%; height: 100%;"></splash-screen>
+
     <!--Left Sidebar-->
     <div id="leftSidebar">
-        <volume-widget style="height: 40%;"></volume-widget>
+        <volume-sidebar style="height: 40%;"></volume-sidebar>
 
-        <div id="internetStatus" class="internet-icon">
-            <img src="../static/media/internet.svg" width="23" height="23">
-        </div>
+
+        <footer>
+            <div id="internetStatus" class="internet-icon">
+                <img rel="preload" src="../static/media/internet.svg" width="23" height="23">
+            </div>
+
+            <img rel="preload" src="../static/media/bt_off.svg" alt="bt off" height="25" id="bt_indicator">
+
+            <p id="connected-device">no device connected</p>
+        </footer>
     </div>
 
     <notification-widget id="notification-widget"></notification-widget>
@@ -23,23 +34,27 @@
     <div id="widget-container" class="widget-container">
         
         <!--Collection 1-->
-        <div class="widget-collection">
+        <div class="widget-collection" id="audio_map">
             <bt-audio-widget style="width: 550px; height: 33%;" id="audio-widget"></bt-audio-widget>
             <map-widget style="width: 550px; height: 60%;" id="map-widget"></map-widget>
         </div>
-        
+
         <!--Collection 2-->
-        <div class="widget-collection">
-            <time-widget style="height: 43%;" id="time-widget"></time-widget>
-            <clock-widget style="height: 50%;" id="clock-widget"></clock-widget>
+        <div class="widget-collection" id="clock_time">
+            <clock-widget style="height: 55%;" id="clock-widget"></clock-widget>
+            <time-widget style="height: 42%;" id="time-widget"></time-widget>
         </div>
-        
+
         <!--Collection 3-->
-        <div class="widget-collection">
+        <div class="widget-collection" id="volume_main">
+            <volume-main style="height: 96%;"></volume-main>
+        </div>
+
+        <!--Collection 4-->
+        <div class="widget-collection" id="hardware">
             <relais-widget id="relais-widget"></relais-widget>
             <climate-widget id="climate-widget"></climate-widget>
         </div>
-        
 
 
 
@@ -66,15 +81,23 @@
                         <img src="../static/media/widget-settings.svg" alt="Widgets" />
                         <span>Widget</span>
                     </div>
+
+                    <div class="menu-item" onclick="openSubPanel('Audio', this)">
+                        <img src="../static/media/audio.svg" alt="Audio" />
+                        <span>Audio</span>
+                    </div>
                     
             </div>
             <div class="sub-panel" id="subPanel">
                 <h2 id="settingsHeadline">Einstellungsmenü:</h2>
                 <display-widget style="width: 100%; display: none;"></display-widget>
+                <color-widget style="display: none; width: 100%;"></color-widget>
                 <system-widget style="display: none;"></system-widget>
+                <audio-widget style="display: none; position: relative; top: -20%;"></audio-widget>
                 <wifi-setup-widget style="width: 100%; display: none;"></wifi-setup-widget>
                 <bt-setup-widget style="width: 95%; display: none;"></bt-setup-widget>
-                <vsettings-widget style="display: none;"></vsettings-widget>
+                <vsettings-widget style="display: none; position: relative; top: -10%;"></vsettings-widget>
+                <!-- <order-widget style="display: none; width: 90%"></order-widget> -->
             </div>
         </div>
     </div>
@@ -83,12 +106,15 @@
 
 
     <!--external Code and Widgets-->
-    <script src="../static/code/code.js"></script>
-    
+    <script src="../static/code/code.js" type="module"></script>
+    <script src="../static/code/widgets/splashScreen.js" type="module"></script>
+
     <script src="../static/code/widgets/settings/notification_widget.js" type="module"></script>
 
+    <script src="../static/code/widgets/volume_sidebar.js" type="module"></script>
     <script src="../static/code/widgets/volume_widget.js" type="module"></script>
-    
+    <script src="../static/code/widgets/settings/audio_widget.js" type="module"></script>
+
     <script src="../static/code/widgets/clock_widget.js" type="module"></script>
     <script src="../static/code/widgets/time_widgets.js" type="module"></script>
     
@@ -99,8 +125,10 @@
     <script src="../static/code/widgets/climate_widget.js" type="module"></script>
     
     <script src="../static/code/widgets/settings/display_settings.js" type="module"></script>
+    <script src="../static/code/widgets/settings/color_widgets.js" type="module"></script>
     <script src="../static/code/widgets/settings/system_widget.js" type="module"></script>
     <script src="../static/code/widgets/settings/widget_settings.js" type="module"></script>
+    <script src="../static/code/widgets/settings/widget_order_settings.js" type="module"></script>
     <script src="../static/code/widgets/settings/wifi_controller_widget.js" type="module"></script>
     <script src="../static/code/widgets/settings/bt_controller_widget.js" type="module"></script>
 

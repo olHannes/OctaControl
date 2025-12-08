@@ -8,25 +8,42 @@ body {
         grayscale(var(--global-grayscale, 1));
     transition: filter 0.3s ease;
 
+    height: 100dvh;
+    width: 100dvw;
+    padding: 0;
+    margin: 0;
     overflow: hidden;
+    font-family: Arial, sans-serif;
 }
 
 #leftSidebar {
-    background-color: #053e33;
+    background-color: #1f2d2a;
     height: 100dvh;
-    width: 5%;
+    width: 250px;
     position: fixed;
     z-index: 10;
-    left: 0;
+    left: -250px;
     top: 0;
-    box-shadow: 7px 2px 20px 0px #053e33;
+    box-shadow: 7px 2px 20px 0px #1f2d2a;
+    transition: left 0.3s ease;
+}
+
+#leftSidebar.active {
+    left: 0;
+}
+
+#leftSidebar footer {
+    display: flex;
+    position: absolute;
+    bottom: 5px;
+    left: 2.5%;
+    width: 95%;
+    align-items: center;
+    justify-content: space-evenly;
+    border-top: dashed 1px lightslategray;
 }
 
 .internet-icon {
-    display: flex;
-    justify-content: space-around;
-    position: relative;
-    top: 54%;
     transition: background-color 0.3s ease;
 }
 .internet-icon.offline {
@@ -38,12 +55,22 @@ body {
     50% { opacity: 0.4; }
 }
 
+#leftSidebar footer p {
+    color: white;
+    background-color: #03201b;
+    padding: 9px;
+    border-radius: 10px;
+    max-width: 80%;
+    min-width: 50%;
+    text-align: center;
+}
+
 
 .widget-container {
     position: fixed;
     top: 0;
     right: 0;
-    width: 95%;
+    width: 100%;
     height: 100dvh;
     display: flex;
     flex-wrap: nowrap;
@@ -53,7 +80,7 @@ body {
     padding: 1.5rem;
     box-sizing: border-box;
     scroll-behavior: smooth;
-    background: linear-gradient(135deg, #42674d, #000000);
+    background: linear-gradient(135deg, var(--bg), #000000);
     transition: width 0.5s ease;
 }
 
@@ -179,4 +206,35 @@ body {
     gap: 5%;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.sub-panel::-webkit-scrollbar {
+    width: 2px;
+}
+.sub-panel::-webkit-scrollbar-track {
+    background: none;
+}
+.sub-panel::-webkit-scrollbar-thumb {
+    background: linear-gradient(rgba(2, 22, 9, 0.248), rgb(16, 109, 49), rgba(2, 22, 9, 0.248));
+    border-radius: 6px;
+}
+
+
+
+
+#clock-widget {
+    transition: height 0.4s ease;
+}
+
+#time-widget {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+
+#time-widget.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }

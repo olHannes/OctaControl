@@ -79,24 +79,27 @@ class ClockWidget extends HTMLElement {
                     font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
                     display: block;
                     width: 300px;
+                    height: auto;
                 }
 
                 .clock-widget {
                     width: 90%;
-                    height: 90%;
-                    padding: 1rem;
+                    height: 100%;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
                     background: var(--card);
                     border-radius: 18px;
                     display: grid;
                     gap: 0.75rem;
                     align-items: center;
                     justify-items: center;
-                    box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+                    box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);    
                 }
 
                 .clock-wrap {
                     width: 82%;
                     height: 100%;
+                    max-height: 220px;
                     aspect-ratio: 1 / 1;
                     border-radius: 50%;
                     display: grid;

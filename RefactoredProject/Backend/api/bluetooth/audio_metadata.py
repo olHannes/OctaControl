@@ -1,10 +1,30 @@
 from flask import Blueprint, jsonify
 from utils.media_player import *
+from utils.audio_reader import start, stop
 from utils.Logger import Logger
 
 bt_meta_api = Blueprint("bt_meta_api", __name__, url_prefix="/api/bluetooth/metadata")
 blApiTag = "BtMeta"
 log = Logger()
+
+
+@bt_meta_api.route("/start", methods=["POST"])
+def startThread():
+    """
+    Trys to start the climate_reader Thread
+    """
+    res = start()
+    return jsonify({"status": "success", "message": res}), 200
+
+
+@bt_meta_api.route("/stop", methods=["POST"])
+def stopThread():
+    """
+    Trys to stop the climate_reader Thread
+    """
+    stop()
+    return jsonify({"status": "success"}), 200
+
 
 @bt_meta_api.route("/all", methods=["GET"])
 def all_data():

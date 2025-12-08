@@ -1,54 +1,87 @@
-//code/widgets/volume_widget.js
+import { emitVolumeChange, listenVolumeChange } from "../utils/volumeEvents.js";
 
-class VolumeWidget extends HTMLElement {
+class VolumeMain extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this.apiPath = "http://127.0.0.1:5000/api/system/volume";
-
-        this.volumeApis = {
-            get: `${this.apiPath}/get`,
-            set: `${this.apiPath}/set`,
-        };
+        this.volumeApis = { get: `${this.apiPath}/get`, set: `${this.apiPath}/set` };
         this.volume = 10;
+        this.isMuted = false;
+        this.lastVolume = this.volume;
     }
 
-
-    /**
-     * connected Callback
-     */
     connectedCallback() {
         this.render();
         this.initWidget();
 
-        this.shadowRoot.querySelector("#btnUp").addEventListener("click", () => this.adjustVolume(5));
-        this.shadowRoot.querySelector("#btnDown").addEventListener("click", () => this.adjustVolume(-5));
+        const slider = this.shadowRoot.querySelector("#volumeSlider");
+        const muteBtn = this.shadowRoot.querySelector("#btnMute");
+        const expandBtn = this.shadowRoot.querySelector("#expand");
+
+        muteBtn.addEventListener("click", () => this.toggleMute());
+        expandBtn.addEventListener("click", () => this.expandWidget());
+
+        const updateFromPointer = (clientY) => {
+            const rect = slider.getBoundingClientRect();
+            let percent = 1 - (clientY - rect.top) / rect.height;
+            percent = Math.max(0, Math.min(1, percent));
+            const newVal = Math.round(percent * 100);
+            slider.value = newVal;
+            this.set(newVal);
+        };
+
+        let isDragging = false;
+
+        slider.addEventListener("mousedown", e => {
+            isDragging = true;
+            updateFromPointer(e.clientY);
+        });
+        window.addEventListener("mousemove", e => {
+            if (isDragging) updateFromPointer(e.clientY);
+        });
+        window.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        slider.addEventListener("touchstart", e => {
+            isDragging = true;
+            updateFromPointer(e.touches[0].clientY);
+            e.preventDefault();
+        });
+        slider.addEventListener("touchmove", e => {
+            if (isDragging) {
+                updateFromPointer(e.touches[0].clientY);
+                e.preventDefault();
+            }
+        });
+        slider.addEventListener("touchend", () => {
+            isDragging = false;
+        });
+
+        listenVolumeChange(({ volume, muted }) => {
+            this.volume = volume;
+            this.isMuted = muted;
+            this.updateDisplay();
+        });
     }
 
 
-    /**
-     * init Widget
-     * inits the widget based on the system volume
-     */
     async initWidget() {
         const data = await this.get();
         if (data && data.volume !== undefined) {
             this.volume = data.volume;
+            this.isMuted = (this.volume === 0);
             this.updateDisplay();
         }
     }
 
 
-    /**
-     * get
-     * returns null of the system volume [0-100]
-     */
     async get() {
         try {
             const res = await fetch(this.volumeApis.get, { method: "GET" });
             if (!res.ok) throw new Error("Failed to Load Volume");
-            const data = await res.json();
-            return data;
+            return await res.json();
         } catch (error) {
             console.error(`Failed to get Volume: ${error}`);
             return null;
@@ -56,113 +89,200 @@ class VolumeWidget extends HTMLElement {
     }
 
 
-    /**
-     * set
-     * sets the volume of the system to the given value
-     */
     async set(volume) {
         try {
             const res = await fetch(this.volumeApis.set, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ volume: Number(volume) })
+                body: JSON.stringify({ volume })
             });
-
-            if (!res.ok) throw new Error("API set failed");
+            if (!res.ok) throw new Error("API failed");
 
             this.volume = volume;
+            this.isMuted = (volume === 0);
             this.updateDisplay();
-        } catch (error) {
-            console.error(`Failed to update Volume: ${error}`);
+
+            emitVolumeChange(this.volume, this.isMuted);
+
+        } catch (e) {
+            console.error(e);
         }
     }
 
 
-    /**
-     * adjust volume
-     * updates the volume based on the delta value
-     */
-    adjustVolume(delta) {
-        const newVolume = Math.min(100, Math.max(0, this.volume + delta));
-        this.set(newVolume);
+    toggleMute() {
+        if (!this.isMuted) {
+            this.lastVolume = this.volume || 50;
+            this.set(0);
+        } else {
+            this.set(this.lastVolume);
+        }
+        this.updateDisplay();
     }
 
 
-    /**
-     * update Display
-     * update of the UI
-     */
+    expandWidget() {
+        const widget = document.querySelector("volume-main");
+        const btn = this.shadowRoot.querySelector("#expand");
+        const volumeSlider = this.shadowRoot.querySelector("#volumeSlider");
+        if(widget.style.width > "300px"){
+            widget.style.width = "250px";
+            btn.style.transform = "rotate(0deg)";
+            volumeSlider.style.left = "-35%";
+        }else {
+            widget.style.width = "550px";
+            btn.style.transform = "rotate(180deg)";
+            volumeSlider.style.left = "-15%";
+        }
+    }
+
+
     updateDisplay() {
-        const display = this.shadowRoot.querySelector("#volumeValue");
-        if (display) {
-            display.textContent = `${this.volume}%`;
+        const slider = this.shadowRoot.querySelector("#volumeSlider");
+        slider.value = this.volume;
+
+        const btn = this.shadowRoot.querySelector("#btnMute");
+        const label = this.shadowRoot.querySelector("#volumeValue");
+
+        label.textContent = `${this.volume}%`;
+
+        btn.classList.toggle("muted", this.isMuted);
+
+        if (this.volume > 75) {
+            label.style.color = "red";
+        } else if (this.volume > 45) {
+            label.style.color = "orange";
+        } else {
+            label.style.color = "green";
         }
     }
 
 
-    /**
-     * render
-     * setup of html and css
-     */
     render() {
-        const style = `
+        this.shadowRoot.innerHTML = `
             <style>
-                :host {
-                    display: block;
-                    width: 100%;
+                .volume-widget {
                     height: 100%;
+                    width: 100%;
+                    overflow-x: hidden;
+                    position: relative;
                 }
 
-                .volume-container {
+                h2 {
+                    text-align: center;
+                    border-bottom: 1px solid gray;
+                }
+
+                .volume-content {
                     display: flex;
                     flex-direction: column;
+
                     align-items: center;
-                    justify-content: center;
-                    height: 100%;
-                    width: 100%;
-                    padding: 1rem 0;
-                    box-sizing: border-box;
+                    justify-content: space-around;
                 }
 
-                .volume-button {
-                    width: 48px;
-                    height: 60px;
-                    margin: 0.5rem 0;
-                    font-size: 24px;
-                    font-weight: bold;
+                #volumeSlider {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 53dvh;
+                    height: 40px;
+                    rotate: -90deg;
+                    position: absolute;
+                    bottom: 51%;
+                    left: -35%;
+                    background: none;
+                }
+
+                #volumeSlider::-webkit-slider-runnable-track {
+                    height: 15px;
+                    backround: none;
+                    border-radius: 14px;
                     border: none;
-                    border-radius: 12px;
-                    background: linear-gradient(145deg, #4092bb, #04152f);
-                    color: #fff;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-                    cursor: pointer;
-                    transition: all 0.2s ease-in-out;
+                    background: linear-gradient(90deg, #021609ff, #17a047ff);
+                }
+                
+                #volumeSlider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 6rem;
+                    height: 3rem;
+                    background: url("../static/media/slider_thumb.png") no-repeat center center;
+                    background-size: contain;
+                    border: 0;
+                    border-radius: 10px;
+                    margin-top: -1.4rem;
+                    margin-top: calc((15px - 3rem) / 2);
+                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
                 }
 
-                .volume-button:active {
-                    transform: scale(0.95);
-                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+                footer {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-around;
+                    align-items: center;
+                    position: absolute;
+                    bottom: 10px;
+                    border-top: 1px solid gray;
+                    padding-top: 5px;
                 }
 
-                .volume-value {
-                    margin-top: 0.5rem;
-                    font-size: 18px;
-                    color: #fff;
-                    font-weight: 500;
+                .value { 
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                    color: #333;
+                    letter-spacing: 0.5px;
+                    margin: 0.5rem 0;
+                    padding: 0.25rem 0.75rem;
+                    background: #f5f5f5;
+                    border-radius: 0.5rem;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+                    transition: all 0.2s ease;
                 }
+                .value:hover {
+                    background: #eaeaea;
+                }
+
+                button { 
+                    padding: 0.5rem 1rem; 
+                    border-radius: 0.25rem; 
+                    cursor: pointer; 
+                    color: red; 
+                    border: none; 
+                }
+                
+                button:not(.muted) {
+                    background: #f5f5f5;
+                    color: red;
+                }
+                button.muted {
+                    background: red;
+                    color: #f5f5f5;
+                }
+
+                .expand {
+                    position: absolute;
+                    top: 50%;
+                    right: 5px;
+                    height: 5rem;
+                    transform: translateY(-50%);
+                    opacity: 0.02;
+                }
+
             </style>
-        `;
 
-        const html = `
-            <div class="volume-container">
-                <button class="volume-button" id="btnUp">+</button>
-                <button class="volume-button" id="btnDown">−</button>
-                <div class="volume-value" id="volumeValue">--%</div>
+            <div class="volume-widget">
+                <h2>Lautstärke</h2>
+                <div class="volume-content">
+                    <img class="expand" id="expand" src="../static/media/expand_arrow.svg" alt"expand"></img>
+                    <input type="range" min="0" max="100" value="0" step="2" id="volumeSlider"/>
+                    <footer>
+                        <div class="value" id="volumeValue">0%</div>
+                        <button id="btnMute">Mute</button>
+                    </footer>
+                </div>
             </div>
         `;
-
-        this.shadowRoot.innerHTML = style + html;
     }
 }
 
-customElements.define("volume-widget", VolumeWidget);
+customElements.define("volume-main", VolumeMain);
