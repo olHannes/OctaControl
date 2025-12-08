@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OctaControl Test</title>
+</head>
+<body>
+
+<h1>Sensor Live Test</h1>
+<pre id="output"></pre>
+
+<!-- ✅ Socket.IO Client korrekt laden -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+    const output = document.getElementById("output");
+
+    const socket = io("http://localhost:5000");
+
+    socket.on("connect", () => {
+        console.log("✅ WebSocket verbunden");
+    });
+
+    socket.on("sensor_test", data => {
+        console.log("test received: ", data);
+    });
+
+    socket.on("sensor_update", data => {
+        console.log("Live:", data);
+        output.textContent = JSON.stringify(data, null, 2);
+    });
+
+    socket.on("disconnect", () => {
+        console.warn("❌ WebSocket getrennt");
+    });
+</script>
+
+</body>
+</html>
