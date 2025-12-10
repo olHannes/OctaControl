@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from database import get_db
 from services.sensor_service import SensorService
 
 sensors_api = Blueprint("sensors_api", __name__)
@@ -10,6 +11,8 @@ def get_sensors():
 
 @sensors_api.route("/", methods=["GET"])
 def get_supported_sensors():
-    data = [{"sensor": "DHT11", "description": "Sensor for Humidity and Temperature.", "format": "°C and % value"},
-            {"sensor": "BH1750", "description": "Brightness-sensor.", "format": "lux value"}]
-    return jsonify(data)
+    db = get_db()
+    rows = db.execute("SELECT id, name, description, datafields, active FROM sensors").fetchall()
+    sensors = [dict(row) for row in rows]
+    
+    return jsonify(sensors)

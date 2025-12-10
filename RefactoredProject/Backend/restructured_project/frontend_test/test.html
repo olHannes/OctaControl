@@ -3,19 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>OctaControl Test</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        #map {
+            height: 400px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
 
 <h1>Sensor Live Test</h1>
-<pre id="output"></pre>
 
-<!-- ✅ Socket.IO Client korrekt laden -->
+<div id="data" style="display: flex">
+    <pre id="output"></pre>
+    
+    <pre id="sensors"></pre>
+</div>
+
+
+<div id="map"></div>
+
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
+    const sensorsBox = document.getElementById("sensors");
     const output = document.getElementById("output");
 
     const socket = io("http://localhost:5000");
+
+    const map = L.map('map').setView([50, 10], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    let marker = null;
+
+    async function loadSensors() {
+        try {
+            const res = await fetch("http://localhost:5000/api/sensors/");
+            if(!res.ok) throw new Error("Api returned " + res.status);
+
+            const data = await res.json();
+            sensorsBox.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            sensorsBox.textContent = "Error while fetching sensors: ", e.message;
+        }
+    }
+
+    loadSensors();
 
     socket.on("connect", () => {
         console.log("✅ WebSocket verbunden");
@@ -25,9 +66,23 @@
         console.log("test received: ", data);
     });
 
+
     socket.on("sensor_update", data => {
-        console.log("Live:", data);
         output.textContent = JSON.stringify(data, null, 2);
+
+        const lat = data?.gps?.lat;
+        const lon = data?.gps?.lon;
+
+        if (typeof lat === "number" && typeof lon === "number" &&
+            !isNaN(lat) && !isNaN(lon)) {
+
+            if (marker === null) {
+                marker = L.marker([lat, lon]).addTo(map);
+                map.setView([lat, lon], 15);
+            } else {
+                marker.setLatLng([lat, lon]);
+            }
+        }
     });
 
     socket.on("disconnect", () => {

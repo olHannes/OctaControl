@@ -5,6 +5,7 @@ import threading
 class DummyUartReader:
     def __init__(self):
         self.data = {
+            "dummy": True,
             "gps": {
                 "lat": 52.123456,
                 "lon": 9.123456,

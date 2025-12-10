@@ -9,7 +9,7 @@ PAYLOAD_SIZE = struct.calcsize(FMT)
 
 class SensorUartReader:
     def __init__(self, port="COM12", baud=115200):
-        self.ser = serial.Serial(port, baud, timeout=1)
+        self.ser = serial.Serial(port, baud, timeout=None)
 
         self.data = {
             "gps": {
@@ -32,6 +32,7 @@ class SensorUartReader:
     
         self._lock = threading.Lock()
         self._running = True
+        
 
         threading.Thread(target=self._loop, daemon=True).start()
 
@@ -60,6 +61,10 @@ class SensorUartReader:
                     continue
 
                 length = self.ser.read(1)[0]
+                
+                if length != PAYLOAD_SIZE +1:
+                    continue
+                
                 cmd = self.ser.read(1)[0]
 
                 payload = self.ser.read(length - 1)
@@ -103,7 +108,7 @@ class SensorUartReader:
                     self.data["flags"] = flags
 
             except Exception as e:
-                print("[UART ERROR]", e)
+                pass
 
     # ---------------------------------------------------------
 
