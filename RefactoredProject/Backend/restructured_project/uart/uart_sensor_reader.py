@@ -2,10 +2,15 @@ import serial
 import struct
 import threading
 import copy
+from timezonefinder import TimezoneFinder
+from datetime import datetime
+import pytz
 
 START_BYTE = 0xAA
 FMT = "<hhBiihBiiHHBBBBBB"
 PAYLOAD_SIZE = struct.calcsize(FMT)
+
+tf = TimezoneFinder()
 
 class SensorUartReader:
     def __init__(self, port="COM12", baud=115200):
@@ -19,6 +24,7 @@ class SensorUartReader:
                 "sats": 0,
                 "altitude": 0.0,
                 "accuracy": 0.0,
+                "quality": "none",
                 "heading": 0.0
             },
             "climate": {
@@ -85,6 +91,13 @@ class SensorUartReader:
                 altitude, accuracy, heading, \
                 year, month, day, hour, minute, second, \
                 flags = values
+                
+                acc = accuracy / 100.0
+                
+                local_time = None
+                
+                if sats >= 4 and acc < 100 and lat != 0 and lon != 0:
+                    local_time = utc_to_local(lat / 1e6, lon / 1e6, year, month, day, hour, minute, second)
 
                 with self._lock:
                     self.data["brightness"] = brightness / 10.0
@@ -98,20 +111,41 @@ class SensorUartReader:
                     self.data["gps"]["sats"] = sats
                     self.data["gps"]["altitude"] = altitude / 100.0
                     self.data["gps"]["accuracy"] = accuracy / 100.0
+                    self.data["gps"]["quality"] = (
+                        "good" if acc < 5 else "medium" if acc < 20 else "poor"
+                    )
                     self.data["gps"]["heading"] = heading / 10.0
 
                     self.data["time"] = (
                         f"{year:04d}-{month:02d}-{day:02d} "
                         f"{hour:02d}:{minute:02d}:{second:02d}"
                     )
+                    
+                    self.data["local_time"] = local_time
 
                     self.data["flags"] = flags
 
             except Exception as e:
                 pass
-
+    
     # ---------------------------------------------------------
 
     def get_data(self):
         with self._lock:
             return copy.deepcopy(self.data)
+
+        
+# ---------------------------------------------------------
+
+def utc_to_local(lat, lon, year, month, day, hour, minute, second):
+    try:
+        tz_name = tf.timezone_at(lat=lat, lng=lon)
+        if tz_name is None:
+            return None
+        tz = pytz.timezone(tz_name)
+        
+        utc_dt = datetime(year, month, day, hour, minute, second, tzinfo=pytz.utc)
+        local_dt = utc_dt.astimezone(tz)
+        return local_dt.strftime("%Y-%m-%d %H:%M:%S")
+    except Exception:
+        return None
