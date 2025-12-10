@@ -13,6 +13,7 @@ static float filtered_alt = 0;
 static float filtered_heading = 0;
 static uint8_t last_sat = 0;
 
+
 static void gps_init() {
     gpsSerial.begin(9600);
 }
@@ -25,16 +26,17 @@ static void gps_update() {
 
 static void gps_read(SensorData& data) {
 
-    if (!gps.location.isValid() || gps.location.age() > 5000) {
+    bool hasFix = gps.location.isValid() && gps.location.age() < 5000;
+
+    if(!hasFix) {
         data.status_flags |= (1 << 2);
-        return;
+    } else {
+        data.status_flags &= ~( 1 << 2);
+    
+        // --- Position ---
+        data.gps_lat = (int32_t)(gps.location.lat() * 1e6);
+        data.gps_lon = (int32_t)(gps.location.lng() * 1e6);
     }
-
-    data.status_flags &= ~(1 << 2);
-
-    // --- Position ---
-    data.gps_lat = (int32_t)(gps.location.lat() * 1e6);
-    data.gps_lon = (int32_t)(gps.location.lng() * 1e6);
 
     // --- Speed ---
     if (gps.speed.isValid()) {

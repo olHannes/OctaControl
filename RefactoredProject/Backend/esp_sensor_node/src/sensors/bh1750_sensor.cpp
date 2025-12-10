@@ -25,6 +25,7 @@ static void bh1750_read(SensorData& data) {
         data.status_flags |= (1 << 0); // Bit 0 = BH1750 error
         return;
     }
+    data.status_flags &= ~(1 << 0);
     data.brightness = (int16_t)(lux * 10.0f);
 }
 

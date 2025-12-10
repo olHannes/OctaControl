@@ -20,6 +20,7 @@ static void dht_read(SensorData& data) {
         return;
     }
 
+    data.status_flags &= ~(1 << 1);
     data.temperature = (int16_t)temperature * 10;
     data.humidity = humidity;
 }
