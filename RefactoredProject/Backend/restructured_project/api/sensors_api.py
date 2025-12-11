@@ -9,10 +9,16 @@ def get_sensors():
     data = SensorService.get().read_all()
     return jsonify(data)
 
-@sensors_api.route("/", methods=["GET"])
-def get_supported_sensors():
+@sensors_api.route("/all", methods=["GET"])
+def get_all_sensors():
     db = get_db()
     rows = db.execute("SELECT id, name, description, datafields, active FROM sensors").fetchall()
     sensors = [dict(row) for row in rows]
-    
+    return jsonify(sensors)
+
+@sensors_api.route("/supported", methods=["GET"])
+def get_supported_sensors():
+    db = get_db()
+    rows = db.execute("SELECT id, name, description, datafields FROM sensors WHERE active == 1").fetchall()
+    sensors = [dict(row) for row in rows]
     return jsonify(sensors)

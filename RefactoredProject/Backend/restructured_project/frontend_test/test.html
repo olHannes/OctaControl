@@ -16,16 +16,21 @@
 </head>
 <body>
 
-<h1>Sensor Live Test</h1>
+<h1>Live Web-Data Test</h1>
 
 <div id="data" style="display: flex">
-    <pre id="output"></pre>
-    
-    <pre id="sensors"></pre>
+    <div style="display: flex; flex-direction: column; background-color: black; color: #FF851B; padding-left: 50px; padding-right: 50px;">
+        <h2>Supported Sensors:</h2>
+        <pre id="sensors"></pre>
+    </div>
+    <div style="display: flex; flex-direction: column; background-color: #FF851B; color: black; padding-left: 50px; padding-right: 50px;">
+        <h2>Live Data:</h2>
+        <pre id="output"></pre>
+    </div>
 </div>
-
-
 <div id="map"></div>
+
+
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
@@ -46,7 +51,7 @@
 
     async function loadSensors() {
         try {
-            const res = await fetch("http://localhost:5000/api/sensors/");
+            const res = await fetch("http://localhost:5000/api/sensors/supported");
             if(!res.ok) throw new Error("Api returned " + res.status);
 
             const data = await res.json();
