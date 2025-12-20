@@ -1,0 +1,56 @@
+Das Project 'OctaControl' ist ein Infotainment für mein Auto (Skoda Octavia 2 1z3). 
+Das ganze wird nun erneut gerefactored.
+
+Hardware:
+- RaspberryPi 4b
+- TouchDisplay (USB und HDMI)
+- 5V Relais 
+- 12V -> 5V wandler (50 Watt)
+- Arduino Nano (Datenknoten)
+-> DHT11 Temperatur & Luftfeuchtigkeit
+-> GT-U7 GPS
+-> BH1750 Brightness
+(evtl. RTL-SDR Stick für DAB)
+
+Software Architektur:
+Das Ziel ist es, dass der RaspberryPi einen Python Flask Server am laufen hat und den Chromium-Kiosk Modus benutzt, um die Seite darzustellen:
+
+Backend:
+-> Python Flask
+-> Websockets für Sensordaten (ausgelesen aus Arduinoverbindung)
+
+Arduinoknoten:
+-> C++ 
+<< Sensoren werden ausgelesen und gecached
+<< regelmäßig an den Pi übertragen
+
+Frontend:
+-> HTML
+-> JavaScript
+-> Css
+
+Datenbank:
+- sqlite Datenbank
+- Simple Tabellen für unterstützte Sensoren, Logs und z.B. gespeicherte DAB-Sender
+- evtl. caching von Gps-daten für Streckenrekonstruktion und Fahrtanalysen
+
+
+Der RaspberryPi soll nur mit dem benötigten Sachen (Lite-Betriebssystem) ausgestattet sein und die Anwendungen im Autostart starten.
+
+Über das Frontend müssen folgende Einstellungen unterstützt werden:
+- Wlan (suchen, verbinden <Passwortabfrage>, löschen)
+- Bluetooth (suchen, verbinden, löschen)
+- Audio-Source (wechseln zwischen Dab und Bluetooth)
+- Bluetooth-Audio (Metadaten anzeigen, Play, Pause, Skip, Previous)
+Bei Internet-Anbindung (über mobile Hotspot)
+-> Wetterdaten, evtl noch mehr über open-apis
+-> Karte mit aktueller Position (später vielleicht über eigene Tile-map)
+
+Das Frontend soll möglichst Modular und Modern aufgebaut sein (bisher unter verwendung eigener Module)
+
+
+Umgesetzt bisher (hat in früherer Version funktioniert):
+- Bluetooth Control
+- Wlan Settings
+- Bluetooth Audio Control
+- Autostart-scripte (zum Teil auf vollem Pi-OS)
