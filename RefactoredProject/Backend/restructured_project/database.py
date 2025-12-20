@@ -50,11 +50,15 @@ def init_db():
 
     db.execute("""
     CREATE TABLE IF NOT EXISTS sensor_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         ts INTEGER,
-        sensor TEXT,
-        value REAL,
-        raw_value REAL,
-        flags INTEGER
+        sensor_id INTEGER NOT NULL,
+        value REAL NOT NULL,
+        meta_json TEXT,
+
+        FOREIGN KEY(sensor_id) REFERENCES sensors(id)
+               ON UPDATE CASCADE
+               ON DELETE RESTRICT
     )
     """)
 
