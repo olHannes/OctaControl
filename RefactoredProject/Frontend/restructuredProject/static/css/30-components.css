@@ -1,0 +1,203 @@
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--fg);
+  font-size: 13px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 25px;
+  max-height: 35px;
+}
+
+.pill img {
+    height: 25px;
+}
+.pill span {
+    font-size: large;
+}
+
+.pill--muted { color: var(--muted); }
+.pill--ok { outline: 2px solid rgba(60, 200, 120, .55); }
+.pill--warn { outline: 2px solid rgba(255, 170, 0, .55); }
+.pill--bad { outline: 2px solid rgba(255, 60, 60, .55); }
+
+.bottombar { gap: 10px; justify-content: space-between; }
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: var(--card);
+  color: var(--fg);
+  border-radius: 12px;
+  padding: 14px 8px;
+  font-size: 14px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nav-btn img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+.nav-btn span {
+    line-height: 1;
+}
+
+.nav-btn.active {
+  background: var(--accent);
+  color: #000;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--gap);
+}
+
+.card {
+    position: relative;
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    min-height: 130px;
+}
+
+.card-title {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.big {
+  font-size: 30px;
+  letter-spacing: .2px;
+}
+
+.card_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.icon-tile {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tile-bg);
+    border: 1px solid var(--tile-border);
+}
+
+.card-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--icon) 25%, transparent);
+    border: 1px solid color-mix(in srgb, var(--icon) 40%, transparent);
+}
+
+.icon{
+  width: 20px;
+  height: 20px;
+  background-color: var(--icon);
+  display: inline-block;
+
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+.nav-btn.active .icon{
+  background-color: var(--icon-active);
+}
+
+
+.dashboard .dashboard__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+
+.dashboard .dashboard-card {
+    position: relative;
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    min-height: 130px;
+
+    background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.dashboard .card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.icon-tile{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tile-bg);
+  border: 1px solid var(--tile-border);
+}
+
+.icon{
+  width: 20px;
+  height: 20px;
+  background-color: var(--icon);
+  display: inline-block;
+
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+.icon--temp{
+    -webkit-mask-image: url("../assets/icons/temperature-quarter-svgrepo-com.svg");
+    mask-image: url("../assets/icons/temperature-quarter-svgrepo-com.svg");
+}
+
+.icon--hum{
+    -webkit-mask-image: url("../assets/icons/humidity-svgrepo-com.svg");
+    mask-image: url("../assets/icons/humidity-svgrepo-com.svg");
+}
+
+.icon--lux{
+    -webkit-mask-image: url("../assets/icons/sun-svgrepo-com.svg");
+    mask-image: url("../assets/icons/sun-svgrepo-com.svg");
+}
+
+.icon--audio{
+    -webkit-mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
+    mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
+}
