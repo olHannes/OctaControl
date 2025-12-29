@@ -3,6 +3,7 @@ export function renderDashboard(root, store) {
   root.innerHTML = `
     <section class="dashboard" aria-hidden="true">
       <div class="grid dashboard__grid">
+
         <div class="card dashboard-card">
           <div class="card__top">
             <span class="icon-tile">
@@ -59,10 +60,34 @@ export function renderDashboard(root, store) {
 
       <div class="big__card">
         <div class="map_card">
-        
+            <div id="map"></div>
+          <div class="map_info" id="map_dashboard-info">
+
+            <div class="map_info_tile">
+              <span class="icon icon--satellites"></span>
+              <span class="value">6</span>
+              <span class="big__unit">Satellites</span>
+            </div>
+            <div class="map_info_tile">
+              <span class="icon icon--altitude"></span>
+              <span class="value">235m</span>
+              <span class="big__unit">Altitude</span>
+            </div>
+            <div class="map_info_tile">
+              <span class="icon icon--speed"></span>
+              <span class="value">87 km/h</span>
+              <span class="big__unit">Speed</span>
+            </div>
+            <div class="map_info_tile">
+              <span class="icon icon--direction"></span>
+              <span class="value">97° E</span>
+              <span class="big__unit">Direction</span>
+            </div>
+            
+          </div>
         </div>
         <div class="audio_card">
-        
+          audio
         </div>
       </div>
     </section>
@@ -88,10 +113,27 @@ export function renderDashboard(root, store) {
         audioEl.textContent = `--`;
       }
     }
+    setTimeout(initMap, 0);
   };
 
   render(store.getState?.() ?? {});
 
-  // Update UI when store changes
   store.subscribe((s) => render(s));
+}
+
+
+
+let map;
+
+function initMap() {
+  if (map) return;
+
+  map = L.map("map").setView([50.08, 14.44], 13);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    maxZoom: 19,
+    attribution: "&copy; CartoDB"
+  }).addTo(map);
+
+  //L.marker([50.08, 14.44]).addTo(map);
 }

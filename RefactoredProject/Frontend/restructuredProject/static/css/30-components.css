@@ -169,6 +169,26 @@
 }
 
 .icon--position{
-    -webkit-mask-image: url("../assets/icons/position-location-svgrepo-com.svg");
-    mask-image: url("../assets/icons/position-location-svgrepo-com.svg");
+    -webkit-mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
+    mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
+}
+
+.icon--satellites{
+    -webkit-mask-image: url("../assets/icons/map/satellite-svgrepo-com.svg");
+    mask-image: url("../assets/icons/map/satellite-svgrepo-com.svg");
+}
+
+.icon--altitude{
+    -webkit-mask-image: url("../assets/icons/map/mountain-svgrepo-com.svg");
+    mask-image: url("../assets/icons/map/mountain-svgrepo-com.svg");
+}
+
+.icon--speed{
+    -webkit-mask-image: url("../assets/icons/map/speed-svgrepo-com.svg");
+    mask-image: url("../assets/icons/map/speed-svgrepo-com.svg");
+}
+
+.icon--direction{
+    -webkit-mask-image: url("../assets/icons/map/compass-svgrepo-com.svg");
+    mask-image: url("../assets/icons/map/compass-svgrepo-com.svg");
 }
