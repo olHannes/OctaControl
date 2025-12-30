@@ -24,6 +24,14 @@
   --ui-accent-hover: color-mix(in srgb, var(--system-color) 85%, white);
   --ui-accent-active: color-mix(in srgb, var(--system-color) 85%, black);
 
+  --color-palette-skoda: ;
+  --color-palette-ocean: ;
+  --color-palette-sunset: ;
+  --color-palette-royal: ;
+  --color-palette-rose: ;
+  --color-palette-pure: ;
+  --color-palette-warm: ;
+  --color-palette-cool: ;
 
   --light-blue: #42A5F5;
   --light-orange: #FFCA28;

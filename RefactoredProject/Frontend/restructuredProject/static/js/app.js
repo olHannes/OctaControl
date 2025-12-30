@@ -1,97 +1,107 @@
 // js/app.js
 import { createStore } from "./store.js";
-import { WsHub } from "./wsHub.js";
 import { initRouter } from "./router.js";
+import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 
 import { renderDashboard } from "./pages/dashboard.page.js";
 import { renderAudio } from "./pages/audio.page.js";
 import { renderNavi } from "./pages/navi.page.js";
 import { renderSettings } from "./pages/settings.page.js";
 
+
 const store = createStore({
-  theme: localStorage.getItem("theme") ?? "dark",
-  ws: { connected: false },
-  sensors: { temp: null, hum: null, lux: null },
-  audio: { source: "bluetooth", state: "stopped", title: null, artist: null },
-  net: { wifi: null, bt: null, gps: null },
+  conn: { connected: false },
+  sensor: {
+    brightness: null,
+    climate: { temperature: null, humidity: null },
+    gps: {
+      lat: null, lon: null, speed: null, sats: null,
+      altitude: null, accuracy: null, quality: null, heading: null
+    },
+    time: null,
+    local_time: null,
+    flags: null,
+  },
+  ui: { theme: "dark", systemColor: "#3aa0ff" },
+  system: { battery: null, internet: null, wifi: null, audioSource: null, version: null },
 });
 
-// Theme initial
-document.documentElement.dataset.theme = store.get().theme;
+document.documentElement.dataset.theme = store.get().ui.theme;
+document.documentElement.style.setProperty("--system-color", store.get().ui.systemColor);
 
-// Theme toggle
-document.querySelector("#themeBtn").addEventListener("click", () => {
-  const next = store.get().theme === "dark" ? "light" : "dark";
-  store.set({ theme: next });
-  document.documentElement.dataset.theme = next;
-  localStorage.setItem("theme", next);
-});
 
-// Clock
-setInterval(() => {
-  const d = new Date();
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  document.querySelector("#clock").textContent = `${hh}:${mm}`;
-}, 500);
-
-// Router
 const router = initRouter();
-
-// Render pages once
 renderDashboard(router.views.dashboard, store);
-renderAudio(router.views.audio, store, null); // wsHub setzen wir gleich
-renderNavi(router.views.navi);
-renderSensors(router.views.sensors);
-renderSettings(router.views.settings);
+renderAudio(router.views.audio, store);
+renderNavi(router.views.navi, store);
+renderSettings(router.views.settings, store);
 
-// WS Hub (eine zentrale Verbindung!)
-const wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws";
-const wsHub = new WsHub(wsUrl);
 
-// Jetzt Audio-Page mit wsHub “nachrüsten” (einfach neu rendern)
-renderAudio(router.views.audio, store, wsHub);
+const socket = io("http://127.0.0.1:5000");
 
-// WS connection status -> Pills
-wsHub.addEventListener("ws:open", () => store.set({ ws: { connected: true } }));
-wsHub.addEventListener("ws:close", () => store.set({ ws: { connected: false } }));
+socket.on("connect", () => store.setSlice("conn", { connected: true }));
+socket.on("disconnect", () => store.setSlice("conn", { connected: false }));
 
-// Erwartete Events vom Backend: sensor:update, gps:update, wifi:update, bt:update, audio:update
-wsHub.addEventListener("sensor:update", (e) => {
-  // Beispiel: { key: "temp", value: 21.5 } oder { temp:.., hum:.. }
-  const p = e.detail ?? {};
-  const current = store.get().sensors;
+socket.on("sensor_update", (data) => {
+  const cur = store.get().sensor;
 
-  if (typeof p.key === "string") {
-    store.set({ sensors: { ...current, [p.key]: p.value } });
-  } else {
-    store.set({ sensors: { ...current, ...p } });
+  store.setSlice("sensor", {
+    ...data,
+    climate: { ...cur.climate, ...(data.climate ?? {}) },
+    gps:     { ...cur.gps,     ...(data.gps ?? {}) },
+  });
+});
+
+
+
+const themeBtn = document.querySelector("#themeBtn");
+if (themeBtn) {
+  themeBtn.addEventListener("click", () => {
+    const next = store.get().ui.theme === "dark" ? "light" : "dark";
+    store.setSlice("ui", { theme: next });
+  });
+}
+
+
+store.subscribeSelector(s => s.ui, (ui) => {
+  document.documentElement.dataset.theme = ui.theme;
+  document.documentElement.style.setProperty("--system-color", ui.systemColor);
+});
+
+
+store.subscribeSelector(s => s.sensor, (sensor) => {
+  const clock = document.querySelector("#clock");
+  const date  = document.querySelector("#date");
+  const temp  = document.querySelector("#tempPill");
+
+  const t = sensor?.local_time ?? sensor?.time;
+  if (clock && t) {
+    clock.textContent = String(t).split(" ")[1]?.slice(0,5) ?? "--:--";
+  }
+  if (date && t) {
+    date.textContent = String(t).split(" ")[0] ?? "";
+  }
+
+  if (temp) {
+    const v = sensor?.climate?.temperature;
+    temp.textContent = (v == null) ? "--°C" : `${v.toFixed(1)}°C`;
   }
 });
 
-wsHub.addEventListener("audio:update", (e) => {
-  const p = e.detail ?? {};
-  store.set({ audio: { ...store.get().audio, ...p } });
-});
 
-// Topbar pills from store
 store.subscribe((s) => {
   const wifi = document.querySelector("#wifiPill");
-  const bt = document.querySelector("#btPill");
-  const gps = document.querySelector("#gpsPill");
+  const bt   = document.querySelector("#btPill");
+  const gps  = document.querySelector("#gpsPill");
 
-  // Basic placeholders (du kannst später echte states mappen)
-  wifi.textContent = `WLAN: ${s.net?.wifi ?? "--"}`;
-  bt.textContent = `BT: ${s.net?.bt ?? "--"}`;
-  gps.textContent = `GPS: ${s.net?.gps ?? "--"}`;
+  if (wifi) wifi.textContent = `NET: ${s.system?.internet ?? "--"}`;
+  if (bt)   bt.textContent   = `SRC: ${s.system?.audioSource ?? "--"}`;
+  if (gps)  gps.textContent  = `GPS: ${s.sensor?.gps?.quality ?? "--"}`;
 
-  // Connection indicator via outline color
-  const okClass = s.ws.connected ? "pill--ok" : "pill--bad";
+  const okClass = s.conn.connected ? "pill--ok" : "pill--bad";
   [wifi, bt, gps].forEach(el => {
+    if (!el) return;
     el.classList.remove("pill--ok", "pill--bad");
     el.classList.add(okClass);
   });
 });
-
-const color = "#3aa0ff";
-document.documentElement.style.setProperty("--system-color", color);
