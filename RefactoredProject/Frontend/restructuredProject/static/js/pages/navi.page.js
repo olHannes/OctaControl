@@ -73,7 +73,12 @@ export function renderNavi(root, store) {
     if(elAcc) elAcc.textContent = (gps.accuracy == null || gps.quality == null) ? "error" : `${gps.accuracy.toFixed(0)} / ${gps.quality}`;
     elAcc.dataset.quality = (gps.quality == null) ? "bad" : gps.quality;
 
-
+    const lat = gps.lat, lon = gps.lon;
+    if (main_map && main_marker && lat != null && lon != null) {
+      const ll = [lat, lon];
+      main_marker.setLatLng(ll);
+      main_map.panTo(ll, { animate: false });
+    }
   });
 }
 

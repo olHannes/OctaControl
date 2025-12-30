@@ -129,11 +129,9 @@ export function renderDashboard(root, store) {
     if (elSpeed)   elSpeed.textContent   = (gps.speed == null) ? "--" : `${Math.round(gps.speed)} km/h`;
     if (elHeading) elHeading.textContent = (gps.heading == null) ? "--" : `${Math.round(gps.heading)}°`;
 
-    // Map update
     if (map && marker && lat != null && lon != null) {
       const ll = [lat, lon];
       marker.setLatLng(ll);
-      // optional: nur bei Dashboard-View aktiv zentrieren (sonst springt es nervig)
       map.panTo(ll, { animate: false });
     }
   });
