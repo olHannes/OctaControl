@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="./css/20-base.css">
   <link rel="stylesheet" href="./css/30-components.css">
   <link rel="stylesheet" href="./css/40-dashboard.css">
+  <link rel="stylesheet" href="./css/40-navi.css">
 </head>
 
 <body>
@@ -33,16 +34,16 @@
         </div>
 
         <div class="pill pill--muted">
-            <span class="icon icon--bluetooth"></span>
-            <span class="icon icon--radio"></span>
+            <span class="icon icon--bluetooth" id="pill-bluetooth"></span>
+            <span class="icon icon--radio" id="pill-radio"></span>
         </div>
 
         <div class="pill pill--muted">
-            <span class="icon icon--battery-slash"></span>
-            <span class="icon icon--battery-empty"></span>
-            <span class="icon icon--battery-low"></span>
-            <span class="icon icon--battery-mid"></span>
-            <span class="icon icon--battery-full"></span>
+            <span class="icon icon--battery-slash battery" data-battery="none"></span>
+            <span class="icon icon--battery-empty battery" data-battery="empty"></span>
+            <span class="icon icon--battery-low battery"   data-battery="low"></span>
+            <span class="icon icon--battery-mid battery"   data-battery="mid"></span>
+            <span class="icon icon--battery-full battery"  data-battery="full"></span>
             <span id="batteryPill" class="pill pill-muted">--%</span>
         </div>
 

@@ -125,10 +125,9 @@
   border: 1px solid var(--tile-border);
 }
 
-.icon{
-  display: inline-block;
-}
 
+.battery { display: none; }
+.battery.is-active { display: inline-block; }
 
 /*Icons*/
 .icon--network{
@@ -201,6 +200,12 @@
 .icon--position{
   -webkit-mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
   mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
+}
+
+.icon--accuracy{
+  -webkit-mask-image: url("../assets/icons/map/double-check-svgrepo-com.svg");
+  mask-image: url("../assets/icons/map/double-check-svgrepo-com.svg");
+  background-color: #42A5F5;
 }
 
 .icon--satellites{

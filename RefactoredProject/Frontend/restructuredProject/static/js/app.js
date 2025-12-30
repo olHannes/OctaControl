@@ -23,7 +23,7 @@ const store = createStore({
     flags: null,
   },
   ui: { theme: "dark", systemColor: "#3aa0ff" },
-  system: { battery: null, internet: null, wifi: null, audioSource: null, version: null },
+  system: { battery: null, internet: true, wifi: null, audioSource: "radio", version: null },
 });
 
 document.documentElement.dataset.theme = store.get().ui.theme;
@@ -89,19 +89,39 @@ store.subscribeSelector(s => s.sensor, (sensor) => {
 });
 
 
+
+function batteryLevel(percent) {
+  if(percent == null) return "none";
+  if(percent <= 5) return "empty";
+  if(percent <= 20) return "low";
+  if(percent <= 60) return "mid";
+  return "full";
+}
+
+function updateBattery(percent) {
+  const level = batteryLevel(percent);
+
+  document.querySelectorAll(".battery").forEach(icon => {
+    icon.classList.toggle("is-active", icon.dataset.battery === level);
+  });
+
+  const pill = document.querySelector("#batteryPill");
+  if (pill) pill.textContent = percent != null ? `${percent}%` : "--%";
+}
+
+
+
 store.subscribe((s) => {
   const wifi = document.querySelector("#wifiPill");
-  const bt   = document.querySelector("#btPill");
+  const bt   = document.querySelector("#pill-bluetooth");
+  const radio = document.querySelector("#pill-radio");
+
   const gps  = document.querySelector("#gpsPill");
 
-  if (wifi) wifi.textContent = `NET: ${s.system?.internet ?? "--"}`;
-  if (bt)   bt.textContent   = `SRC: ${s.system?.audioSource ?? "--"}`;
-  if (gps)  gps.textContent  = `GPS: ${s.sensor?.gps?.quality ?? "--"}`;
+  if (wifi) wifi.style.display = s.system?.internet ? "block" : "none";
 
-  const okClass = s.conn.connected ? "pill--ok" : "pill--bad";
-  [wifi, bt, gps].forEach(el => {
-    if (!el) return;
-    el.classList.remove("pill--ok", "pill--bad");
-    el.classList.add(okClass);
-  });
+  if(bt) bt.style.display = (s.system?.audioSource == "radio") ? "none" : "block";
+  if(radio) radio.style.display = (s.system?.audioSource == "radio") ? "block" : "none";
+  
+  updateBattery(s.system?.battery);
 });
