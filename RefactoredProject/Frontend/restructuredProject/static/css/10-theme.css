@@ -4,22 +4,50 @@
   --card: #1a2233;
   --fg: #e6ebf2;
   --muted: #8b93a6;
-  --accent: #3aa0ff;
-  --danger: #ff4d4d;
 
-  --radius: 12px;
   --gap: 14px;
   --shadow: 0 6px 20px rgba(0,0,0,.35);
 
-  --icon: var(--accent);
-  --icon-active: #000;
 
   --card-border: rgba(60, 200, 120, .18);
   --card-grad-1: rgba(35, 55, 70, .55);
   --card-grad-2: rgba(10, 20, 30, .70);
   --tile-bg: rgba(20, 45, 30, .55);
   --tile-border: rgba(60, 200, 120, .16);
+
+
+
+  --system-color: #3aa0ff;
+  --ui-accent: var(--system-color);
+  --ui-accent-weak: color-mix(in srgb, var(--system-color) 20%, transparent);
+  --ui-accent-border: color-mix(in srgb, var(--system-color) 35%, transparent);
+  --ui-accent-hover: color-mix(in srgb, var(--system-color) 85%, white);
+  --ui-accent-active: color-mix(in srgb, var(--system-color) 85%, black);
+
+
+  --light-blue: #42A5F5;
+  --light-orange: #FFCA28;
+  --light-green: #00d492;
+  --light-purple: #AB47BC;
+
+  --battery-empty: #6B7280;
+  --battery-slash: #EF4444;
+  --battery-low:   #F59E0B;
+  --battery-mid:   #22C55E;
+  --battery-full:  #16A34A;
+
+  --network: #14B8A6;
+  --bluetooth: #2563EB;
+  --radio: #06B6D4;
+
+  --favourite: #FB923C;
+
+  --system-shutdown: #DC2626;
+  --system-shutdown-muted: #FCA5A5;
+
 }
+
+
 
 html[data-theme="light"] {
   --bg: #f6f8fb;
@@ -27,8 +55,6 @@ html[data-theme="light"] {
   --card: #ffffff;
   --fg: #0c1220;
   --muted: #556079;
-  --accent: #1b6fff;
-  --danger: #d60000;
   --shadow: 0 6px 18px rgba(0,0,0,.10);
 
   --card-border: rgba(27, 111, 255, .18);

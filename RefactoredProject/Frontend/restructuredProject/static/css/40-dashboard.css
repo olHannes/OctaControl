@@ -14,7 +14,6 @@
   min-height: 130px;
 
   background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
-  border: 1px solid var(--card-border);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -53,7 +52,6 @@
     border-radius: 18px;
     padding: 18px;
     background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
-    border: 1px solid var(--card-border);
     box-shadow: var(--shadow);
 }
 
@@ -77,4 +75,7 @@
     align-items: center;
 }
 
+.leaflet-container .leaflet-control-attribution, .leaflet-container .leaflet-control-scale, .leaflet-control-container {
+  display: none;
+}
 

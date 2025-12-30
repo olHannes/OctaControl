@@ -92,3 +92,6 @@ store.subscribe((s) => {
     el.classList.add(okClass);
   });
 });
+
+const color = "#3aa0ff";
+document.documentElement.style.setProperty("--system-color", color);

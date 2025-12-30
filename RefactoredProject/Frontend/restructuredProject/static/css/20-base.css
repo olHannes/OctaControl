@@ -45,7 +45,7 @@ body {
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
 
-    border-bottom: 1px solid rgba(60, 200, 120, .2);
+    border-bottom: 1px solid var(--ui-accent-border);
 }
 .topbar__left {
     justify-self: start;
@@ -87,3 +87,13 @@ body {
 .view.active { display: block; }
 
 section { height: 100%; }
+
+
+
+
+.seperator_vertical {
+  height: 58px;
+  width: 1px;
+  border: none;
+  background-color: var(--ui-accent-border);
+}

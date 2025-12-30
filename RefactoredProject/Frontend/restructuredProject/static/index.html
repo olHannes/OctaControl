@@ -19,7 +19,6 @@
       <div class="topbar__left">
         <img src="./assets/images/skoda_logo.png" alt="Skoda Octavia">
         <h3>Octavia</h3>
-        <!-- <span id="gpsPill" class="pill pill--muted">GPS: --</span> -->
     </div>
     
       <div class="topbar__center">
@@ -34,15 +33,21 @@
         </div>
 
         <div class="pill pill--muted">
-            <img id="audioSource" src="./assets/icons/bluetooth-svgrepo-com.svg" alt="bluetooth icon">
+            <span class="icon icon--bluetooth"></span>
+            <span class="icon icon--radio"></span>
         </div>
 
         <div class="pill pill--muted">
-            <img src="./assets/icons/battery/battery-slash-svgrepo-com.svg" alt="battery status">
+            <span class="icon icon--battery-slash"></span>
+            <span class="icon icon--battery-empty"></span>
+            <span class="icon icon--battery-low"></span>
+            <span class="icon icon--battery-mid"></span>
+            <span class="icon icon--battery-full"></span>
             <span id="batteryPill" class="pill pill-muted">--%</span>
         </div>
 
-        <span id="wifiPill" class="pill pill--muted">WLAN: --</span>
+        <span id="wifiPill" class="icon icon--network pill pill--muted"></span>
+
         <button id="themeBtn" title="Theme umschalten">🌓</button>
       </div>
     </header>

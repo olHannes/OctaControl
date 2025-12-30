@@ -68,16 +68,19 @@ export function renderDashboard(root, store) {
               <span class="value">6</span>
               <span class="big__unit">Satellites</span>
             </div>
+            <div class="seperator_vertical"></div>
             <div class="map_info_tile">
               <span class="icon icon--altitude"></span>
-              <span class="value">235m</span>
+              <span class="value">235 m</span>
               <span class="big__unit">Altitude</span>
             </div>
+            <div class="seperator_vertical"></div>
             <div class="map_info_tile">
               <span class="icon icon--speed"></span>
               <span class="value">87 km/h</span>
               <span class="big__unit">Speed</span>
             </div>
+            <div class="seperator_vertical"></div>
             <div class="map_info_tile">
               <span class="icon icon--direction"></span>
               <span class="value">97° E</span>
@@ -128,12 +131,14 @@ let map;
 function initMap() {
   if (map) return;
 
-  map = L.map("map").setView([50.08, 14.44], 13);
+  map = L.map("map").setView([52.2937, 8.9136], 13);
 
+  const defaultCoords = [52.5200, 13.4050];
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19,
     attribution: "&copy; CartoDB"
   }).addTo(map);
+
 
   //L.marker([50.08, 14.44]).addTo(map);
 }

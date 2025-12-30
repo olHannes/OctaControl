@@ -52,7 +52,7 @@
 }
 
 .nav-btn.active {
-  background: var(--accent);
+  background: var(--ui-accent);
   color: #000;
 }
 
@@ -67,7 +67,7 @@
     border-radius: 18px;
     padding: 18px 18px 16px;
     background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
-    border: 1px solid var(--card-border);
+    border: 1px solid var(--ui-accent-border);
     box-shadow: var(--shadow);
     overflow: hidden;
     min-height: 130px;
@@ -100,7 +100,7 @@
 .icon {
   width: 20px;
   height: 20px;
-  background-color: var(--icon);
+  background-color: var(--ui-accent);
   display: inline-block;
 
   -webkit-mask-repeat: no-repeat;
@@ -111,12 +111,6 @@
   mask-position: center;
   mask-size: contain;
 }
-
-.nav-btn.active .icon {
-  background-color: var(--icon-active);
-}
-
-
 
 
 
@@ -132,63 +126,103 @@
 }
 
 .icon{
-  width: 20px;
-  height: 20px;
-  background-color: var(--icon);
   display: inline-block;
-
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
 }
 
 
 /*Icons*/
+.icon--network{
+  -webkit-mask-image: url("../assets/icons/internet-3-svgrepo-com.svg");
+  mask-image: url("../assets/icons/internet-3-svgrepo-com.svg");
+  background-color: var(--network);
+}
+.icon--bluetooth{
+  -webkit-mask-image: url("../assets/icons/bluetooth-svgrepo-com.svg");
+  mask-image: url("../assets/icons/bluetooth-svgrepo-com.svg");
+  background-color: var(--bluetooth);
+}
+
+.icon--radio{
+  -webkit-mask-image: url("../assets/icons/radio-signal-1026-svgrepo-com.svg");
+  mask-image: url("../assets/icons/radio-signal-1026-svgrepo-com.svg");
+  background-color: var(--radio);
+}
+
+.icon--battery-empty{
+  -webkit-mask-image: url("../assets/icons/battery/battery-empty-svgrepo-com.svg");
+  mask-image: url("../assets/icons/battery/battery-empty-svgrepo-com.svg");
+  background-color: var(--battery-empty);
+}
+
+.icon--battery-full{
+  -webkit-mask-image: url("../assets/icons/battery/battery-full-svgrepo-com.svg");
+  mask-image: url("../assets/icons/battery/battery-full-svgrepo-com.svg");
+  background-color: var(--battery-full);
+}
+
+.icon--battery-mid{
+  -webkit-mask-image: url("../assets/icons/battery/battery-mid-svgrepo-com.svg");
+  mask-image: url("../assets/icons/battery/battery-mid-svgrepo-com.svg");
+  background-color: var(--battery-mid);
+}
+
+.icon--battery-low{
+  -webkit-mask-image: url("../assets/icons/battery/battery-low-svgrepo-com.svg");
+  mask-image: url("../assets/icons/battery/battery-low-svgrepo-com.svg");
+  background-color: var(--battery-low);
+}
+
+.icon--battery-slash{
+  -webkit-mask-image: url("../assets/icons/battery/battery-slash-svgrepo-com.svg");
+  mask-image: url("../assets/icons/battery/battery-slash-svgrepo-com.svg");
+  background-color: var(--battery-slash);
+}
+
 .icon--temp{
-    -webkit-mask-image: url("../assets/icons/temperature-quarter-svgrepo-com.svg");
-    mask-image: url("../assets/icons/temperature-quarter-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/temperature-quarter-svgrepo-com.svg");
+  mask-image: url("../assets/icons/temperature-quarter-svgrepo-com.svg");
 }
 
 .icon--hum{
-    -webkit-mask-image: url("../assets/icons/humidity-svgrepo-com.svg");
-    mask-image: url("../assets/icons/humidity-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/humidity-svgrepo-com.svg");
+  mask-image: url("../assets/icons/humidity-svgrepo-com.svg");
 }
 
 .icon--lux{
-    -webkit-mask-image: url("../assets/icons/sun-svgrepo-com.svg");
-    mask-image: url("../assets/icons/sun-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/sun-svgrepo-com.svg");
+  mask-image: url("../assets/icons/sun-svgrepo-com.svg");
 }
 
 .icon--audio{
-    -webkit-mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
-    mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
+  mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
 }
 
 .icon--position{
-    -webkit-mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
-    mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
+  mask-image: url("../assets/icons/map/position-location-svgrepo-com.svg");
 }
 
 .icon--satellites{
-    -webkit-mask-image: url("../assets/icons/map/satellite-svgrepo-com.svg");
-    mask-image: url("../assets/icons/map/satellite-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/map/satellite-svgrepo-com.svg");
+  mask-image: url("../assets/icons/map/satellite-svgrepo-com.svg");
+  background-color: var(--light-blue);
 }
 
 .icon--altitude{
-    -webkit-mask-image: url("../assets/icons/map/mountain-svgrepo-com.svg");
-    mask-image: url("../assets/icons/map/mountain-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/map/mountain-svgrepo-com.svg");
+  mask-image: url("../assets/icons/map/mountain-svgrepo-com.svg");
+  background-color: var(--light-orange);
 }
 
 .icon--speed{
-    -webkit-mask-image: url("../assets/icons/map/speed-svgrepo-com.svg");
-    mask-image: url("../assets/icons/map/speed-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/map/speed-svgrepo-com.svg");
+  mask-image: url("../assets/icons/map/speed-svgrepo-com.svg");
+  background-color: var(--light-green);
 }
 
 .icon--direction{
-    -webkit-mask-image: url("../assets/icons/map/compass-svgrepo-com.svg");
-    mask-image: url("../assets/icons/map/compass-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/map/compass-svgrepo-com.svg");
+  mask-image: url("../assets/icons/map/compass-svgrepo-com.svg");
+  background-color: var(--light-purple);
 }
