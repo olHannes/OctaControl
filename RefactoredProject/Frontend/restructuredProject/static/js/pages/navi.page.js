@@ -46,7 +46,7 @@ export function renderNavi(root, store) {
           </div>
         </div>
       </div>
-
+        
       <div class="card map-container">
         <div id="main_map"></div>
       </div>
@@ -70,7 +70,7 @@ export function renderNavi(root, store) {
     if(elSpe) elSpe.textContent = (gps.speed == null) ? "-- km/h" : `${gps.speed.toFixed(0)} km/h`;
     if(elDir) elDir.textContent = (gps.heading == null) ? "--°" : `${gps.heading.toFixed(0)}°`;
 
-    if(elAcc) elAcc.textContent = (gps.accuracy == null || gps.quality == null) ? "error" : `${gps.accuracy.toFixed(0)} / ${gps.quality}`;
+    if(elAcc) elAcc.textContent = (gps.accuracy == null || gps.quality == null) ? "error" : `${gps.accuracy.toFixed(0)}`;
     elAcc.dataset.quality = (gps.quality == null) ? "bad" : gps.quality;
 
     const lat = gps.lat, lon = gps.lon;
@@ -108,7 +108,7 @@ function initMainMap() {
 window.addEventListener("view:shown", (e) => {
   if(e.detail.view === "navi") {
     requestAnimationFrame(() => {
-      console.log("resize navi-map");
+      //console.log("resize navi-map");
       main_map.invalidateSize();
     })
   }

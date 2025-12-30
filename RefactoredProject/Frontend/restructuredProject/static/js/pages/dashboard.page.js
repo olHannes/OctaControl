@@ -159,7 +159,7 @@ function initMapOnce() {
 window.addEventListener("view:shown", (e) => {
   if(e.detail.view === "dashboard") {
     requestAnimationFrame(() => {
-      console.log("resize dashboard-map");
+      //console.log("resize dashboard-map");
       map.invalidateSize();
     })
   }
