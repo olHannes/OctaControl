@@ -156,5 +156,13 @@ function initMapOnce() {
     className: "pos-marker",
   });
   marker = L.marker([52.5200, 13.4050], { icon: positionIcon }).addTo(map);
-
 }
+
+window.addEventListener("view:shown", (e) => {
+  if(e.detail.view === "dashboard") {
+    requestAnimationFrame(() => {
+      console.log("resize dashboard-map");
+      map.invalidateSize();
+    })
+  }
+})

@@ -1,5 +1,5 @@
 
-#view-navi {
+#navi {
     height: 100%;
     width: 100%;
     display: flex;
@@ -23,12 +23,6 @@
     height: 100%;
 }
 
-.vertical-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .map-data-block {
     display: flex;
     align-items: self-start;
@@ -39,14 +33,6 @@
 }
 
 
-.quality-bad {
-    color: var(--battery-slash);
-}
-
-.quality-medium {
-    color: var(--battery-low);
-}
-
-.quality-good {
-    color: var(--battery-full);
-}
+[data-quality="poor"]    { color: var(--battery-slash); }
+[data-quality="medium"] { color: var(--battery-low); }
+[data-quality="good"]   { color: var(--battery-full); }

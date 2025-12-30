@@ -14,6 +14,8 @@ export function initRouter() {
       el.classList.toggle("active", k === name);
     }
     buttons.forEach(b => b.classList.toggle("active", b.dataset.view === name));
+
+    window.dispatchEvent(new CustomEvent("view:shown", { detail: { view: name }}));
   }
 
   buttons.forEach(btn => btn.addEventListener("click", () => show(btn.dataset.view)));

@@ -23,11 +23,11 @@ const store = createStore({
     flags: null,
   },
   ui: { theme: "dark", systemColor: "#3aa0ff" },
-  system: { battery: null, internet: true, wifi: null, audioSource: "radio", version: null },
+  system: { battery: 70, internet: true, wifi: null, audioSource: "bluetooth", version: null },
 });
 
-document.documentElement.dataset.theme = store.get().ui.theme;
-document.documentElement.style.setProperty("--system-color", store.get().ui.systemColor);
+//document.documentElement.dataset.theme = store.get().ui.theme;
+//document.documentElement.style.setProperty("--system-color", store.get().ui.systemColor);
 
 
 const router = initRouter();

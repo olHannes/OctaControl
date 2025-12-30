@@ -2,57 +2,82 @@
 let main_map;
 let main_marker;
 
-export function renderNavi(root) {
+export function renderNavi(root, store) {
   root.innerHTML = `
-    <div class="card map-data">
-      <div class="map-data-block">
-        <span class="icon icon--satellites"></span>
-        <div class="vertical-container">
-          <span>--</span>
-          <span class="card-title">Satellites</span>
+    <section class="navi">
+      <div class="card map-data">
+        <div class="map-data-block">
+          <span class="icon icon--satellites"></span>
+          <div class="vertical-container">
+            <span data-kpi="satellites">--</span>
+            <span class="card-title">Satellites</span>
+          </div>
+        </div>
+
+        <div class="map-data-block">
+          <span class="icon icon--altitude"></span>
+          <div class="vertical-container">
+            <span data-kpi="altitude">--m</span>
+            <span class="card-title">Altitude</span>
+          </div>  
+        </div>
+
+        <div class="map-data-block">
+          <span class="icon icon--speed"></span>
+          <div class="vertical-container">
+            <span data-kpi="speed">--km/h</span>
+            <span class="card-title">Speed</span>
+          </div>
+        </div>
+
+        <div class="map-data-block">
+          <span class="icon icon--direction"></span>
+          <div class="vertical-container">
+            <span data-kpi="direction">--°</span>
+            <span class="card-title">Direction</span>
+          </div>
+        </div>
+
+        <div class="map-data-block">
+          <span class="icon icon--accuracy"></span>
+          <div class="vertical-container">
+            <span data-kpi="accuracy" data-quality="bad">error</span>
+            <span class="card-title">Accuracy</span>
+          </div>
         </div>
       </div>
 
-      <div class="map-data-block">
-        <span class="icon icon--altitude"></span>
-        <div class="vertical-container">
-          <span>--m</span>
-          <span class="card-title">Altitude</span>
-        </div>  
+      <div class="card map-container">
+        <div id="main_map"></div>
       </div>
-
-      <div class="map-data-block">
-        <span class="icon icon--speed"></span>
-        <div class="vertical-container">
-          <span>--km/h</span>
-          <span class="card-title">Speed</span>
-        </div>
-      </div>
-
-      <div class="map-data-block">
-        <span class="icon icon--direction"></span>
-        <div class="vertical-container">
-          <span>--°</span>
-          <span class="card-title">Direction</span>
-        </div>
-      </div>
-
-      <div class="map-data-block">
-        <span class="icon icon--accuracy"></span>
-        <div class="vertical-container">
-          <span class="quality-bad">bad</span>
-          <span class="card-title">Quality</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card map-container">
-      <div id="main_map"></div>
-    </div>
+    </section>
   `;
 
   initMainMap();
+
+
+  const elSat  = root.querySelector('[data-kpi="satellites"]');
+  const elAlt  = root.querySelector('[data-kpi="altitude"]');
+  const elSpe  = root.querySelector('[data-kpi="speed"]');
+  const elDir  = root.querySelector('[data-kpi="direction"]');
+  const elAcc  = root.querySelector('[data-kpi="accuracy"]');
+
+  
+  store.subscribeSelector(s => s.sensor, (sensor) => {
+    const gps = sensor?.gps ?? {};
+    if(elSat) elSat.textContent = (gps.sats == null) ? "--" : `${gps.sats}`;
+    if(elAlt) elAlt.textContent = (gps.altitude == null) ? "-- h" : `${gps.altitude.toFixed(1)}m`;
+    if(elSpe) elSpe.textContent = (gps.speed == null) ? "-- km/h" : `${gps.speed.toFixed(0)} km/h`;
+    if(elDir) elDir.textContent = (gps.heading == null) ? "--°" : `${gps.heading.toFixed(0)}°`;
+
+    if(elAcc) elAcc.textContent = (gps.accuracy == null || gps.quality == null) ? "error" : `${gps.accuracy.toFixed(0)} / ${gps.quality}`;
+    elAcc.dataset.quality = (gps.quality == null) ? "bad" : gps.quality;
+
+
+  });
 }
+
+
 
 function initMainMap() {
   if (main_map) return;
@@ -73,3 +98,13 @@ function initMainMap() {
   main_marker = L.marker([52.5200, 13.4050], { icon: positionIcon }).addTo(main_map);
 
 }
+
+
+window.addEventListener("view:shown", (e) => {
+  if(e.detail.view === "navi") {
+    requestAnimationFrame(() => {
+      console.log("resize navi-map");
+      main_map.invalidateSize();
+    })
+  }
+})

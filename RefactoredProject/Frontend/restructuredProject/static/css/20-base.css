@@ -90,7 +90,11 @@ body {
 section { height: 100%; }
 
 
-
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .seperator_vertical {
   height: 58px;
