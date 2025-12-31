@@ -5,7 +5,8 @@ let main_marker;
 export function renderNavi(root, store) {
   root.innerHTML = `
     <section class="navi">
-      <div class="card map-data">
+      <div class="card" style="padding: 0; padding-top: 15px;">
+      <div class="map-data">
         <div class="map-data-block">
           <span class="icon icon--satellites"></span>
           <div class="vertical-container">
@@ -47,8 +48,9 @@ export function renderNavi(root, store) {
         </div>
       </div>
         
-      <div class="card map-container">
+      <div class="map-container">
         <div id="main_map"></div>
+      </div>
       </div>
     </section>
   `;
