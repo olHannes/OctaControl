@@ -4,8 +4,9 @@ import { initRouter } from "./router.js";
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 
 import { renderDashboard } from "./pages/dashboard.page.js";
-import { renderAudio } from "./pages/audio.page.js";
 import { renderNavi } from "./pages/navi.page.js";
+import { renderAudio } from "./pages/audio.page.js";
+import { renderLighting } from "./pages/lighting.page.js";
 import { renderSettings } from "./pages/settings.page.js";
 
 
@@ -26,14 +27,12 @@ const store = createStore({
   system: { battery: 70, internet: true, wifi: null, audioSource: "bluetooth", version: null },
 });
 
-//document.documentElement.dataset.theme = store.get().ui.theme;
-//document.documentElement.style.setProperty("--system-color", store.get().ui.systemColor);
-
 
 const router = initRouter();
 renderDashboard(router.views.dashboard, store);
 renderAudio(router.views.audio, store);
 renderNavi(router.views.navi, store);
+renderLighting(router.views.lighting, store);
 renderSettings(router.views.settings, store);
 
 

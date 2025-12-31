@@ -5,12 +5,13 @@ export function initRouter() {
     dashboard: document.querySelector("#view-dashboard"),
     audio: document.querySelector("#view-audio"),
     navi: document.querySelector("#view-navi"),
-    sensors: document.querySelector("#view-sensors"),
+    lighting: document.querySelector("#view-lighting"),
     settings: document.querySelector("#view-settings"),
   };
 
   function show(name) {
     for (const [k, el] of Object.entries(views)) {
+      if (!el) return;
       el.classList.toggle("active", k === name);
     }
     buttons.forEach(b => b.classList.toggle("active", b.dataset.view === name));
