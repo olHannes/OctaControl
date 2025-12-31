@@ -192,6 +192,11 @@
   mask-image: url("../assets/icons/sun-svgrepo-com.svg");
 }
 
+.icon--light{
+  -webkit-mask-image: url("../assets/icons/light-bulb-line-drawing-svgrepo-com.svg");
+  mask-image: url("../assets/icons/light-bulb-line-drawing-svgrepo-com.svg");
+}
+
 .icon--audio{
   -webkit-mask-image: url("../assets/icons/music-note-svgrepo-com.svg");
   mask-image: url("../assets/icons/music-note-svgrepo-com.svg");

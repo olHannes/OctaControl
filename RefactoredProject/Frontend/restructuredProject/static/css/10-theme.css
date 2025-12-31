@@ -17,21 +17,21 @@
 
 
 
-  --system-color: #3aa0ff;
+  --color-palette-skoda: #25d38a;
+  --color-palette-ocean: #3b82f6;
+  --color-palette-sunset: #fb7b2b;
+  --color-palette-royal: #9b5cff;
+  --color-palette-rose: #ff4fa3;
+  --color-palette-pure: #e9eef6;
+  --color-palette-warm: #f2a100;
+  --color-palette-cool: #1fbad6;
+
+  --system-color: var(--color-palette-sunset);
   --ui-accent: var(--system-color);
   --ui-accent-weak: color-mix(in srgb, var(--system-color) 20%, transparent);
   --ui-accent-border: color-mix(in srgb, var(--system-color) 35%, transparent);
   --ui-accent-hover: color-mix(in srgb, var(--system-color) 85%, white);
   --ui-accent-active: color-mix(in srgb, var(--system-color) 85%, black);
-
-  --color-palette-skoda: ;
-  --color-palette-ocean: ;
-  --color-palette-sunset: ;
-  --color-palette-royal: ;
-  --color-palette-rose: ;
-  --color-palette-pure: ;
-  --color-palette-warm: ;
-  --color-palette-cool: ;
 
   --light-blue: #42A5F5;
   --light-orange: #FFCA28;
