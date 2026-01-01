@@ -12,7 +12,6 @@ export const LIGHTING_PRESETS = [
   { key: "cool", name: "Cool", css: "var(--color-palette-cool)" },
 ];
 
-
 export const lightingService = {
   get() {
     return apiGet("/api/lighting");
@@ -128,13 +127,22 @@ export function renderLighting(root, store) {
   store.subscribeSelector(s => s.lighting, (l) => {
     if(!l) return;
 
-    toggleBtn.checked = !!l.enabled;
-    slider.value = String(l.brightness ?? 0);
-    brightValue.textContent = String(l.brightness ?? 0);
-    slider.disabled = !l.enabled;
-
+    const enabled = !!l.enabled;
+    const brightness = Number(l.brightness ?? 0);
     const preset = LIGHTING_PRESETS.find(p => p.key === l.colorKey) ?? LIGHTING_PRESETS[2];
-    document.documentElement.style.setProperty("--system-color", preset.css);
+
+    toggleBtn.checked = enabled;
+    slider.value = String(brightness);
+    brightValue.textContent = String(brightness);
+    slider.disabled = !enabled;
+
+    root.querySelector(".lighting-card")?.toggleAttribute("data-off", !enabled);
+    
+    if(enabled) {
+      document.documentElement.style.setProperty("--system-color", preset.css);
+    } else {
+      document.documentElement.style.setProperty("--system-color", "#8a7f78");
+    }
   
     grid.querySelectorAll(".preset").forEach(b => {
       if(b.dataset.key === preset.key) b.setAttribute("data-active", "true");
