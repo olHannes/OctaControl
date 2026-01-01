@@ -80,11 +80,26 @@ export function renderLighting(root, store) {
     </section>
   `;
 
+  const toggleBtn = root.querySelector("#lightEnabled");
   const slider = root.querySelector("#brightSlider");
   const brightValue = root.querySelector("#brightValue");
-  slider?.addEventListener("input", () => (brightValue.textContent = slider.value));
-
   const grid = root.querySelector(".preset-grid");
+  
+  store.subscribeSelector(s => s.lighting, (l) => {
+    const preset = LIGHTING_PRESETS.find(p => p.key === l.colorKey) ?? LIGHTING_PRESETS[2];
+    document.documentElement.style.setProperty("--system-color", preset.css);
+  });
+  
+  toggleBtn?.addEventListener("change", function () {
+    const checked = this.checked;
+    console.log(checked);
+  });
+
+  slider?.addEventListener("input", () => {
+    const value = slider.value;
+    brightValue.textContent = value;
+  });
+
   grid?.addEventListener("click", (e) => {
     const btn = e.target.closest(".preset");
     if (!btn) return;
@@ -95,4 +110,13 @@ export function renderLighting(root, store) {
     const c = btn.dataset.color;
     document.documentElement.style.setProperty("--system-color", c);
   });
+}
+
+
+export function loadLightingMock() {
+  const raw = localStorage.getItem("lighting");
+  return raw ? JSON.parse(raw) : { enabled: true, brightness: 70, colorKey: "sunset" };
+}
+export function saveLightingMock(l) {
+  localStorage.setItem("lighting", JSON.stringify(l));
 }

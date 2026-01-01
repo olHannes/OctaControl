@@ -9,6 +9,21 @@ def get_db():
     return conn
 
 
+def get_setting(db, key, default=None):
+    row = db.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
+    return row["value"] if row else default
+
+def set_setting(db, key, value):
+    db.execute("""
+        INSERT INTO settings (key, value, updated_at)
+        VALUES (?, ?, strftime('%s', 'now'))
+        ON CONFLICT(key) DO UPDATE SET
+            value=excluded.value,
+            updated_at=excluded.updated_at
+    """, (key, str(value)))
+
+
+#FOR DEBUG ONLY
 def wipe_db():
     db = get_db()
 
@@ -113,6 +128,15 @@ def init_db():
 
 
     # Initialwerte
+    db.executemany("""
+    INSERT OR IGNORE INTO settings (key, value, updated_at) 
+        VALUES (?, ?, strftime('%s', 'now'))
+        """, [
+            ("lighting.enabled", "1"),
+            ("lighting.brightness", "70"),
+            ("lighting.colorKey", "sunset"),
+    ])
+
     db.execute("""
     INSERT OR IGNORE INTO audio_state VALUES
     (1, 'bluetooth', 30, 0, strftime('%s','now'))

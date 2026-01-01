@@ -1,16 +1,29 @@
 // js/api.js
-export async function apiGet(path) {
-  const res = await fetch(path, { headers: { "Accept": "application/json" } });
-  if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
-  return res.json();
+
+async function request(path, { method = "GET", body } = {}) {
+  const res = await fetch(path, {
+    method,
+    headers: {
+      "Accept": "application/json",
+      ...(body ? { "Content-Type": "application/json" } : {}),
+    },
+    body: body? JSON.stringify(body): undefined,
+  });
+
+  let data = null;
+  const ct =  res.headers.get("content-type") || "";
+  if (ct.includes("application/json")) data = await res.json().catch(() => null);
+
+  if(!res.ok) {
+    const msg = data?.message ?? `${method} ${path} failed: ${res.status}`;
+    const err = new Error(msg);
+    err.status = res.status;
+    err.payload = data;
+    throw err;
+  }
+  return data;
 }
 
-export async function apiPost(path, body) {
-  const res = await fetch(path, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify(body ?? {}),
-  });
-  if (!res.ok) throw new Error(`POST ${path} failed: ${res.status}`);
-  return res.json();
-}
+export const apiGet = (p) => request(p);
+export const apiPost = (p, b) => request(p, { method: "POST", body: b});
+export const apiPatch = (p, b) => request(p, { method: "PATCH", body: b});

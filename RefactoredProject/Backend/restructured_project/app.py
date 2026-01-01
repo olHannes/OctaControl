@@ -8,6 +8,7 @@ from flask_cors import CORS
 from database import init_db
 
 from api.sensors_api import sensors_api
+from api.lighting_api import lighting_api
 from sockets.sensor_socket import init_sensor_socket, init_test
 
 init_db()
@@ -23,7 +24,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 #REST APIs registrieren
 ####################################################################
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
-
+app.register_blueprint(lighting_api, url_prefix="/api/lighting")
 
 #WebSocket initialisieren
 ####################################################################
