@@ -1,4 +1,55 @@
 // js/pages/lighting.page.js
+import {apiGet, apiPatch } from "../api.js";
+
+export const LIGHTING_PRESETS = [
+  { key: "skoda", name: "Skoda", css: "var(--color-palette-skoda)" },
+  { key: "ocean", name: "Ocean", css: "var(--color-palette-ocean)" },
+  { key: "sunset", name: "Sunset", css: "var(--color-palette-sunset)" },
+  { key: "royal", name: "Royal", css: "var(--color-palette-royal)" },
+  { key: "rose", name: "Rose", css: "var(--color-palette-rose)" },
+  { key: "pure", name: "Pure", css: "var(--color-palette-pure)" },
+  { key: "warm", name: "Warm", css: "var(--color-palette-warm)" },
+  { key: "cool", name: "Cool", css: "var(--color-palette-cool)" },
+];
+
+
+export const lightingService = {
+  get() {
+    return apiGet("/api/lighting");
+  },
+  patch(patch) {
+    return apiPatch("/api/lighting", patch);
+  },
+};
+
+let brightnessTimer = null;
+
+export async function loadLighting(store) {
+  const data = await lightingService.get();
+  store.setSlice("lighting", data);
+}
+
+export async function setLightingEnabled(store, enabled) {
+  store.setSlice("lighting", { ...store.getState().lighting, enabled });
+  await lightingService.patch({ enabled });
+}
+
+export function setLightingBrightness(store, brightness) {
+  const b = Number(brightness);
+  store.setSlice("lighting", { ...store.getState().lighting, brightness: b });
+
+  clearTimeout(brightnessTimer);
+  brightnessTimer = setTimeout(() => {
+    lightingService.patch({ brightness: b }).catch(console.error);
+  }, 250);
+}
+
+export async function setLightingColor(store, colorKey) {
+  store.setSlice("lighting", { ...store.getState().lighting, colorKey });
+  await lightingService.patch({ colorKey });
+}
+
+
 export function renderLighting(root, store) {
   root.innerHTML = `
     <section class="lighting">
@@ -46,26 +97,15 @@ export function renderLighting(root, store) {
             <div class="presets__label">Color Presets</div>
 
             <div class="preset-grid" role="list">
-              ${[
-                ["Skoda",   "var(--color-palette-skoda)"],
-                ["Ocean",   "var(--color-palette-ocean)"],
-                ["Sunset", "var(--color-palette-sunset)"],
-                ["Royal", "var(--color-palette-royal)"],
-                ["Rose",   "var(--color-palette-rose)"],
-                ["Pure",  "var(--color-palette-pure)"],
-                ["Warm",  "var(--color-palette-warm)"],
-                ["Cool",   "var(--color-palette-cool)"],
-              ].map(([name, hex], idx) => `
+              ${LIGHTING_PRESETS.map((p) => `
                 <button
                   class="preset"
                   type="button"
                   role="listitem"
-                  data-color="${hex}"
-                  data-name="${name}"
-                  aria-label="${name}"
-                  style="--preset:${hex}"
-                  ${idx === 2 ? 'data-active="true"' : ""}
-                  
+                  data-key="${p.key}"
+                  data-name="${p.name}"
+                  aria-label="${p.name}"
+                  style="--preset:${p.css}"
                 ></button>
               `).join("")}
             </div>
@@ -86,37 +126,36 @@ export function renderLighting(root, store) {
   const grid = root.querySelector(".preset-grid");
   
   store.subscribeSelector(s => s.lighting, (l) => {
+    if(!l) return;
+
+    toggleBtn.checked = !!l.enabled;
+    slider.value = String(l.brightness ?? 0);
+    brightValue.textContent = String(l.brightness ?? 0);
+    slider.disabled = !l.enabled;
+
     const preset = LIGHTING_PRESETS.find(p => p.key === l.colorKey) ?? LIGHTING_PRESETS[2];
     document.documentElement.style.setProperty("--system-color", preset.css);
+  
+    grid.querySelectorAll(".preset").forEach(b => {
+      if(b.dataset.key === preset.key) b.setAttribute("data-active", "true");
+      else b.removeAttribute("data-active");
+    });
   });
   
-  toggleBtn?.addEventListener("change", function () {
-    const checked = this.checked;
-    console.log(checked);
+  toggleBtn.addEventListener("change", (e) => {
+    setLightingEnabled(store, e.currentTarget.checked).catch(console.error);
   });
 
-  slider?.addEventListener("input", () => {
-    const value = slider.value;
-    brightValue.textContent = value;
+  slider.addEventListener("input", (e) => {
+    setLightingBrightness(store, e.currentTarget.value);
   });
 
-  grid?.addEventListener("click", (e) => {
+  grid.addEventListener("click", (e) => {
     const btn = e.target.closest(".preset");
-    if (!btn) return;
-
-    grid.querySelectorAll(".preset").forEach(b => b.removeAttribute("data-active"));
-    btn.setAttribute("data-active", "true");
-
-    const c = btn.dataset.color;
-    document.documentElement.style.setProperty("--system-color", c);
+    if(!btn) return;
+    setLightingColor(store, btn.dataset.key).catch(console.error);
   });
-}
 
+  loadLighting(store).catch(console.error);
 
-export function loadLightingMock() {
-  const raw = localStorage.getItem("lighting");
-  return raw ? JSON.parse(raw) : { enabled: true, brightness: 70, colorKey: "sunset" };
-}
-export function saveLightingMock(l) {
-  localStorage.setItem("lighting", JSON.stringify(l));
 }

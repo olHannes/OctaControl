@@ -97,7 +97,7 @@ function initMainMap() {
   }).addTo(main_map);
 
   const positionIcon = L.icon({
-    iconUrl: "/RefactoredProject/Frontend/restructuredProject/static/assets/icons/map/position-location-svgrepo-com.svg",
+    iconUrl: "../static/assets/icons/map/position-location-svgrepo-com.svg",
     iconSize: [32, 32],
     iconAnchor: [16, 30],
     className: "pos-marker",

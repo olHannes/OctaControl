@@ -1,7 +1,5 @@
-#import eventlet
-#eventlet.monkey_patch()
-
-from flask import Flask
+import os
+from flask import Flask, render_template
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
@@ -15,7 +13,17 @@ init_db()
 
 #App config
 ####################################################################
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(
+        BASE_DIR, "..", "..", "Frontend", "restructuredProject", "templates"
+    ),
+    static_folder=os.path.join(
+        BASE_DIR, "..", "..", "Frontend", "restructuredProject", "static"
+    ),
+)
+
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config["SECRET_KEY"] = "dev"
 
@@ -23,6 +31,10 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 #REST APIs registrieren
 ####################################################################
+@app.route("/")
+def index():
+    return render_template("index.html")
+
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
 

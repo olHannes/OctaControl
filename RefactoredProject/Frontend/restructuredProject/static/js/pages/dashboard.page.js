@@ -148,7 +148,7 @@ function initMapOnce() {
   }).addTo(map);
 
   const positionIcon = L.icon({
-    iconUrl: "/RefactoredProject/Frontend/restructuredProject/static/assets/icons/map/position-location-svgrepo-com.svg",
+    iconUrl: "../static/assets/icons/map/position-location-svgrepo-com.svg",
     iconSize: [32, 32],
     iconAnchor: [16, 30],
     className: "pos-marker",
@@ -159,7 +159,6 @@ function initMapOnce() {
 window.addEventListener("view:shown", (e) => {
   if(e.detail.view === "dashboard") {
     requestAnimationFrame(() => {
-      //console.log("resize dashboard-map");
       map.invalidateSize();
     })
   }
