@@ -1,0 +1,53 @@
+
+.settings {
+    display: flex;
+    justify-content: space-around;
+}
+
+.centered-panel {
+    width: 50%;
+    height: 100%;
+    align-items: start;
+    overflow-y: auto;
+}
+
+.settings .headline, 
+.settings .description,
+.settings h3,
+.settings span {
+    padding: 0;
+    margin: 0;
+}
+
+.settings .panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around;
+    background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
+    border-radius: 16px;
+    padding: 11px 0px;
+    margin: var(--gap) 0;
+    border: 1px solid var(--ui-accent-border);
+}
+
+.icon-wrapper {
+    width: 7dvh;
+    height: 7dvh;
+    background-color: var(--ui-accent-weak);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 10px;
+}
+.settings .icon {
+    height: 100%;
+    border-radius: 10px;
+    background-color: var(--ui-accent);
+}
+
+.subheading {
+    font-weight: lighter;
+    font-size: 1.4rem;
+}

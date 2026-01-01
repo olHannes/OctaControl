@@ -102,3 +102,7 @@ section { height: 100%; }
   border: none;
   background-color: var(--ui-accent-border);
 }
+
+.align-left {
+  align-items: flex-start;
+}
