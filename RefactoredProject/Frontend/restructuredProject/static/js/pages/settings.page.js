@@ -1,3 +1,15 @@
+// js/pages/settings.page.js
+import {apiGet, apiPatch, apiPost } from "../api.js";
+
+export const settingsService = {
+  get() {
+    return apiGet("/api/settings");
+  },
+  patch(patch) {
+    return apiPatch("/api/settings", patch);
+  },
+};
+
 export function renderSettings(root) {
   root.innerHTML = `
     <section class="settings">
@@ -6,35 +18,97 @@ export function renderSettings(root) {
         <p class="description">Manage system preferences and connectivity</p>
 
         <span class="subheading">Connectivity</span>
-        
-        <div class="panel">
-          <div class="icon-wrapper">
-            <span class="icon icon--bluetooth"></span>
+
+        <div class="panel-group">
+          <div class="panel">
+            <div class="icon-wrapper">
+              <span class="icon icon--bluetooth"></span>
+            </div>
+            <div class="vertical-container align-left">
+              <h3>Bluetooth</h3>
+              <span class="description">Connect to audio devices</span>
+            </div>
+            <label class="switch" title="Bluetooth Toggle">
+              <input type="checkbox" id="bluetoothToggle" checked />
+              <span class="switch__track" aria-hidden="true"></span>
+              <span class="switch__thumb" aria-hidden="true"></span>
+            </label>
           </div>
-          <div class="vertical-container align-left">
-            <h3>Bluetooth</h3>
-            <span class="description">Connect to audio devices</span>
+
+          <div class="panel-details" id="bluetoothDetails" aria-hidden="false">
+            <div class="panel-details__inner">
+              <div class="details-grid">
+                <div class="details-card">
+                  <div class="details-title">Paired devices</div>
+                  <ul class="details-list" id="bluetoothPairedList">
+                    <li class="details-item">
+                      <span class="details-item__label">—</span>
+                      <button class="details-btn" type="button" data-action="bt-connect" disabled>Connect</button>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="details-card">
+                  <div class="details-title">Available devices</div>
+                  <div class="details-actions">
+                    <button class="details-btn details-btn--primary" type="button" id="bluetoothScanBtn">Scan</button>
+                  </div>
+                  <ul class="details-list" id="bluetoothScanList">
+                    <li class="details-item">
+                      <span class="details-item__label">—</span>
+                      <button class="details-btn" type="button" data-action="bt-pair" disabled>Pair</button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
-          <label class="switch" title="Bluetooth Toggle">
-            <input type="checkbox" id="bluetoothToggle" checked />
-            <span class="switch__track" aria-hidden="true"></span>
-            <span class="switch__thumb" aria-hidden="true"></span>
-          </label>
         </div>
 
-        <div class="panel">
-          <div class="icon-wrapper">
-            <span class="icon icon--wlan-off"></span>
+        <div class="panel-group">
+          <div class="panel">
+            <div class="icon-wrapper">
+              <span class="icon icon--wlan-off"></span>
+            </div>
+            <div class="vertical-container align-left">
+              <h3>Wi-Fi</h3>
+              <span class="description">Connect to wireless networks</span>
+            </div>
+            <label class="switch" title="Wifi Toggle">
+              <input type="checkbox" id="wifiToggle" />
+              <span class="switch__track" aria-hidden="true"></span>
+              <span class="switch__thumb" aria-hidden="true"></span>
+            </label>
           </div>
-          <div class="vertical-container align-left">
-            <h3>Wi-Fi</h3>
-            <span class="description">Connect to wireless networks</span>
+
+          <div class="panel-details" id="wifiDetails" aria-hidden="true">
+            <div class="panel-details__inner">
+              <div class="details-grid">
+                <div class="details-card">
+                  <div class="details-title">Connected network</div>
+                  <ul class="details-list" id="wifiConnectedList">
+                    <li class="details-item">
+                      <span class="details-item__label">—</span>
+                      <button class="details-btn" type="button" data-action="wifi-disconnect" disabled>Disconnect</button>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="details-card">
+                  <div class="details-title">Available networks</div>
+                  <div class="details-actions">
+                    <button class="details-btn details-btn--primary" type="button" id="wifiScanBtn">Scan</button>
+                  </div>
+                  <ul class="details-list" id="wifiScanList">
+                    <li class="details-item">
+                      <span class="details-item__label">—</span>
+                      <button class="details-btn" type="button" data-action="wifi-connect" disabled>Connect</button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
-          <label class="switch" title="Wifi Toggle">
-            <input type="checkbox" id="wifiToggle" />
-            <span class="switch__track" aria-hidden="true"></span>
-            <span class="switch__thumb" aria-hidden="true"></span>
-          </label>
         </div>
 
         <span class="subheading">System</span>
@@ -90,4 +164,22 @@ export function renderSettings(root) {
       </div>
     </section>
   `;
+
+  const btToggle = root.querySelector("#bluetoothToggle");
+  const btDetails = root.querySelector("#bluetoothDetails");
+  const wifiToggle = root.querySelector("#wifiToggle");
+  const wifiDetails = root.querySelector("#wifiDetails");
+
+  const syncDetails = (toggleEl, detailsEl) => {
+    if (!toggleEl || !detailsEl) return;
+    const open = !!toggleEl.checked;
+    detailsEl.classList.toggle("is-open", open);
+    detailsEl.setAttribute("aria-hidden", String(!open));
+  };
+
+  btToggle?.addEventListener("change", () => syncDetails(btToggle, btDetails));
+  wifiToggle?.addEventListener("change", () => syncDetails(wifiToggle, wifiDetails));
+  syncDetails(btToggle, btDetails);
+  syncDetails(wifiToggle, wifiDetails);
+
 }
