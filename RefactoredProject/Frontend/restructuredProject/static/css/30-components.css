@@ -86,6 +86,45 @@
     margin-bottom: 10px;
 }
 
+
+.switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  display: inline-block;
+}
+.switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.switch__track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.14);
+  transition: 180ms;
+}
+.switch__thumb {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.9);
+  transition: 180ms;
+}
+.switch input:checked ~ .switch__track {
+  background: color-mix(in oklab, var(--ui-accent) 55%, rgba(255,255,255,0.10));
+}
+.switch input:checked ~ .switch__thumb {
+  transform: translateX(20px);
+}
+
+
+
 .icon-tile {
     width: 34px;
     height: 34px;
@@ -112,8 +151,6 @@
   mask-size: contain;
 }
 
-
-
 .icon-tile{
   width: 34px;
   height: 34px;
@@ -135,10 +172,45 @@
   mask-image: url("../assets/icons/internet-3-svgrepo-com.svg");
   background-color: var(--network);
 }
+
 .icon--bluetooth{
   -webkit-mask-image: url("../assets/icons/bluetooth-svgrepo-com.svg");
   mask-image: url("../assets/icons/bluetooth-svgrepo-com.svg");
   background-color: var(--bluetooth);
+}
+
+.icon--wlan-on{
+  -webkit-mask-image: url("../assets/icons/wifi-svgrepo-com.svg");
+  mask-image: url("../assets/icons/wifi-svgrepo-com.svg");
+  background-color: var(--network);
+}
+
+.icon--wlan-off{
+  -webkit-mask-image: url("../assets/icons/wifi-slash-svgrepo-com.svg");
+  mask-image: url("../assets/icons/wifi-slash-svgrepo-com.svg");
+  background-color: var(--bluetooth);
+}
+
+.icon--update{
+  -webkit-mask-image: url("../assets/icons/download-minimalistic-svgrepo-com.svg");
+  mask-image: url("../assets/icons/download-minimalistic-svgrepo-com.svg");
+}
+
+.icon--restart{
+  -webkit-mask-image: url("../assets/icons/restart-svgrepo-com.svg");
+  mask-image: url("../assets/icons/restart-svgrepo-com.svg");
+}
+
+.icon--shutdown{
+  -webkit-mask-image: url("../assets/icons/system-shutdown-svgrepo-com.svg");
+  mask-image: url("../assets/icons/system-shutdown-svgrepo-com.svg");
+  background-color: var(--system-shutdown);
+}
+
+.icon--arrow{
+  -webkit-mask-image: url("../assets/icons/arrow-right-1-svgrepo-com.svg");
+  mask-image: url("../assets/icons/arrow-right-1-svgrepo-com.svg");
+  background-color: var(--muted);
 }
 
 .icon--radio{

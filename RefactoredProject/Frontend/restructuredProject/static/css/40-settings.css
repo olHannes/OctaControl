@@ -4,6 +4,22 @@
     justify-content: space-around;
 }
 
+.settings .headline {
+    margin: 0;
+    padding: 0;
+}
+
+.settings h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.description {
+    color: var(--text);
+    padding: 0;
+    margin: 0;
+}
+
 .centered-panel {
     width: 50%;
     height: 100%;
@@ -11,25 +27,58 @@
     overflow-y: auto;
 }
 
-.settings .headline, 
-.settings .description,
-.settings h3,
-.settings span {
-    padding: 0;
+.subheading {
+    font-weight: lighter;
+    font-size: 1.4rem;
+    margin-top: 13px;
+    margin-bottom: 5px;
+    color: var(--text);
+}
+
+.panel .subheading {
+    font-size: 1.3rem;
     margin: 0;
+    margin-bottom: 7px;
+    color: white;
 }
 
 .settings .panel {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+
     width: 100%;
-    justify-content: space-around;
     background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
     border-radius: 16px;
-    padding: 11px 0px;
-    margin: var(--gap) 0;
+    
+    padding: 11px 16px;
+    margin: 2px 0px;
     border: 1px solid var(--ui-accent-border);
+    transition: background 160ms ease, border-color 160ms ease;
+}
+
+.settings .panel .switch,
+.settings .panel .icon--arrow {
+    margin-left: auto;
+}
+
+.settings .panel-system:hover {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card-grad-1) 82%, white),
+    color-mix(in srgb, var(--card-grad-2) 82%, white)
+  );
+  border-color: color-mix(in srgb, var(--ui-accent-border) 70%, white);
+}
+
+.settings .panel-system.panel-shutdown:hover {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--system-shutdown-light) 92%, white),
+    var(--system-shutdown-light)
+  );
 }
 
 .icon-wrapper {
@@ -38,16 +87,42 @@
     background-color: var(--ui-accent-weak);
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
     border-radius: 10px;
-}
-.settings .icon {
-    height: 100%;
-    border-radius: 10px;
-    background-color: var(--ui-accent);
 }
 
-.subheading {
+.settings .icon {
+    height: 100%;
+    width: 45%;
+    border-radius: 10px;
+}
+
+.shutdown-background {
+    background-color: var(--system-shutdown-light);
+}
+.settings .power-off {
+    color: var(--system-shutdown);
+}
+
+.settings .information {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 6px 20px;
+    gap: 2px;
+    margin-top: 15px;
+}
+
+.line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.light-text {
     font-weight: lighter;
-    font-size: 1.4rem;
+    font-size: 1rem;
+    margin: 0;
+    color: var(--text);
 }

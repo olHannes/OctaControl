@@ -5,6 +5,8 @@
   --fg: #e6ebf2;
   --muted: #8b93a6;
 
+  --text: #ffffffad;
+
   --gap: 14px;
   --shadow: 0 6px 20px rgba(0,0,0,.35);
 
@@ -51,6 +53,7 @@
   --favourite: #FB923C;
 
   --system-shutdown: #DC2626;
+  --system-shutdown-light: #a919193b;
   --system-shutdown-muted: #FCA5A5;
 
 }
