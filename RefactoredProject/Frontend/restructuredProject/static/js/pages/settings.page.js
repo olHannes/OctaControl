@@ -37,6 +37,34 @@ export const settingsService = {
 };
 
 
+function renderScannedNetworks(networks) {
+  const list = document.getElementById("wifiScanList");
+  if(!list) return;
+
+  list.innerHTML = "";
+  if(!Array.isArray(networks) || networks.length === 0) {
+    list.appendChild(createEmptyItem("No networks available"));
+    return;
+  }
+  networks.forEach(({ ssid, signal }) => {
+    const li = document.createElement("li");
+    li.className = "details-item";
+    const label = document.createElement("span");
+    label.className = "details-item__label";
+    label.textContent = ssid;
+    const button = document.createElement("button");
+    button.className = "details-btn";
+    button.type = "button";
+    button.textContent = "Connect";
+    button.dataset.ssid = ssid;
+    button.dataset.action = "wifi-connect";
+    button.disabled = false;
+
+    li.appendChild(label);
+    li.appendChild(button);
+    list.appendChild(li);
+  })
+}
 function renderKnownNetworks(networks, connectedSsid) {
   const list = document.getElementById("wifiConnectedList");
   if (!list) return;
@@ -89,7 +117,6 @@ function createEmptyItem(text) {
 
 
 
-
 export async function loadSoftwareVersion(store) {
   const data = await settingsService.version();
   store.setSlice("software", data);
@@ -100,6 +127,11 @@ export async function loadWifiStatus(store) {
   const knownNetworks = await settingsService.getKnownWifi();
   store.setSlice("network", wifiStatus);
   store.setSlice("network", knownNetworks);
+}
+
+export async function scanWifiNetworks(store) {
+  const data = await settingsService.scanWifi();
+  store.setSlice("network", data);
 }
 
 
@@ -357,6 +389,9 @@ export function renderSettings(root, store) {
   loadSoftwareVersion(store);
   loadWifiStatus(store);
 
+  const wifiScan = root.querySelector("#wifiScanBtn");
+  wifiScan.addEventListener("click", () => scanWifiNetworks(store));
+
 
   const versionName = root.querySelector("#version");
   const versionDate = root.querySelector("#update");
@@ -380,6 +415,16 @@ export function renderSettings(root, store) {
   store.subscribeSelector(s => s.network, (l) => {
     console.log(l);
     renderKnownNetworks(l.knownNetworks, l.ssid);
+    renderScannedNetworks(l.scannedNetworks);
+    
+    const wifiToggle = root.querySelector("#wifiToggle");
+    const wifiDetails = root.querySelector("#wifiDetails");
+    if (!wifiToggle || !wifiDetails) return;
+    const shouldBeOn = l.power === "on";
+    if (wifiToggle.checked !== shouldBeOn) {
+      wifiToggle.checked = shouldBeOn;
+    }
+    syncDetails(wifiToggle, wifiDetails);
   });
 
 }

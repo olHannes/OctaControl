@@ -136,7 +136,7 @@ def scan_wifi():
             sig = normalize_signal(sig + random.randint(-3, 3))
             networks.append({"ssid": ssid, "signal": str(sig)})
 
-        return jsonify({"networks": networks}), 200
+        return jsonify({"scannedNetworks": networks}), 200
 
     except TimeoutError:
         return jsonify({"error": "Command timed out (simulated)"}), 504

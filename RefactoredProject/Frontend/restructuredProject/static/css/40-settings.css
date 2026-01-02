@@ -187,6 +187,8 @@
   border: 1px solid color-mix(in srgb, var(--ui-accent-border) 65%, transparent);
   background: color-mix(in srgb, var(--card-grad-2) 18%, transparent);
   padding: 12px 12px 10px 12px;
+  max-height: 50dvh;
+  overflow-y: auto;
 }
 
 .details-title{
