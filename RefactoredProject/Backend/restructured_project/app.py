@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 from database import init_db
 
+from api.system_api import system_api
 from api.sensors_api import sensors_api
 from api.lighting_api import lighting_api
 from sockets.sensor_socket import init_sensor_socket, init_test
@@ -35,6 +36,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 def index():
     return render_template("index.html")
 
+app.register_blueprint(system_api, url_prefix="/api/system")
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
 
