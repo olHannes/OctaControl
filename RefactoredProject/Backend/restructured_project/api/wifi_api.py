@@ -1,23 +1,64 @@
 from flask import Blueprint, jsonify, request
 import subprocess
-from utils.Logger import Logger
+import os
+from typing import List, Optional
+
+#from utils.Logger import Logger
 
 wlan_api = Blueprint("wlan_api", __name__, url_prefix="/api/wlan")
 
 wlanApiTag = "WlanApi"
-log = Logger()
+#log = Logger()
 
+NMCLI_ENV = {
+    **os.environ,
+    "LANG": "C",
+    "LC_ALL": "C",
+}
+
+DEFAULT_TIMEOUT = 8
+
+def run_cmd(args: List[str], timeout: int = DEFAULT_TIMEOUT, check: bool = False):
+    """
+    Einheitlicher subprocess wrapper
+    """
+    return subprocess.run(
+        args,
+        capture_output=True,
+        text=True,
+        env=NMCLI_ENV,
+        timeout=timeout,
+        check=check
+    )
+
+def get_wifi_device() -> Optional[str]:
+    """
+    search for first device with TYPE=wifi
+    nmcli -t -f DEVICE,TYPE dev status -> z.B. 'wlan0:wifi'
+    """
+    r = run_cmd(["nmcli", "-t", "-f", "DEVICE,TYPE", "dev", "status"])
+    if r.returncode != 0:
+        return None
+    for line in r.stdout.splitlines():
+        if not line:
+            continue
+        dev, typ = (line.split(":", 1) + [""])[:2]
+        if typ == "wifi":
+            return dev
+    return None
 
 
 @wlan_api.route("/status", methods=["GET"])
 def wlan_status():
     """
     provides the current wlan status
-    """
-    log.verbose(wlanApiTag, "POST /status received")
-    
+    """    
     try:
-        wifi_power_output = subprocess.check_output(["nmcli", "radio", "wifi"]).decode().strip()
+        wifi_power = run_cmd(["nmcli", "radio", "wifi"])
+        if wifi_power.returncode != 0:
+            return jsonify({"error": wifi_power.stderr.strip()}), 500
+        wifi_power_output = wifi_power.stdout.strip()
+
         state = "on" if wifi_power_output.lower() == "enabled" else "off"
 
         if state == "off":
@@ -28,13 +69,18 @@ def wlan_status():
                 "ip": None,
                 "signal": None
             }), 200
+        
+        wifi_dev = get_wifi_device()
+        con_info = run_cmd(
+            ["nmcli", "-t", "-f", "IN-USE,SSID,SIGNAL", "dev", "wifi"]
+        )
 
-        con_info = subprocess.check_output(
-            ["nmcli", "-t", "-f", "active,ssid,signal", "dev", "wifi"]
-        ).decode().strip().splitlines()
+        if con_info.returncode != 0:
+            return jsonify({"error": con_info.stderr.strip()}), 500
+        
+        active_line = next((line for line in con_info.stdout.splitlines() if line.startswith("*:")), None)
 
-        active_connection = next((line for line in con_info if line.startswith("ja:")), None)
-        if not active_connection:
+        if not active_line:
             return jsonify({
                 "state": "on",
                 "status": "disconnected",
@@ -43,10 +89,20 @@ def wlan_status():
                 "signal": None
             }), 200
         
-        _, ssid, signal = active_connection.split(":")
+        _, ssid, signal = active_line.split(":", 2)
 
-        ip_output = subprocess.check_output(["hostname", "-I"]).decode().strip()
-        ip_address = ip_output.split()[0] if ip_output else "unbekannt"
+        ip_address = None
+        if wifi_dev:
+            ipr = run_cmd(["nmcli", "-t", "-g", "IP4.ADDRESS", "dev", "show", wifi_dev])
+            if ipr.returncode == 0:
+                ip_address = (ipr.stdout.strip().splitlines()[0].split("/", 1)[0]
+                              if ipr.stdout.strip() else None)
+        if not ip_address:
+            ipr2 = run_cmd(["hostname", "-I"])
+            ip_address = ipr2.stdout.split()[0] if ipr2.stdout else None
+
+        #ip_output = subprocess.check_output(["hostname", "-I"]).decode().strip()
+        #ip_address = ip_output.split()[0] if ip_output else "unbekannt"
 
         return jsonify({
             "state": "on",
@@ -55,8 +111,12 @@ def wlan_status():
             "ip": ip_address,
             "signal": signal
         })
+    
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
     except Exception as e:
-        log.error(wlanApiTag, f"/status: failed to get status - {e}")
         return jsonify({"error": f"Failed to get Wlan state - {e}"}), 500
 
 
@@ -67,26 +127,26 @@ def wlan_power():
     Payload: {"state": "on"|"off"}
     WLAN Ein- oder Ausschalten via rfkill
     """
-    log.verbose(wlanApiTag, "POST /power received")
+    #log.verbose(wlanApiTag, "POST /power received")
     data = request.json
     if not data or "state" not in data:
-        log.error(wlanApiTag, "/power: Missing parameter")
+        #log.error(wlanApiTag, "/power: Missing parameter")
         return jsonify({"error": "Missing 'state' parameter"}), 400
 
     state = data["state"].lower()
     try:
         if state == "on":
-            subprocess.run(["rfkill", "unblock", "wifi"], check=True)
-
+            run_cmd(["rfkill", "unblock", "wifi"], timeout=DEFAULT_TIMEOUT, check=True)
         elif state == "off":
-            subprocess.run(["rfkill", "block", "wifi"], check=True)
+            run_cmd(["rfkill", "block", "wifi"], timeout=DEFAULT_TIMEOUT, check=True)
         else:
-            log.error(wlanApiTag, "/power: invalid state")
             return jsonify({"error": "Invalid state, use 'on' or 'off'"}), 400
 
         return jsonify({"status": f"WLAN turned {state}"})
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
     except subprocess.CalledProcessError as e:
-        log.error(wlanApiTag, f"/power: failed to toggle wlan - {e}")
+        #log.error(wlanApiTag, f"/power: failed to toggle wlan - {e}")
         return jsonify({"error": f"Failed to set WLAN state - {e}"}), 500
 
 
@@ -97,13 +157,15 @@ def scan_wifi():
     Scans the wifi and returns a list of reachable networks
     return value: networs = [{ssid, signal}, ...]
     """
-    log.verbose(wlanApiTag, "GET /scan received")
+    #log.verbose(wlanApiTag, "GET /scan received")
     try:
-        subprocess.run(["nmcli", "dev", "wifi", "rescan"], check=True)
-        result = subprocess.check_output(
-            ["nmcli", "-t", "-f", "ssid,signal", "dev", "wifi"], 
-            stderr=subprocess.STDOUT
-        ).decode("utf-8").strip().splitlines()
+        run_cmd(["nmcli", "dev", "wifi", "rescan"], timeout=DEFAULT_TIMEOUT, check=True)
+
+        r = run_cmd(["nmcli", "-t", "-f", "SSID,SIGNAL", "dev", "wifi"], timeout=DEFAULT_TIMEOUT)
+        if r.returncode != 0:
+            return jsonify({"error": r.stderr.strip()}), 500
+        
+        result = r.stdout.strip().splitlines()
 
         network_map = {}
         for line in result:
@@ -124,12 +186,11 @@ def scan_wifi():
     
         networks = list(network_map.values())
         return jsonify({ "networks": networks }), 200
-
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
     except subprocess.CalledProcessError as e:
-        log.error(wlanApiTag, f"/scan failed - {e.output.decode().strip()}")
         return jsonify({ "error": "Scan command failed" }), 500
     except Exception as e:
-        log.error(wlanApiTag, f"/scan failed - {e}")
         return jsonify({ "error": f"Failed to scan - {e}" }), 500
 
 
@@ -139,15 +200,9 @@ def known_wifi():
     """
     Returns a list of known WIFI networks
     """
-    log.verbose(wlanApiTag, "GET /known received")
     try:
-        result = subprocess.run(
-            ["nmcli", "-t", "-f", "name,type", "connection", "show"],
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
+        result = run_cmd(["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"], timeout=DEFAULT_TIMEOUT)
+
         lines = result.stdout.strip().split("\n")
         wifi_connections = []
 
@@ -161,40 +216,41 @@ def known_wifi():
                     "ssid": name
                 })
         return jsonify({ "networks": wifi_connections }), 200
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
     except subprocess.CalledProcessError as e:
-        log.error(wlanApiTag, f"Failed to get known networks - {e.stderr}")
         return jsonify({ "error": "Could not list known networks" }), 500
 
 
 
 @wlan_api.route("/connect", methods=["POST"])
 def connect_to_wifi():
-    log.verbose(wlanApiTag, "POST /connect received")
     try:
         data = request.json
         if not data or "ssid" not in data:
-            log.error(wlanApiTag, "/connect: Missing 'ssid'")
             return jsonify({"error": "Missing 'ssid'"}), 400
         
         ssid = data["ssid"]
         password = data.get("password")
 
-        subprocess.run(["nmcli", "device", "disconnect", "wlan0"], check=False)
+        wifi_dev = get_wifi_device()
+        if wifi_dev:
+            run_cmd(["nmcli", "wifi", "disconnect", wifi_dev], timeout=DEFAULT_TIMEOUT, check=False)
 
+        cmd = ["nmcli", "dev", "wifi", "connect", ssid]
         if password:
-            cmd = ["nmcli", "dev", "wifi", "connect", ssid, "password", password]
-        else:
-            cmd = ["nmcli", "dev", "wifi", "connect", ssid]
+            cmd += ["password", password]
 
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = run_cmd(cmd, timeout=DEFAULT_TIMEOUT)
 
         if result.returncode != 0:
-            return jsonify({"error": "Failed to connect - " + result.stderr}), 500
+            return jsonify({"error": result.stderr.strip()}), 500
 
         return jsonify({"status": f"Connected to {ssid}"}), 200
 
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
     except Exception as e:
-        log.error(wlanApiTag, f"Failed to connect with {data.get('ssid')} - {e}")
         return jsonify({"error": f"Failed to connect to wifi - {e}"}), 500
 
     
@@ -205,23 +261,19 @@ def disconnect_to_wifi():
     Payload: {"ssid": "<network_name>"}
     Tries to disconnect the Raspberry Pi from the given WiFi network.
     """
-    log.verbose(wlanApiTag, "POST /disconnect received")
     try:
         data = request.json
         if not data or "ssid" not in data:
-            log.error(wlanApiTag, "/disconnect: Missing 'ssid'")
             return jsonify({"error": "Missing 'ssid'"}), 400
         
         ssid = data["ssid"]
-
-        result = subprocess.run(["nmcli", "connection", "down", ssid], capture_output=True, text=True)
+        result = run_cmd(["nmcli", "connection", "down", ssid], timeout=DEFAULT_TIMEOUT)
 
         if result.returncode != 0:
-            log.error(wlanApiTag, f"Disconnect failed: {result.stderr.strip()}")
             return jsonify({"error": f"Failed to disconnect: {result.stderr.strip()}"}), 500
-        
         return jsonify({"status": f"Disconnected from {ssid}"}), 200
-
+    
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Command timed out"}), 504
     except Exception as e:
-        log.error(wlanApiTag, f"Exception during disconnect from {ssid} - {e}")
         return jsonify({"error": f"Failed to disconnect from WiFi: {e}"}), 500

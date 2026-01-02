@@ -1,67 +1,74 @@
 
 .settings {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .settings .headline {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .settings h3 {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .description {
-    color: var(--text);
-    padding: 0;
-    margin: 0;
+  color: var(--text);
+  padding: 0;
+  margin: 0;
 }
 
 .centered-panel {
-    width: 50%;
-    height: 100%;
-    align-items: start;
-    overflow-y: auto;
+  width: 65%;
+  height: 100%;
+  align-items: start;
+  overflow-y: auto;
+  -webkit-box-shadow: 0px 0px 47px -1px var(--ui-accent-border);
+  box-shadow: 0px 0px 47px -1px var(--ui-accent-border);
+  padding: 17px;
+  border-radius: 22px;
+}
+.centered-panel::-webkit-scrollbar {
+  display: none;
 }
 
 .subheading {
-    font-weight: lighter;
-    font-size: 1.4rem;
-    margin-top: 13px;
-    margin-bottom: 5px;
-    color: var(--text);
+  font-weight: lighter;
+  font-size: 1.4rem;
+  margin-top: 13px;
+  margin-bottom: 5px;
+  color: var(--text);
 }
 
 .panel .subheading {
-    font-size: 1.3rem;
-    margin: 0;
-    margin-bottom: 7px;
-    color: white;
+  font-size: 1.3rem;
+  margin: 0;
+  margin-bottom: 7px;
+  color: white;
 }
 
 .settings .panel {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 14px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
 
-    width: 100%;
-    background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
-    border-radius: 16px;
-    
-    padding: 11px 16px;
-    margin: 2px 0px;
-    border: 1px solid var(--ui-accent-border);
-    transition: background 160ms ease, border-color 160ms ease;
+  width: 100%;
+  background: linear-gradient(135deg, var(--card-grad-1), var(--card-grad-2));
+  border-radius: 16px;
+  
+  padding: 11px 16px;
+  margin: 2px 0px;
+  border: 1px solid var(--ui-accent-weak);
+  transition: background 160ms ease, border-color 160ms ease;
 }
 
 .settings .panel .switch,
 .settings .panel .icon--arrow {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .settings .panel-system:hover {
@@ -82,49 +89,49 @@
 }
 
 .icon-wrapper {
-    width: 7dvh;
-    height: 7dvh;
-    background-color: var(--ui-accent-weak);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
+  width: 7dvh;
+  height: 7dvh;
+  background-color: var(--ui-accent-weak);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
 }
 
 .settings .icon {
-    height: 100%;
-    width: 45%;
-    border-radius: 10px;
+  height: 100%;
+  width: 45%;
+  border-radius: 10px;
 }
 
 .shutdown-background {
-    background-color: var(--system-shutdown-light);
+  background-color: var(--system-shutdown-light);
 }
 .settings .power-off {
-    color: var(--system-shutdown);
+  color: var(--system-shutdown);
 }
 
 .settings .information {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 6px 20px;
-    gap: 2px;
-    margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 6px 20px;
+  gap: 2px;
+  margin-top: 15px;
 }
 
 .line {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .light-text {
-    font-weight: lighter;
-    font-size: 1rem;
-    margin: 0;
-    color: var(--text);
+  font-weight: lighter;
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text);
 }
 
 

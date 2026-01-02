@@ -8,18 +8,123 @@ export const settingsService = {
   shutdown() {
     return apiPost("/api/system/shutdown");
   },
-  get() {
-    return apiGet("/api/settings");
+  restart() {
+    return apiPost("/api/system/reboot");
   },
-  patch(patch) {
-    return apiPatch("/api/settings", patch);
+  update() {
+    return apiPost("/api/system/update");
+  },
+
+
+  toggleWifi(enabled){
+    return apiPost("/api/wlan/power", {"state": enabled ? "on": "off"});
+  },
+  getWifiStatus(){
+    return apiGet("/api/wlan/status");
+  },
+  getKnownWifi(){
+    return apiGet("/api/wlan/known");
+  },
+  scanWifi(){
+    return apiGet("/api/wlan/scan");
+  },
+  connectWifi(ssid, password){
+    return apiPost("/api/wlan/connect", {"ssid": ssid, "password": password});
+  },
+  disconnectWifi(ssid){
+    return apiPost("/api/wlan/disconnect", {"ssid": ssid});
   },
 };
+
+
+function renderKnownNetworks(networks, connectedSsid) {
+  const list = document.getElementById("wifiConnectedList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  if (!Array.isArray(networks) || networks.length === 0) {
+    list.appendChild(createEmptyItem("No known networks"));
+    return;
+  }
+
+  networks.forEach(({ ssid }) => {
+    const li = document.createElement("li");
+    li.className = "details-item";
+
+    const label = document.createElement("span");
+    label.className = "details-item__label";
+    label.textContent = ssid;
+
+    const button = document.createElement("button");
+    button.className = "details-btn";
+    button.type = "button";
+
+    if (ssid === connectedSsid) {
+      button.textContent = "Disconnect";
+      button.dataset.action = "wifi-disconnect";
+      button.dataset.ssid = ssid;
+      button.disabled = false;
+    } else {
+      button.textContent = "Not connected";
+      button.disabled = true;
+    }
+    li.appendChild(label);
+    li.appendChild(button);
+    list.appendChild(li);
+  });
+}
+function createEmptyItem(text) {
+  const li = document.createElement("li");
+  li.className = "details-item";
+
+  const label = document.createElement("span");
+  label.className = "details-item__label";
+  label.textContent = text;
+
+  li.appendChild(label);
+  return li;
+}
+
+
+
 
 
 export async function loadSoftwareVersion(store) {
   const data = await settingsService.version();
   store.setSlice("software", data);
+}
+
+export async function loadWifiStatus(store) {
+  const wifiStatus = await settingsService.getWifiStatus();
+  const knownNetworks = await settingsService.getKnownWifi();
+  store.setSlice("network", wifiStatus);
+  store.setSlice("network", knownNetworks);
+}
+
+
+let restartTimer = null;
+
+export function restartSystem(root) {
+  const restartText = root.querySelector("#restartText");
+  if(!restartText) return;
+
+  if(restartTimer !== null) {
+    clearTimeout(restartTimer);
+    restartTimer = null;
+    restartText.textContent = "Restart the infotainment system";
+    return;
+  }
+  restartText.textContent = "Restarting in 3 seconds - click to cancle";
+  restartTimer = setTimeout(async () => {
+    restartTimer = null;
+    restartText.textContent = "Restarting...";
+    try {
+      await settingsService.restart();
+    } catch (e) {
+      restartText.textContent = "Restart the infotainment system";
+    }
+  }, 3000);
 }
 
 let shutdownTimer = null;
@@ -90,7 +195,7 @@ export function renderSettings(root, store) {
               <span class="description">Connect to audio devices</span>
             </div>
             <label class="switch" title="Bluetooth Toggle">
-              <input type="checkbox" id="bluetoothToggle" checked />
+              <input type="checkbox" id="bluetoothToggle"/>
               <span class="switch__track" aria-hidden="true"></span>
               <span class="switch__thumb" aria-hidden="true"></span>
             </label>
@@ -185,13 +290,13 @@ export function renderSettings(root, store) {
           <span class="icon icon--arrow" style="height: 50%;" id="updateIcon"></span>
         </div>
 
-        <div class="panel panel-system">
+        <div class="panel panel-system" id="restartBtn">
           <div class="icon-wrapper">
             <span class="icon icon--restart"></span>
           </div>
           <div class="vertical-container align-left">
             <h3>Restart</h3>
-            <span class="description">Restart the infotainment system</span>
+            <span class="description" id="restartText">Restart the infotainment system</span>
           </div>
           <span class="icon icon--arrow" style="height: 50%;"></span>
         </div>
@@ -243,10 +348,15 @@ export function renderSettings(root, store) {
   syncDetails(btToggle, btDetails);
   syncDetails(wifiToggle, wifiDetails);
 
-  const powerBtn = root.querySelector(".power-off");
+  const powerBtn = root.querySelector(".panel-shutdown");
   if(powerBtn) powerBtn.addEventListener("click", () => shutdownSystem(root));
+
+  const restartBtn = root.querySelector("#restartBtn");
+  if(restartBtn) restartBtn.addEventListener("click", () => restartSystem(root));
   
   loadSoftwareVersion(store);
+  loadWifiStatus(store);
+
 
   const versionName = root.querySelector("#version");
   const versionDate = root.querySelector("#update");
@@ -265,6 +375,11 @@ export function renderSettings(root, store) {
 
     updateIcon.style.background = l.dirty ? "var(--system-shutdown)" : "var(--muted)";
     versionDate.style.color = l.dirty ? "var(--system-shutdown)" : "white";
+  });
+
+  store.subscribeSelector(s => s.network, (l) => {
+    console.log(l);
+    renderKnownNetworks(l.knownNetworks, l.ssid);
   });
 
 }

@@ -6,7 +6,7 @@ class SensorService:
 
     def __init__(self):
         try:
-            self.reader = SensorUartReader("COM7", 115200)
+            self.reader = SensorUartReader("COM12", 115200)
         except:
             self.reader = DummyUartReader()
 

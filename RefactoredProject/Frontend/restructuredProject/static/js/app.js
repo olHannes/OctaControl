@@ -24,7 +24,8 @@ const store = createStore({
     flags: null,
   },
   ui: { theme: "dark", systemColor: "#3aa0ff" },
-  system: { battery: 70, internet: true, wifi: null, audioSource: "bluetooth", version: null },
+  system: { battery: 70, audioSource: "bluetooth", version: null },
+  network: { power: null, state: null, internet: null, ip: null, ssid: null, signal: null, knownNetworks: [] },
   software: { branch: null, commit: null, date: null, dirty: null },
   lighting: { enabled: null, brightness: null, colorKey: null },
 });

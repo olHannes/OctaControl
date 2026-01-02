@@ -10,6 +10,8 @@ from api.sensors_api import sensors_api
 from api.lighting_api import lighting_api
 from sockets.sensor_socket import init_sensor_socket, init_test
 
+from api.wlan_mock import wlan_api
+
 init_db()
 
 #App config
@@ -39,6 +41,8 @@ def index():
 app.register_blueprint(system_api, url_prefix="/api/system")
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
+
+app.register_blueprint(wlan_api, url_prefix="/api/wlan")
 
 #WebSocket initialisieren
 ####################################################################
