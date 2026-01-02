@@ -1,41 +1,5 @@
 // js/pages/settings.page.js
-import {apiGet, apiPatch, apiPost } from "../api.js";
-
-export const settingsService = {
-  version() {
-    return apiGet("/api/system/version");
-  },
-  shutdown() {
-    return apiPost("/api/system/shutdown");
-  },
-  restart() {
-    return apiPost("/api/system/reboot");
-  },
-  update() {
-    return apiPost("/api/system/update");
-  },
-
-
-  toggleWifi(enabled){
-    return apiPost("/api/wlan/power", {"state": enabled ? "on": "off"});
-  },
-  getWifiStatus(){
-    return apiGet("/api/wlan/status");
-  },
-  getKnownWifi(){
-    return apiGet("/api/wlan/known");
-  },
-  scanWifi(){
-    return apiGet("/api/wlan/scan");
-  },
-  connectWifi(ssid, password){
-    return apiPost("/api/wlan/connect", {"ssid": ssid, "password": password});
-  },
-  disconnectWifi(ssid){
-    return apiPost("/api/wlan/disconnect", {"ssid": ssid});
-  },
-};
-
+import {systemService, wifiService} from "../services/settings.service.js";
 
 function renderScannedNetworks(networks) {
   const list = document.getElementById("wifiScanList");
@@ -118,19 +82,19 @@ function createEmptyItem(text) {
 
 
 export async function loadSoftwareVersion(store) {
-  const data = await settingsService.version();
+  const data = await systemService.version();
   store.setSlice("software", data);
 }
 
 export async function loadWifiStatus(store) {
-  const wifiStatus = await settingsService.getWifiStatus();
-  const knownNetworks = await settingsService.getKnownWifi();
+  const wifiStatus = await wifiService.getWifiStatus();
+  const knownNetworks = await wifiService.getKnownWifi();
   store.setSlice("network", wifiStatus);
   store.setSlice("network", knownNetworks);
 }
 
 export async function scanWifiNetworks(store) {
-  const data = await settingsService.scanWifi();
+  const data = await wifiService.scanWifi();
   store.setSlice("network", data);
 }
 
