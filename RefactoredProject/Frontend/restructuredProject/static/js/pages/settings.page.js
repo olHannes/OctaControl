@@ -2,6 +2,9 @@
 import {apiGet, apiPatch, apiPost } from "../api.js";
 
 export const settingsService = {
+  version() {
+    return apiGet("/api/system/version");
+  },
   get() {
     return apiGet("/api/settings");
   },
@@ -10,7 +13,13 @@ export const settingsService = {
   },
 };
 
-export function renderSettings(root) {
+
+export async function loadSoftwareVersion(store) {
+  const data = await settingsService.version();
+  store.setSlice("software", data);
+}
+
+export function renderSettings(root, store) {
   root.innerHTML = `
     <section class="settings">
       <div class="vertical-container centered-panel">
@@ -121,7 +130,7 @@ export function renderSettings(root) {
             <h3>System Update</h3>
             <span class="description">Check for Updates</span>
           </div>
-          <span class="icon icon--arrow" style="height: 50%;"></span>
+          <span class="icon icon--arrow" style="height: 50%;" id="updateIcon"></span>
         </div>
 
         <div class="panel panel-system">
@@ -150,7 +159,7 @@ export function renderSettings(root) {
           <span class="subheading">System Information</span>
           <div class="line">
             <span class="light-text">Model</span>
-            <span id="model">--</span>
+            <span id="model">Škoda Octavia 2</span>
           </div>
           <div class="line">
             <span class="light-text">Software Version</span>
@@ -181,5 +190,26 @@ export function renderSettings(root) {
   wifiToggle?.addEventListener("change", () => syncDetails(wifiToggle, wifiDetails));
   syncDetails(btToggle, btDetails);
   syncDetails(wifiToggle, wifiDetails);
+  
+  loadSoftwareVersion(store);
+
+  const versionName = root.querySelector("#version");
+  const versionDate = root.querySelector("#update");
+  const updateIcon = root.querySelector("#updateIcon");
+
+  store.subscribeSelector(s => s.software, (l) => {
+    if(!l) return;
+
+    const version = `${l.branch}:${l.commit}`;
+    versionName.textContent = version;
+    
+    if(l.date) {
+      const d = new Date(l.date);
+      versionDate.textContent = d.toLocaleDateString("de-DE");
+    }
+
+    updateIcon.style.background = l.dirty ? "var(--system-shutdown)" : "var(--muted)";
+    versionDate.style.color = l.dirty ? "var(--system-shutdown)" : "white";
+  });
 
 }

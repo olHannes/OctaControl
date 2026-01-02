@@ -25,6 +25,7 @@ const store = createStore({
   },
   ui: { theme: "dark", systemColor: "#3aa0ff" },
   system: { battery: 70, internet: true, wifi: null, audioSource: "bluetooth", version: null },
+  software: { branch: null, commit: null, date: null, dirty: null },
   lighting: { enabled: null, brightness: null, colorKey: null },
 });
 
