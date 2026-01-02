@@ -1,82 +1,6 @@
 // js/pages/settings.page.js
 import {systemService, wifiService} from "../services/settings.service.js";
-
-function renderScannedNetworks(networks) {
-  const list = document.getElementById("wifiScanList");
-  if(!list) return;
-
-  list.innerHTML = "";
-  if(!Array.isArray(networks) || networks.length === 0) {
-    list.appendChild(createEmptyItem("No networks available"));
-    return;
-  }
-  networks.forEach(({ ssid, signal }) => {
-    const li = document.createElement("li");
-    li.className = "details-item";
-    const label = document.createElement("span");
-    label.className = "details-item__label";
-    label.textContent = ssid;
-    const button = document.createElement("button");
-    button.className = "details-btn";
-    button.type = "button";
-    button.textContent = "Connect";
-    button.dataset.ssid = ssid;
-    button.dataset.action = "wifi-connect";
-    button.disabled = false;
-
-    li.appendChild(label);
-    li.appendChild(button);
-    list.appendChild(li);
-  })
-}
-function renderKnownNetworks(networks, connectedSsid) {
-  const list = document.getElementById("wifiConnectedList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  if (!Array.isArray(networks) || networks.length === 0) {
-    list.appendChild(createEmptyItem("No known networks"));
-    return;
-  }
-
-  networks.forEach(({ ssid }) => {
-    const li = document.createElement("li");
-    li.className = "details-item";
-
-    const label = document.createElement("span");
-    label.className = "details-item__label";
-    label.textContent = ssid;
-
-    const button = document.createElement("button");
-    button.className = "details-btn";
-    button.type = "button";
-
-    if (ssid === connectedSsid) {
-      button.textContent = "Disconnect";
-      button.dataset.action = "wifi-disconnect";
-      button.dataset.ssid = ssid;
-      button.disabled = false;
-    } else {
-      button.textContent = "Not connected";
-      button.disabled = true;
-    }
-    li.appendChild(label);
-    li.appendChild(button);
-    list.appendChild(li);
-  });
-}
-function createEmptyItem(text) {
-  const li = document.createElement("li");
-  li.className = "details-item";
-
-  const label = document.createElement("span");
-  label.className = "details-item__label";
-  label.textContent = text;
-
-  li.appendChild(label);
-  return li;
-}
+import * as connectivity from "../features/connectivity.js";
 
 
 
@@ -378,8 +302,8 @@ export function renderSettings(root, store) {
 
   store.subscribeSelector(s => s.network, (l) => {
     console.log(l);
-    renderKnownNetworks(l.knownNetworks, l.ssid);
-    renderScannedNetworks(l.scannedNetworks);
+    connectivity.renderKnownNetworks(root, l.knownNetworks, l.ssid);
+    connectivity.renderScannedNetworks(root, l.scannedNetworks);
     
     const wifiToggle = root.querySelector("#wifiToggle");
     const wifiDetails = root.querySelector("#wifiDetails");
