@@ -5,6 +5,9 @@ export const settingsService = {
   version() {
     return apiGet("/api/system/version");
   },
+  shutdown() {
+    return apiPost("/api/system/shutdown");
+  },
   get() {
     return apiGet("/api/settings");
   },
@@ -17,6 +20,55 @@ export const settingsService = {
 export async function loadSoftwareVersion(store) {
   const data = await settingsService.version();
   store.setSlice("software", data);
+}
+
+let shutdownTimer = null;
+let shutdownCountdown = null;
+let shutdownRemaining = 0;
+
+export function shutdownSystem(root) {
+  const shutdownText = root.querySelector(".power-off");
+  if (!shutdownText) return;
+  if (shutdownTimer !== null) {
+    clearTimeout(shutdownTimer);
+    shutdownTimer = null;
+
+    clearInterval(shutdownCountdown);
+    shutdownCountdown = null;
+
+    shutdownText.textContent = "Power off the system";
+    shutdownRemaining = 0;
+    return;
+  }
+  shutdownRemaining = 5;
+  shutdownText.textContent = `system will shut down in ${shutdownRemaining} seconds - click to cancel`;
+  shutdownCountdown = setInterval(() => {
+    shutdownRemaining -= 1;
+    if (shutdownRemaining > 0) {
+      shutdownText.textContent = `system will shut down in ${shutdownRemaining} seconds - click to cancel`;
+    }
+  }, 1000);
+
+  shutdownTimer = setTimeout(async () => {
+    shutdownTimer = null;
+    clearInterval(shutdownCountdown);
+    shutdownCountdown = null;
+    shutdownText.textContent = "Shutting down…";
+
+    try {
+      await settingsService.shutdown();
+    } catch (e) {
+      console.error(e);
+      shutdownText.textContent = "Power off the system";
+    }
+  }, 5000);
+}
+export function cleanupShutdownUi() {
+  if (shutdownTimer !== null) clearTimeout(shutdownTimer);
+  shutdownTimer = null;
+  if (shutdownCountdown !== null) clearInterval(shutdownCountdown);
+  shutdownCountdown = null;
+  shutdownRemaining = 0;
 }
 
 export function renderSettings(root, store) {
@@ -190,6 +242,9 @@ export function renderSettings(root, store) {
   wifiToggle?.addEventListener("change", () => syncDetails(wifiToggle, wifiDetails));
   syncDetails(btToggle, btDetails);
   syncDetails(wifiToggle, wifiDetails);
+
+  const powerBtn = root.querySelector(".power-off");
+  if(powerBtn) powerBtn.addEventListener("click", () => shutdownSystem(root));
   
   loadSoftwareVersion(store);
 
