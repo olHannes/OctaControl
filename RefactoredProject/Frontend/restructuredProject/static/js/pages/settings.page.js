@@ -3,23 +3,8 @@ import {systemService, wifiService} from "../services/settings.service.js";
 import * as connectivity from "../features/connectivity.js";
 
 
-
-
-export async function loadSoftwareVersion(store) {
-  const data = await systemService.version();
-  store.setSlice("software", data);
-}
-
-export async function loadWifiStatus(store) {
-  const wifiStatus = await wifiService.getWifiStatus();
-  const knownNetworks = await wifiService.getKnownWifi();
-  store.setSlice("network", wifiStatus);
-  store.setSlice("network", knownNetworks);
-}
-
-export async function scanWifiNetworks(store) {
-  const data = await wifiService.scanWifi();
-  store.setSlice("network", data);
+export function updateSystem(root) {
+  console.log("update System");
 }
 
 
@@ -40,7 +25,7 @@ export function restartSystem(root) {
     restartTimer = null;
     restartText.textContent = "Restarting...";
     try {
-      await settingsService.restart();
+      await systemService.restart();
     } catch (e) {
       restartText.textContent = "Restart the infotainment system";
     }
@@ -81,7 +66,7 @@ export function shutdownSystem(root) {
     shutdownText.textContent = "Shutting down…";
 
     try {
-      await settingsService.shutdown();
+      await systemService.shutdown();
     } catch (e) {
       console.error(e);
       shutdownText.textContent = "Power off the system";
@@ -199,7 +184,7 @@ export function renderSettings(root, store) {
 
         <span class="subheading">System</span>
 
-        <div class="panel panel-system">
+        <div class="panel panel-system" id="updateBtn">
           <div class="icon-wrapper">
             <span class="icon icon--update"></span>
           </div>
@@ -221,7 +206,7 @@ export function renderSettings(root, store) {
           <span class="icon icon--arrow" style="height: 50%;"></span>
         </div>
 
-        <div class="panel panel-system panel-shutdown">
+        <div class="panel panel-system panel-shutdown" id="shutdownBtn">
           <div class="icon-wrapper shutdown-background">
             <span class="icon icon--shutdown"></span>
           </div>
@@ -250,61 +235,42 @@ export function renderSettings(root, store) {
       </div>
     </section>
   `;
-
-  const btToggle = root.querySelector("#bluetoothToggle");
-  const btDetails = root.querySelector("#bluetoothDetails");
-  const wifiToggle = root.querySelector("#wifiToggle");
-  const wifiDetails = root.querySelector("#wifiDetails");
-
-  const syncDetails = (toggleEl, detailsEl) => {
-    if (!toggleEl || !detailsEl) return;
-    const open = !!toggleEl.checked;
-    detailsEl.classList.toggle("is-open", open);
-    detailsEl.setAttribute("aria-hidden", String(!open));
-  };
-
-  btToggle?.addEventListener("change", () => syncDetails(btToggle, btDetails));
-  wifiToggle?.addEventListener("change", () => syncDetails(wifiToggle, wifiDetails));
-  syncDetails(btToggle, btDetails);
-  syncDetails(wifiToggle, wifiDetails);
-
-  const powerBtn = root.querySelector(".panel-shutdown");
-  if(powerBtn) powerBtn.addEventListener("click", () => shutdownSystem(root));
-
-  const restartBtn = root.querySelector("#restartBtn");
-  if(restartBtn) restartBtn.addEventListener("click", () => restartSystem(root));
   
-  loadSoftwareVersion(store);
-  loadWifiStatus(store);
+  //startup -> event-listener and first store data
+  connectivity.addAllEventListeners(root, store);
+  connectivity.refreshSoftwareVersion(store);
+  connectivity.refreshWifi(store);
 
-  const wifiScan = root.querySelector("#wifiScanBtn");
-  wifiScan.addEventListener("click", () => scanWifiNetworks(store));
-
-
+  //System selections
   const versionName = root.querySelector("#version");
   const versionDate = root.querySelector("#update");
   const updateIcon = root.querySelector("#updateIcon");
 
+  // Software Subscription
   store.subscribeSelector(s => s.software, (l) => {
     if(!l) return;
-
-    const version = `${l.branch}:${l.commit}`;
-    versionName.textContent = version;
-    
-    if(l.date) {
-      const d = new Date(l.date);
-      versionDate.textContent = d.toLocaleDateString("de-DE");
+    if(versionName) {
+      versionName.textContent = `${l.branch}:${l.commit}`;
     }
-
-    updateIcon.style.background = l.dirty ? "var(--system-shutdown)" : "var(--muted)";
-    versionDate.style.color = l.dirty ? "var(--system-shutdown)" : "white";
+    if(l.date && versionDate) {
+      versionDate.textContent = new Date(l.date)
+        .toLocaleDateString("de-DE");
+    }
+    if(updateIcon) {
+      const color = l.dirty
+        ? "var(--system-shutdown)"
+        : "var(--muted)";
+      updateIcon.style.background = color;
+      versionDate && (versionDate.style.color = color);
+    }
   });
 
+  // Network Subscription
   store.subscribeSelector(s => s.network, (l) => {
-    console.log(l);
+    if(!l) return;
     connectivity.renderKnownNetworks(root, l.knownNetworks, l.ssid);
     connectivity.renderScannedNetworks(root, l.scannedNetworks);
-    
+
     const wifiToggle = root.querySelector("#wifiToggle");
     const wifiDetails = root.querySelector("#wifiDetails");
     if (!wifiToggle || !wifiDetails) return;
@@ -312,7 +278,12 @@ export function renderSettings(root, store) {
     if (wifiToggle.checked !== shouldBeOn) {
       wifiToggle.checked = shouldBeOn;
     }
-    syncDetails(wifiToggle, wifiDetails);
+    connectivity.syncDetails(wifiToggle, wifiDetails);
   });
 
+  // Bluetooth Subscription
+  store.subscribeSelector(s => s.bluetooth, (l) => {
+    if(!l) return;
+
+  });
 }
