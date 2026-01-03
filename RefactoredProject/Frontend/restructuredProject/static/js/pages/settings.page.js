@@ -269,7 +269,7 @@ export function renderSettings(root, store) {
   store.subscribeSelector(s => s.network, (l) => {
     if(!l) return;
     connectivity.renderKnownNetworks(root, l.knownNetworks, l.ssid);
-    connectivity.renderScannedNetworks(root, l.scannedNetworks);
+    connectivity.renderScannedNetworks(root, l.scannedNetworks, l.ssid);
 
     const wifiToggle = root.querySelector("#wifiToggle");
     const wifiDetails = root.querySelector("#wifiDetails");

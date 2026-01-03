@@ -293,3 +293,11 @@
 .details-input:focus{
   border-color: color-mix(in srgb, var(--ui-accent-border) 65%, white);
 }
+
+.connect {
+  color: var(--battery-full);
+}
+
+.disconnect {
+  color: var(--battery-slash);
+}

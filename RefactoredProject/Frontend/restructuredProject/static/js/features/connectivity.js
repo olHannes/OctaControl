@@ -56,7 +56,7 @@ export async function scanWifi(store) {
 
 
 //Wifi Rendering functions
-export function renderScannedNetworks(root, networks) {
+export function renderScannedNetworks(root, networks, connectedSsid) {
   const list = root.querySelector("#wifiScanList");
   if(!list) return;
 
@@ -76,12 +76,13 @@ export function renderScannedNetworks(root, networks) {
     button.className = "details-btn";
     button.type = "button";
     button.textContent = "Connect";
-    button.dataset.action = "wifi-connect";
+    button.dataset.action = "wifi-connect-new";
+    button.classList.add("connect");
     if(ssid) button.dataset.ssid = ssid;
     button.disabled = !ssid;
 
     li.appendChild(label);
-    li.appendChild(button);
+    if(ssid != connectedSsid) li.appendChild(button);
     list.appendChild(li);
   })
 }
@@ -89,14 +90,11 @@ export function renderScannedNetworks(root, networks) {
 export function renderKnownNetworks(root, networks, connectedSsid) {
   const list = root.querySelector("#wifiConnectedList");
   if (!list) return;
-
   list.innerHTML = "";
-
   if (!Array.isArray(networks) || networks.length === 0) {
     list.appendChild(createEmptyItem("No known networks"));
     return;
   }
-
   networks.forEach(({ ssid }) => {
     const li = document.createElement("li");
     li.className = "details-item";
@@ -109,17 +107,28 @@ export function renderKnownNetworks(root, networks, connectedSsid) {
     button.className = "details-btn";
     button.type = "button";
 
+    const conBtn = document.createElement("button");
+    conBtn.className = "details-btn";
+    conBtn.type = "button";
+    conBtn.textContent = "Connect";
+    conBtn.dataset.action = "wifi-connect-known";
+    conBtn.dataset.ssid = ssid;
+    conBtn.disabled = false;
+    conBtn.classList.add("connect");
+
     if (ssid === connectedSsid) {
       button.textContent = "Disconnect";
       button.dataset.action = "wifi-disconnect";
       button.dataset.ssid = ssid;
       button.disabled = false;
+      button.classList.add("disconnect");
     } else {
       button.textContent = "Not connected";
       button.disabled = true;
     }
     li.appendChild(label);
     li.appendChild(button);
+    if(!connectedSsid) li.appendChild(conBtn);
     list.appendChild(li);
   });
 }
@@ -170,4 +179,42 @@ export const syncDetails = (toggleEl, detailsEl) => {
 function addFunctionalEventListener(root, store) {
   const wifiScanBtn = root.querySelector("#wifiScanBtn");
   wifiScanBtn?.addEventListener("click", () => scanWifi(store));
+
+  root.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if(!btn) return;
+
+    const action = btn.dataset.action;
+    const ssid = btn.dataset.ssid;
+    
+    try {
+      switch (action) {
+        case "wifi-disconnect":
+          if(!ssid) return;
+          btn.disabled = true;
+          await wifiService.disconnectWifi(ssid);
+          await refreshWifi(store);
+          break;
+        case "wifi-connect-known":
+          if(!ssid) return;
+          btn.disabled = true;
+          await wifiService.connectWifi(ssid);
+          await refreshWifi(store);
+          break;
+        case "wifi-connect-new":
+          if(!ssid) return;
+          btn.disabled = true;
+          //request password
+          await wifiService.connectWifi(ssid);
+          await refreshWifi(store);
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error("Wifi action failed:", err);
+    } finally {
+      btn.disabled = false;
+    }
+  });
 }
