@@ -147,7 +147,7 @@ function createEmptyItem(text) {
 
 //add Event Listener
 export function addAllEventListeners(root, store) {
-  addDetailsEventListener(root);
+  addDetailsEventListener(root, store);
   addSystemEventListener(root);
   addFunctionalEventListener(root, store);
 }
@@ -160,13 +160,29 @@ function addSystemEventListener(root){
   restartBtn?.addEventListener("click", () => restartSystem(root));
   updateBtn?.addEventListener("click", () => updateSystem(root));
 }
-function addDetailsEventListener(root) {
+function addDetailsEventListener(root, store) {
   const btToggle    = root.querySelector("#bluetoothToggle");
   const btDetails   = root.querySelector("#bluetoothDetails");
   const wifiToggle  = root.querySelector("#wifiToggle");
   const wifiDetails = root.querySelector("#wifiDetails");
   btToggle?.addEventListener("change", () => syncDetails(btToggle, btDetails));
-  wifiToggle?.addEventListener("change", () => syncDetails(wifiToggle, wifiDetails));
+  wifiToggle?.addEventListener("change", async () => {
+    if(!wifiToggle) return;
+    const enabled = wifiToggle.checked;
+    syncDetails(wifiToggle, wifiDetails);
+    wifiToggle.disabled = true;
+
+    try {
+      await wifiService.toggleWifi(enabled);
+      await refreshWifi(store);
+    } catch (e) {
+      console.error("Failed to toggle Wifi power:", e);
+      wifiToggle.checked = !enabled;
+      syncDetails(wifiToggle, wifiDetails);
+    } finally {
+      wifiToggle.disabled = false;
+    }
+  });
   syncDetails(btToggle, btDetails);
   syncDetails(wifiToggle, wifiDetails);
 }
