@@ -172,6 +172,32 @@ export function renderKnownBluetoothDevices(root, devices, connectedDevices) {
 }
 export function renderScannedDevices(root, devices, connectedDevices) {
   console.log("scanned devices: ", devices);
+  const list = root.querySelector("#bluetoothScanList");
+  if(!list) return;
+
+  list.innerHTML = "";
+  if(!Array.isArray(devices) || devices.length === 0) {
+    list.appendChild(createEmptyItem("No Bluetooth devices available"));
+    return;
+  }
+  devices.forEach(({address, name}) => {
+    const li = document.createElement("li");
+    li.className = "details-item";
+    const label = document.createElement("span");
+    label.className = "details-item__label";
+    label.textContent = name || "<unknown>";
+    const button = document.createElement("button");
+    button.className = "details-btn";
+    button.type = "button";
+    button.textContent = "Pair";
+    button.dataset.action = "bluetooth-pair-new";
+    button.classList.add("connect");
+    button.dataset.address = address;
+
+    li.appendChild(label);
+    li.appendChild(button);
+    list.appendChild(li);
+  });
 }
 
 function createEmptyItem(text) {
@@ -237,6 +263,9 @@ export const syncDetails = (toggleEl, detailsEl) => {
 function addFunctionalEventListener(root, store) {
   const wifiScanBtn = root.querySelector("#wifiScanBtn");
   wifiScanBtn?.addEventListener("click", () => scanWifi(store));
+
+  const bluetoothScanBtn = root.querySelector("#bluetoothScanBtn");
+  bluetoothScanBtn?.addEventListener("click", () => scanBluetooth(store));
 
   root.addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-action]");
