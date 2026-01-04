@@ -1,5 +1,5 @@
 // js/pages/settings.page.js
-import {systemService, wifiService} from "../services/settings.service.js";
+import {systemService, wifiService, bluetoothService} from "../services/settings.service.js";
 import * as connectivity from "../features/connectivity.js";
 
 
@@ -7,9 +7,7 @@ export function updateSystem(root) {
   console.log("update System");
 }
 
-
 let restartTimer = null;
-
 export function restartSystem(root) {
   const restartText = root.querySelector("#restartText");
   if(!restartText) return;
@@ -35,7 +33,6 @@ export function restartSystem(root) {
 let shutdownTimer = null;
 let shutdownCountdown = null;
 let shutdownRemaining = 0;
-
 export function shutdownSystem(root) {
   const shutdownText = root.querySelector(".power-off");
   if (!shutdownText) return;
@@ -151,7 +148,6 @@ export function renderSettings(root, store) {
               <span class="switch__thumb" aria-hidden="true"></span>
             </label>
           </div>
-
           <div class="panel-details" id="wifiDetails" aria-hidden="true">
             <div class="panel-details__inner">
               <div class="details-grid">
@@ -240,6 +236,7 @@ export function renderSettings(root, store) {
   connectivity.addAllEventListeners(root, store);
   connectivity.refreshSoftwareVersion(store);
   connectivity.refreshWifi(store);
+  connectivity.refreshBluetooth(store);
 
   //System selections
   const versionName = root.querySelector("#version");
@@ -284,6 +281,16 @@ export function renderSettings(root, store) {
   // Bluetooth Subscription
   store.subscribeSelector(s => s.bluetooth, (l) => {
     if(!l) return;
+    connectivity.renderKnownBluetoothDevices(root, l.pairedDevices, l.connectedDeviceMac);
+    connectivity.renderScannedDevices(root, l.scannedDevices, l.connectedDeviceMac);
 
+    const bluetoothToggle = root.querySelector("#bluetoothToggle");
+    const bluetoothDetails = root.querySelector("#bluetoothDetails");
+    if(!bluetoothToggle || !bluetoothDetails) return;
+    const btShouldBeOn = l.power === "yes";
+    if(bluetoothToggle.checked !== btShouldBeOn) {
+      bluetoothToggle.checked = btShouldBeOn;
+    }
+    connectivity.syncDetails(bluetoothToggle, bluetoothDetails);
   });
 }

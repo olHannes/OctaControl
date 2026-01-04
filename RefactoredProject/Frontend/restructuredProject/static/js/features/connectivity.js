@@ -1,7 +1,7 @@
 
-import { systemService, wifiService } from "../services/settings.service.js";
+import { systemService, wifiService, bluetoothService } from "../services/settings.service.js";
 
-//Mapping functions
+//Mapping functions -> settings
 function mapVersion(apiData) {
   return {
     commit: apiData.commit ?? null,
@@ -10,6 +10,7 @@ function mapVersion(apiData) {
     dirty: apiData.dirty ?? false,
   };
 }
+//Mapping functions -> wifi
 function mapWifiStatus(apiData) {
   return {
     power: apiData.power,
@@ -17,7 +18,7 @@ function mapWifiStatus(apiData) {
     ip: apiData.ip ?? null,
     ssid: apiData.ssid ?? null,
     signal: apiData.signal ?? null,
-  }
+  };
 }
 function mapKnownNetworks(apiData) {
   return {
@@ -27,6 +28,26 @@ function mapKnownNetworks(apiData) {
 function mapScannedNetworks(apiData) {
   return {
     scannedNetworks: apiData.scannedNetworks ?? [],
+  };
+}
+//Mapping functions -> bluetooth
+function mapBluetoothStatus(apiData) {
+  return {
+    power: apiData.powered,
+    visibility: apiData.discoverable,
+    connectedDeviceName: apiData.connectedDeviceName ?? null,
+    connectedDeviceMac: apiData.connectedDeviceMac ?? null,
+
+  };
+}
+function mapKnownBluetoothDevices(apiData) {
+  return {
+    pairedDevices: apiData.pairedDevices ?? [],
+  };
+}
+function mapScannedBluetoothDevices(apiData) {
+  return {
+    scannedDevices: apiData.scannedDevices ?? [],
   };
 }
 
@@ -47,10 +68,23 @@ export async function refreshWifi(store) {
   store.setSlice("network", mapWifiStatus(status));
   store.setSlice("network", mapKnownNetworks(known));
 }
-
 export async function scanWifi(store) {
   const scan = await wifiService.scanWifi();
   store.setSlice("network", mapScannedNetworks(scan));
+}
+
+//Bluetooth functions
+export async function refreshBluetooth(store) {
+  const [status, known] = await Promise.all([
+    bluetoothService.getBluetoothStatus(),
+    bluetoothService.getKnownDevices(),
+  ]);
+  store.setSlice("bluetooth", mapBluetoothStatus(status));
+  store.setSlice("bluetooth", mapKnownBluetoothDevices(known));
+}
+export async function scanBluetooth(store) {
+  const scan = await bluetoothService.scanBluetooth();
+  store.setSlice("bluetooth", mapScannedBluetoothDevices(scan));
 }
 
 
@@ -132,6 +166,14 @@ export function renderKnownNetworks(root, networks, connectedSsid) {
     list.appendChild(li);
   });
 }
+
+export function renderKnownBluetoothDevices(root, devices, connectedDevices) {
+  console.log("known devices: ", devices);
+}
+export function renderScannedDevices(root, devices, connectedDevices) {
+  console.log("scanned devices: ", devices);
+}
+
 function createEmptyItem(text) {
   const li = document.createElement("li");
   li.className = "details-item";

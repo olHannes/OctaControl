@@ -11,6 +11,7 @@ from api.lighting_api import lighting_api
 from sockets.sensor_socket import init_sensor_socket, init_test
 
 from api.wlan_mock import wlan_api
+from api.bluetooth_mock import bt_setup_api
 
 init_db()
 
@@ -43,6 +44,7 @@ app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
 
 app.register_blueprint(wlan_api, url_prefix="/api/wlan")
+app.register_blueprint(bt_setup_api, url_prefix="/api/bluetooth")
 
 #WebSocket initialisieren
 ####################################################################

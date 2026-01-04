@@ -15,3 +15,15 @@ export const wifiService = {
     connectWifi(ssid, password) { return apiPost("/api/wlan/connect", { ssid, password }); },
     disconnectWifi(ssid) { return apiPost("/api/wlan/disconnect", { ssid }); },
 };
+
+export const bluetoothService = {
+    toggleBluetooth(enabled) { return apiPost("/api/bluetooth/power", { state: enabled ? "on": "off" }); },
+    toggleVisibility(visible) { return apiPost("/api/bluetooth/visibility", { discoverable: visible ? "on": "off" }); },
+    getBluetoothStatus() { return apiGet("/api/bluetooth/status"); },
+    getKnownDevices() { return apiGet("/api/bluetooth/paired_devices"); },
+    scanBluetooth() { return apiGet("/api/bluetooth/scan"); },
+    pairDevice(address) { return apiPost("/api/bluetooth/pair", {address: address}); },
+    connectDevice(address) { return apiPost("/api/bluetooth/connect", {address: address}); },
+    disconnectDevice(address) { return apiPost("/api/bluetooth/disconnect", {address: address}); },
+    removeDevice(address) { return apiPost("/api/bluetooth/remove", {address: address}); },
+}
