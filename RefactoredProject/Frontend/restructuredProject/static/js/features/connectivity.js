@@ -168,10 +168,51 @@ export function renderKnownNetworks(root, networks, connectedSsid) {
 }
 
 export function renderKnownBluetoothDevices(root, devices, connectedDevices) {
-  console.log("known devices: ", devices);
+  const list = root.querySelector("#bluetoothPairedList");
+  if(!list) return;
+  list.innerHTML = "";
+  if (!Array.isArray(devices) || devices.length === 0) {
+    list.appendChild(createEmptyItem("No paired devices"));
+    return;
+  }
+  devices.forEach(({address, name}) => {
+    const li = document.createElement("li");
+    li.className = "details-item";
+
+    const label = document.createElement("span");
+    label.className = "details-item__label";
+    label.textContent = name ?? "<unknown>";
+
+    const button = document.createElement("button");
+    button.className = "details-btn";
+    button.type = "button";
+
+    const conBtn = document.createElement("button");
+    conBtn.className = "details-btn";
+    conBtn.type = "button";
+    conBtn.textContent = "Connect";
+    conBtn.dataset.action = "bluetooth-connect-paired";
+    conBtn.dataset.address = address;
+    conBtn.disabled = false;
+    conBtn.classList.add("connect");
+
+    if (address === connectedDevices) {
+      button.textContent = "Disconnect";
+      button.dataset.action = "bluetooth-disconnect";
+      button.dataset.address = address;
+      button.disabled = false;
+      button.classList.add("disconnect");
+    } else {
+      button.textContent = "Not connected";
+      button.disabled = true;
+    }
+    li.appendChild(label);
+    li.appendChild(button);
+    if(!connectedDevices) li.appendChild(conBtn);
+    list.appendChild(li);
+  });
 }
 export function renderScannedDevices(root, devices, connectedDevices) {
-  console.log("scanned devices: ", devices);
   const list = root.querySelector("#bluetoothScanList");
   if(!list) return;
 
@@ -185,7 +226,7 @@ export function renderScannedDevices(root, devices, connectedDevices) {
     li.className = "details-item";
     const label = document.createElement("span");
     label.className = "details-item__label";
-    label.textContent = name || "<unknown>";
+    label.textContent = name ?? "<unknown>";
     const button = document.createElement("button");
     button.className = "details-btn";
     button.type = "button";
@@ -273,6 +314,7 @@ function addFunctionalEventListener(root, store) {
 
     const action = btn.dataset.action;
     const ssid = btn.dataset.ssid;
+    const address = btn.dataset.address;
     
     try {
       switch (action) {
@@ -296,6 +338,25 @@ function addFunctionalEventListener(root, store) {
           await refreshWifi(store);
           break;
         default:
+          break;
+
+        case "bluetooth-pair-new":
+          if(!address) return;
+          btn.disabled = true;
+          await bluetoothService.pairDevice(address);
+          await refreshBluetooth(store);
+          break;
+        case "bluetooth-connect-paired":
+          if(!address) return;
+          btn.disabled = true;
+          await bluetoothService.connectDevice(address);
+          await refreshBluetooth(store);
+          break;
+        case "bluetooth-disconnect":
+          if(!address) return;
+          btn.disabled = true;
+          await bluetoothService.disconnectDevice(address);
+          await refreshBluetooth(store);
           break;
       }
     } catch (err) {
