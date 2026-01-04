@@ -1,5 +1,6 @@
 
 import { systemService, wifiService, bluetoothService } from "../services/settings.service.js";
+import { shutdownSystem, restartSystem, updateSystem } from "../pages/settings.page.js";
 
 //Mapping functions -> settings
 function mapVersion(apiData) {
