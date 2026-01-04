@@ -333,8 +333,8 @@ function addFunctionalEventListener(root, store) {
         case "wifi-connect-new":
           if(!ssid) return;
           btn.disabled = true;
-          //request password
-          await wifiService.connectWifi(ssid);
+          openWifiKeyboard(root, store, ssid);
+          //await wifiService.connectWifi(ssid);
           await refreshWifi(store);
           break;
         default:
@@ -365,4 +365,116 @@ function addFunctionalEventListener(root, store) {
       btn.disabled = false;
     }
   });
+}
+
+
+
+//Keyboard functions
+function ensureWifiKeyboard(root, store) {
+  if (root.__wifiKeyboardInit) return;
+  root.__wifiKeyboardInit = true;
+
+  const overlay = root.querySelector(".keyboard-overlay");
+  const input = root.querySelector("#wifiPasswordInput");
+  const ssidLabel = root.querySelector("#keyboardSsid");
+  const keyboard = root.querySelector("#wifiKeyboard");
+  if (!overlay || !input || !ssidLabel || !keyboard) return;
+
+  let isShift = false;
+
+  const setShift = (on) => {
+    isShift = on;
+    const shiftKey = keyboard.querySelector(".key.shift");
+    shiftKey?.classList.toggle("active", isShift);
+
+    keyboard.querySelectorAll(".key").forEach((k) => {
+      if (
+        k.classList.contains("shift") ||
+        k.classList.contains("backspace") ||
+        k.classList.contains("space") ||
+        k.classList.contains("symbol") ||
+        k.classList.contains("action-connect") ||
+        k.classList.contains("action-cancel")
+      ) return;
+
+      const t = k.textContent;
+      k.textContent = on ? t.toUpperCase() : t.toLowerCase();
+    });
+  };
+
+  const close = () => {
+    overlay.classList.add("hidden");
+    overlay.setAttribute("aria-hidden", "true");
+    input.value = "";
+    root.__wifiKeyboardSsid = null;
+    setShift(false);
+  };
+
+  const open = (ssid) => {
+    root.__wifiKeyboardSsid = ssid;
+    ssidLabel.textContent = `SSID: ${ssid ?? "—"}`;
+    input.value = "";
+    overlay.classList.remove("hidden");
+    overlay.setAttribute("aria-hidden", "false");
+    input.focus();
+    setShift(false);
+  };
+
+  root.__openWifiKeyboard = open;
+  root.__closeWifiKeyboard = close;
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target.classList.contains("keyboard-background")) close();
+  });
+
+  keyboard.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button.key");
+    if (!btn) return;
+
+    if (btn.classList.contains("shift")) {
+      setShift(!isShift);
+      return;
+    }
+    if (btn.classList.contains("backspace")) {
+      input.value = input.value.slice(0, -1);
+      return;
+    }
+    if (btn.classList.contains("space")) {
+      input.value += " ";
+      return;
+    }
+    if (btn.classList.contains("action-cancel")) {
+      close();
+      return;
+    }
+    if (btn.classList.contains("action-connect")) {
+      const ssid = root.__wifiKeyboardSsid;
+      const password = input.value;
+
+      if (!ssid) return;
+      //if (!password) return;
+
+      try {
+        await wifiService.connectWifi(ssid, password);
+        await refreshWifi(store);
+      } catch (err) {
+        console.error("Wifi connect with password failed:", err);
+      } finally {
+        close();
+      }
+      return;
+    }
+
+    if (
+      !btn.classList.contains("action-connect") &&
+      !btn.classList.contains("action-cancel")
+    ) {
+      input.value += btn.textContent;
+    }
+  });
+}
+
+function openWifiKeyboard(root, store, ssid) {
+  ensureWifiKeyboard(root, store);
+  root.__openWifiKeyboard?.(ssid);
 }

@@ -81,6 +81,63 @@ export function cleanupShutdownUi() {
 export function renderSettings(root, store) {
   root.innerHTML = `
     <section class="settings">
+      <div class="keyboard-overlay hidden" aria-hidden="true">
+        <div class="keyboard-background"></div>
+
+        <div class="keyboard-panel" role="dialog" aria-label="Wi-Fi password keyboard">
+          <div class="keyboard-header">
+            <div class="keyboard-meta">
+              <div class="keyboard-title">Connect to Wi-Fi</div>
+              <div class="keyboard-ssid" id="keyboardSsid">SSID: —</div>
+            </div>
+          </div>
+
+          <input type="password" class="password-input" id="wifiPasswordInput" placeholder="Password" autocomplete="off" />
+
+          <div class="keyboard" id="wifiKeyboard">
+            <div class="key-row">
+              <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+              <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+              <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+              <button class="key">0</button>
+            </div>
+
+            <div class="key-row">
+              <button class="key">q</button><button class="key">w</button><button class="key">e</button>
+              <button class="key">r</button><button class="key">t</button><button class="key">y</button>
+              <button class="key">u</button><button class="key">i</button><button class="key">o</button>
+              <button class="key">p</button>
+            </div>
+
+            <div class="key-row">
+              <button class="key">a</button><button class="key">s</button><button class="key">d</button>
+              <button class="key">f</button><button class="key">g</button><button class="key">h</button>
+              <button class="key">j</button><button class="key">k</button><button class="key">l</button>
+            </div>
+
+            <div class="key-row">
+              <button class="key shift" type="button">⇧</button>
+              <button class="key">z</button><button class="key">x</button><button class="key">c</button>
+              <button class="key">v</button><button class="key">b</button><button class="key">n</button>
+              <button class="key">m</button>
+              <button class="key backspace" type="button">⌫</button>
+            </div>
+
+            <div class="key-row">
+              <button class="key symbol">!</button><button class="key symbol">@</button>
+              <button class="key symbol">#</button><button class="key symbol">$</button>
+              <button class="key symbol">%</button><button class="key symbol">&</button>
+              <button class="key space" type="button">␣</button>
+            </div>
+
+            <div class="key-row">
+              <button class="key action-connect" type="button">Connect</button>
+              <button class="key action-cancel" type="button">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>  
+
       <div class="vertical-container centered-panel">
         <h2 class="headline">Settings</h2>
         <p class="description">Manage system preferences and connectivity</p>

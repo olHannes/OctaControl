@@ -20,12 +20,12 @@ class MockWlanState:
         {"ssid": "GuestWifi", "signal": "55"},
         {"ssid": "<hidden>", "signal": "40"},
         {"ssid": "CoffeeShop", "signal": "25"},
+        {"ssid": "OfficeNet", "signal": "100"},
     ])
 
     known_networks: List[str] = field(default_factory=lambda: [
         "MyHomeWifi",
-        "GuestWifi",
-        "OfficeNet",
+        "GuestWifi"
     ])
 
     simulate_timeouts: bool = False        
