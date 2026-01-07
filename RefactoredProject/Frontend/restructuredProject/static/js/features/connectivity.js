@@ -303,6 +303,11 @@ export const syncDetails = (toggleEl, detailsEl) => {
     detailsEl.setAttribute("aria-hidden", String(!open));
   };
 function addFunctionalEventListener(root, store) {
+  const passwordForm = root.querySelector("#wifiForm");
+  passwordForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+  });
+
   const wifiScanBtn = root.querySelector("#wifiScanBtn");
   wifiScanBtn?.addEventListener("click", () => scanWifi(store));
 
@@ -335,7 +340,6 @@ function addFunctionalEventListener(root, store) {
           if(!ssid) return;
           btn.disabled = true;
           openWifiKeyboard(root, store, ssid);
-          //await wifiService.connectWifi(ssid);
           await refreshWifi(store);
           break;
         default:

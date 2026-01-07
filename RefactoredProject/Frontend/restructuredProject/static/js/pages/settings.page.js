@@ -92,7 +92,9 @@ export function renderSettings(root, store) {
             </div>
           </div>
 
-          <input type="password" class="password-input" id="wifiPasswordInput" placeholder="Password" autocomplete="off" />
+          <form id="wifiForm">
+            <input type="password" class="password-input" id="wifiPasswordInput" placeholder="Password" autocomplete="off" />
+          </form>
 
           <div class="keyboard" id="wifiKeyboard">
             <div class="key-row">
@@ -289,6 +291,7 @@ export function renderSettings(root, store) {
     </section>
   `;
   
+
   //startup -> event-listener and first store data
   connectivity.addAllEventListeners(root, store);
   connectivity.refreshSoftwareVersion(store);
