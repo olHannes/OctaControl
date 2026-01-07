@@ -1,27 +1,33 @@
 // js/api.js
+import { showLoader, hideLoader } from "./features/loader.js";
 
 async function request(path, { method = "GET", body } = {}) {
-  const res = await fetch(path, {
-    method,
-    headers: {
-      "Accept": "application/json",
-      ...(body ? { "Content-Type": "application/json" } : {}),
-    },
-    body: body? JSON.stringify(body): undefined,
-  });
+  showLoader();
+  try {
+    const res = await fetch(path, {
+      method,
+      headers: {
+        "Accept": "application/json",
+        ...(body ? { "Content-Type": "application/json" } : {}),
+      },
+      body: body? JSON.stringify(body): undefined,
+    });
+    
+    let data = null;
+    const ct =  res.headers.get("content-type") || "";
+    if (ct.includes("application/json")) data = await res.json().catch(() => null);
 
-  let data = null;
-  const ct =  res.headers.get("content-type") || "";
-  if (ct.includes("application/json")) data = await res.json().catch(() => null);
-
-  if(!res.ok) {
-    const msg = data?.message ?? `${method} ${path} failed: ${res.status}`;
-    const err = new Error(msg);
-    err.status = res.status;
-    err.payload = data;
-    throw err;
+    if(!res.ok) {
+      const msg = data?.message ?? `${method} ${path} failed: ${res.status}`;
+      const err = new Error(msg);
+      err.status = res.status;
+      err.payload = data;
+      throw err;
+    }
+    return data;
+  } finally {
+    hideLoader();
   }
-  return data;
 }
 
 export const apiGet = (p) => request(p);

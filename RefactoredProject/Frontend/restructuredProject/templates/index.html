@@ -30,6 +30,14 @@
       </div>
 
       <div class="topbar__right">
+
+        <span class="spinner" role="status" aria-label="Lädt" id="globalLoader">
+          <svg viewBox="0 0 50 50" aria-hidden="true">
+            <circle class="spinner__track" cx="25" cy="25" r="20"></circle>
+            <circle class="spinner__head"  cx="25" cy="25" r="20"></circle>
+          </svg>
+        </span>
+
         <div class="pill pill--muted">
             <img src="../static/assets/icons/temperature-quarter-svgrepo-com.svg" alt="temperature icon">
             <span id="tempPill">--°C</span>

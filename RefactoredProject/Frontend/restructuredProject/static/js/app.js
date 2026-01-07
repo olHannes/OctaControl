@@ -113,7 +113,6 @@ function updateBattery(percent) {
 }
 
 
-
 store.subscribe((s) => {
   const wifi = document.querySelector("#wifiPill");
   const bt   = document.querySelector("#pill-bluetooth");
@@ -127,4 +126,15 @@ store.subscribe((s) => {
   if(radio) radio.style.display = (s.system?.audioSource == "radio") ? "block" : "none";
   
   updateBattery(s.system?.battery);
+});
+
+
+
+window.addEventListener("showGlobalLoader", () => {
+  const loader = document.getElementById('globalLoader');
+  if(loader) loader.style.opacity = "100%";
+});
+window.addEventListener("hideGlobalLoader", () => {
+  const loader = document.getElementById('globalLoader');
+  if(loader) loader.style.opacity = "0%";
 });
