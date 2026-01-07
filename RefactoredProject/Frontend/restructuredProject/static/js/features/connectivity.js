@@ -1,6 +1,8 @@
 
 import { systemService, wifiService, bluetoothService } from "../services/settings.service.js";
 import { shutdownSystem, restartSystem, updateSystem } from "../pages/settings.page.js";
+import { withBusy } from "./panelLock.js";
+
 
 //Mapping functions -> settings
 function mapVersion(apiData) {
@@ -270,17 +272,23 @@ function addSystemEventListener(root){
   restartBtn?.addEventListener("click", () => restartSystem(root));
   updateBtn?.addEventListener("click", () => updateSystem(root));
 }
+
 function addDetailsEventListener(root, store) {
   const btToggle    = root.querySelector("#bluetoothToggle");
   const btDetails   = root.querySelector("#bluetoothDetails");
   const wifiToggle  = root.querySelector("#wifiToggle");
   const wifiDetails = root.querySelector("#wifiDetails");
+
   btToggle?.addEventListener("change", () => syncDetails(btToggle, btDetails));
+
   wifiToggle?.addEventListener("change", async () => {
-    if(!wifiToggle) return;
+    if(!wifiToggle || !wifiDetails) return;
+
     const enabled = wifiToggle.checked;
     syncDetails(wifiToggle, wifiDetails);
+    
     wifiToggle.disabled = true;
+    lockPanel(wifiDetails);
 
     try {
       await wifiService.toggleWifi(enabled);
@@ -291,28 +299,41 @@ function addDetailsEventListener(root, store) {
       syncDetails(wifiToggle, wifiDetails);
     } finally {
       wifiToggle.disabled = false;
+      unlockPanel(wifiDetails);
     }
   });
   syncDetails(btToggle, btDetails);
   syncDetails(wifiToggle, wifiDetails);
 }
+
 export const syncDetails = (toggleEl, detailsEl) => {
     if (!toggleEl || !detailsEl) return;
     const open = !!toggleEl.checked;
     detailsEl.classList.toggle("is-open", open);
     detailsEl.setAttribute("aria-hidden", String(!open));
   };
+
 function addFunctionalEventListener(root, store) {
   const passwordForm = root.querySelector("#wifiForm");
   passwordForm?.addEventListener('submit', (e) => {
     e.preventDefault();
   });
 
+  const wifiDetails = root.querySelector("#wifiDetails");
   const wifiScanBtn = root.querySelector("#wifiScanBtn");
-  wifiScanBtn?.addEventListener("click", () => scanWifi(store));
+  wifiScanBtn?.addEventListener("click", async () => {
+    await withBusy(wifiDetails, async () => {
+      await scanWifi(store);
+    });
+  });
 
+  const bluetoothDetails = root.querySelector("#bluetoothDetails");
   const bluetoothScanBtn = root.querySelector("#bluetoothScanBtn");
-  bluetoothScanBtn?.addEventListener("click", () => scanBluetooth(store));
+  bluetoothScanBtn?.addEventListener("click", async () => {
+    await withBusy(bluetoothDetails, async () => {
+      await scanBluetooth(store);
+    });
+  });
 
   root.addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-action]");
@@ -321,24 +342,35 @@ function addFunctionalEventListener(root, store) {
     const action = btn.dataset.action;
     const ssid = btn.dataset.ssid;
     const address = btn.dataset.address;
+
+    const run = async (panel, fn) => {
+      btn.disabled = true;
+      try {
+        return await withBusy(panel, fn);
+      } finally {
+        btn.disabled = false;
+      }
+    };
     
     try {
       switch (action) {
         case "wifi-disconnect":
           if(!ssid) return;
-          btn.disabled = true;
-          await wifiService.disconnectWifi(ssid);
-          await refreshWifi(store);
+          await run(wifiDetails, async () => {
+            await wifiService.disconnectWifi(ssid);
+            await refreshWifi(store);
+          });
           break;
         case "wifi-connect-known":
           if(!ssid) return;
-          btn.disabled = true;
-          await wifiService.connectWifi(ssid);
-          await refreshWifi(store);
+          await run(wifiDetails, async () => {
+            await wifiService.connectWifi(ssid);
+            await refreshWifi(store);
+          });
           break;
         case "wifi-connect-new":
           if(!ssid) return;
-          btn.disabled = true;
+          btn.disabled=true;
           openWifiKeyboard(root, store, ssid);
           await refreshWifi(store);
           break;
@@ -347,27 +379,28 @@ function addFunctionalEventListener(root, store) {
 
         case "bluetooth-pair-new":
           if(!address) return;
-          btn.disabled = true;
-          await bluetoothService.pairDevice(address);
-          await refreshBluetooth(store);
+          await run(bluetoothDetails, async () => {
+            await bluetoothService.pairDevice(address);
+            await refreshBluetooth(store);
+          });
           break;
         case "bluetooth-connect-paired":
           if(!address) return;
-          btn.disabled = true;
-          await bluetoothService.connectDevice(address);
-          await refreshBluetooth(store);
+          await run(bluetoothDetails, async () => {
+            await bluetoothService.connectDevice(address);
+            await refreshBluetooth(store);
+          });
           break;
         case "bluetooth-disconnect":
           if(!address) return;
-          btn.disabled = true;
-          await bluetoothService.disconnectDevice(address);
-          await refreshBluetooth(store);
+          await run(bluetoothDetails, async () => {
+            await bluetoothService.disconnectDevice(address);
+            await refreshBluetooth(store);
+          });
           break;
       }
     } catch (err) {
-      console.error("Wifi action failed:", err);
-    } finally {
-      btn.disabled = false;
+      console.error("Action failed:", err);
     }
   });
 }

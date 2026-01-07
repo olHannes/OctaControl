@@ -410,3 +410,11 @@
 .disconnect {
   color: var(--battery-slash);
 }
+
+.panel-details.is-busy {
+  pointer-events: none;
+  opacity: 0.55;
+}
+panel-details.is-busy::after {
+  content: "";
+}
