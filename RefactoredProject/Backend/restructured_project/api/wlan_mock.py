@@ -41,6 +41,7 @@ def maybe_delay_or_timeout(endpoint_name: str):
     Simuliert Verzögerungen/Timeouts.
     Du kannst das nutzen, um deine Client-Logik zu testen.
     """
+    time.sleep(2)
     if STATE.simulated_delay_s > 0:
         time.sleep(STATE.simulated_delay_s)
 

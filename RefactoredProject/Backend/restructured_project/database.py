@@ -41,7 +41,7 @@ def wipe_db():
 
 
 def init_db():
-    wipe_db()
+    #wipe_db()
 
     db = get_db()
 
