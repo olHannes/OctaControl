@@ -179,6 +179,18 @@
   background-color: var(--bluetooth);
 }
 
+.icon--bluetooth-on{
+  -webkit-mask-image: url("../assets/icons/bluetooth-svgrepo-com.svg");
+  mask-image: url("../assets/icons/bluetooth-svgrepo-com.svg");
+  background-color: var(--bluetooth);
+}
+
+.icon--bluetooth-off{
+  -webkit-mask-image: url("../assets/icons/bluetooth-slash-svgrepo-com.svg");
+  mask-image: url("../assets/icons/bluetooth-slash-svgrepo-com.svg");
+  background-color: var(--disabled);
+}
+
 .icon--wlan-on{
   -webkit-mask-image: url("../assets/icons/wifi-svgrepo-com.svg");
   mask-image: url("../assets/icons/wifi-svgrepo-com.svg");
@@ -188,7 +200,7 @@
 .icon--wlan-off{
   -webkit-mask-image: url("../assets/icons/wifi-slash-svgrepo-com.svg");
   mask-image: url("../assets/icons/wifi-slash-svgrepo-com.svg");
-  background-color: var(--bluetooth);
+  background-color: var(--disabled);
 }
 
 .icon--update{

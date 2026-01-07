@@ -279,7 +279,26 @@ function addDetailsEventListener(root, store) {
   const wifiToggle  = root.querySelector("#wifiToggle");
   const wifiDetails = root.querySelector("#wifiDetails");
 
-  btToggle?.addEventListener("change", () => syncDetails(btToggle, btDetails));
+  btToggle?.addEventListener("change", async () => {
+    if(!btToggle || !btDetails) return;
+
+    const enabled = btToggle.checked;
+    syncDetails(btToggle, btDetails);
+
+    btToggle.disabled = true;
+    try {
+      await withBusy(btDetails, async () => {
+        await bluetoothService.toggleBluetooth(enabled);
+        await refreshBluetooth(store);
+      });
+    } catch (e) {
+      console.error("Failed to toggle Bluetooth:", e);
+      btToggle.checked = !enabled;
+      syncDetails(btToggle, btDetails);
+    } finally {
+      btToggle.disabled = false;
+    }
+  });
 
   wifiToggle?.addEventListener("change", async () => {
     if(!wifiToggle || !wifiDetails) return;
@@ -288,18 +307,17 @@ function addDetailsEventListener(root, store) {
     syncDetails(wifiToggle, wifiDetails);
     
     wifiToggle.disabled = true;
-    lockPanel(wifiDetails);
-
     try {
-      await wifiService.toggleWifi(enabled);
-      await refreshWifi(store);
+      await withBusy(wifiDetails, async () => {
+        await wifiService.toggleWifi(enabled);
+        await refreshWifi(store);
+      });
     } catch (e) {
-      console.error("Failed to toggle Wifi power:", e);
-      wifiToggle.checked = !enabled;
-      syncDetails(wifiToggle, wifiDetails);
+        console.error("Failed to toggle Wifi power:", e);
+        wifiToggle.checked = !enabled;
+        syncDetails(wifiToggle, wifiDetails);
     } finally {
       wifiToggle.disabled = false;
-      unlockPanel(wifiDetails);
     }
   });
   syncDetails(btToggle, btDetails);
@@ -400,7 +418,7 @@ function addFunctionalEventListener(root, store) {
           break;
       }
     } catch (err) {
-      console.error("Action failed:", err);
+      console.error("Actionction failed:", err);
     }
   });
 }

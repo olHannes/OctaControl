@@ -149,7 +149,7 @@ export function renderSettings(root, store) {
         <div class="panel-group">
           <div class="panel">
             <div class="icon-wrapper">
-              <span class="icon icon--bluetooth"></span>
+              <span class="icon icon--bluetooth" id="bluetoothIcon"></span>
             </div>
             <div class="vertical-container align-left">
               <h3>Bluetooth</h3>
@@ -195,7 +195,7 @@ export function renderSettings(root, store) {
         <div class="panel-group">
           <div class="panel">
             <div class="icon-wrapper">
-              <span class="icon icon--wlan-off"></span>
+              <span class="icon icon--wlan-off" id="wifiIcon"></span>
             </div>
             <div class="vertical-container align-left">
               <h3>Wi-Fi</h3>
@@ -335,6 +335,12 @@ export function renderSettings(root, store) {
     if (wifiToggle.checked !== shouldBeOn) {
       wifiToggle.checked = shouldBeOn;
     }
+    const wifiIcon = document.getElementById("wifiIcon");
+    if (wifiIcon) {
+      wifiIcon.classList.toggle("icon--wlan-on", shouldBeOn);
+      wifiIcon.classList.toggle("icon--wlan-off", !shouldBeOn);
+    }
+
     connectivity.syncDetails(wifiToggle, wifiDetails);
   });
 
@@ -351,6 +357,12 @@ export function renderSettings(root, store) {
     if(bluetoothToggle.checked !== btShouldBeOn) {
       bluetoothToggle.checked = btShouldBeOn;
     }
+    const btIcon = document.getElementById("bluetoothIcon");
+    if (btIcon) {
+      btIcon.classList.toggle("icon--bluetooth-on", btShouldBeOn);
+      btIcon.classList.toggle("icon--bluetooth-off", !btShouldBeOn);
+    }
+
     connectivity.syncDetails(bluetoothToggle, bluetoothDetails);
   });
 }
