@@ -41,7 +41,7 @@ def wipe_db():
 
 
 def init_db():
-    #wipe_db()
+    wipe_db()
 
     db = get_db()
 
@@ -79,10 +79,9 @@ def init_db():
 
     db.execute("""
     CREATE TABLE IF NOT EXISTS audio_state (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
-        source TEXT NOT NULL,
-        volume INTEGER NOT NULL,
-        muted BOOLEAN NOT NULL,
+        source TEXT PRIMARY KEY,
+        volume INTEGER NOT NULL CHECK(volume BETWEEN 0 AND 100),
+        muted INTEGER NOT NULL CHECK(muted in (0,1)),
         updated_at INTEGER
     )
     """)
@@ -135,12 +134,16 @@ def init_db():
             ("lighting.enabled", "1"),
             ("lighting.brightness", "70"),
             ("lighting.colorKey", "sunset"),
+            ("audio.active_source", "bluetooth"),
     ])
 
-    db.execute("""
-    INSERT OR IGNORE INTO audio_state VALUES
-    (1, 'bluetooth', 30, 0, strftime('%s','now'))
-    """)
+    db.executemany("""
+    INSERT OR IGNORE INTO audio_state (source, volume, muted, updated_at)
+    VALUES (?, ?, ?, strftime('%s', 'now'))
+    """, [
+        ('bluetooth', 30, 0),
+        ('radio', 20, 1)
+    ])
 
     db.executemany("""
     INSERT OR IGNORE INTO sensors (name, description, datafields, active)

@@ -8,10 +8,11 @@ from database import init_db
 from api.system_api import system_api
 from api.sensors_api import sensors_api
 from api.lighting_api import lighting_api
+from api.audio_source_api import audio_source_api
 from sockets.sensor_socket import init_sensor_socket, init_test
 
-from api.wlan_mock import wlan_api
 from api.bluetooth_mock import bt_setup_api
+from api.wlan_api import wifi_api
 
 init_db()
 
@@ -42,8 +43,9 @@ def index():
 app.register_blueprint(system_api, url_prefix="/api/system")
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
+app.register_blueprint(audio_source_api, url_prefix="/api/audio_source")
 
-app.register_blueprint(wlan_api, url_prefix="/api/wlan")
+app.register_blueprint(wifi_api, url_prefix="/api/wlan")
 app.register_blueprint(bt_setup_api, url_prefix="/api/bluetooth")
 
 #WebSocket initialisieren
