@@ -1,7 +1,7 @@
 // js/app.js
 import { createStore } from "./store.js";
 import { initRouter } from "./router.js";
-import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+import { io } from "../assets/socketIo/socket.io.esm.min.js";
 
 import { renderDashboard } from "./pages/dashboard.page.js";
 import { renderNavi } from "./pages/navi.page.js";
