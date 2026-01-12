@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from services.AudioSourceService import AudioSourceService
+from services.audio_service import AudioService
 
 audio_source_api = Blueprint("audio_control_api", __name__)
 
@@ -29,6 +30,7 @@ def change_audio_source():
             old_source=payload["oldSource"],
             new_source=payload["newSource"],
         )
+        AudioService.get().set_active_source(updated["activeSource"])
         return jsonify(updated)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

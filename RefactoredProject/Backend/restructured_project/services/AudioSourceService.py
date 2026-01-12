@@ -40,7 +40,7 @@ class AudioSourceService:
         if len(exists) != 2:
             raise ValueError("oldSource/newSource unknown (not in audio_state)")
 
-        current = get_setting(db, "audio.active_source", default="bluetooth")
+        current = get_setting(db, "audio.active_source", default="radio")
         if current != old_source:
             return self.load()
 
