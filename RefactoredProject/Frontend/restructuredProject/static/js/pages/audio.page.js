@@ -14,7 +14,7 @@ function formatMs(ms) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-function renderBluetooth(root, data) {
+export function renderBluetooth(root, data) {
   const btTitle = root.querySelector(".song-title");
   const btArtist = root.querySelector(".song-artist");
   const btDevice = root.querySelector(".song-device");
@@ -22,6 +22,7 @@ function renderBluetooth(root, data) {
   const btPositionCurrent = root.querySelector(".bluetooth--position-current");
   const btPositionDuration = root.querySelector(".bluetooth--position-duration");
   const btAudioToggle = root.querySelector(".bluetooth--toggle");
+  const btAudioToggleWrapper = root.querySelector(".bluetooth--toggle-wrapper");
   const btVolumeSlider = root.querySelector(".volume--slider");
   const btVolumeDisplay = root.querySelector(".volume--display");
 
@@ -51,19 +52,23 @@ function renderBluetooth(root, data) {
     btPositionSlider.value = percent;
   }
 
-  if (btAudioToggle) {
+  if (btAudioToggle && btAudioToggleWrapper) {
     if (data.playing === true) {
       btAudioToggle.classList.add("is-playing");
       btAudioToggle.classList.remove("is-paused");
+      btAudioToggleWrapper.classList.add("is-playing");
+      btAudioToggleWrapper.classList.remove("is-paused");
     } else {
       btAudioToggle.classList.add("is-paused");
       btAudioToggle.classList.remove("is-playing");
+      btAudioToggleWrapper.classList.add("is-paused");
+      btAudioToggleWrapper.classList.remove("is-playing");
     }
   }
 }
 
 
-function renderFmRadio(root, store, data) {
+function renderFmRadio(root, data) {
 
 }
 
@@ -102,9 +107,11 @@ export function renderAudio(root, store) {
               </div>
             </div>
             <div class="bluetooth--controller">
-              <button class="bluetooth--previous"></button>
-              <button class="bluetooth--toggle"></button>
-              <button class="bluetooth--skip"></button>
+              <button class="icon bluetooth--previous" type="button" aria-label="Previous"></button>
+              <div class="bluetooth--toggle-wrapper">
+                <button class="icon bluetooth--toggle" type="button" aria-label="Play/Pause"></button>
+              </div>
+              <button class="icon bluetooth--skip" type="button" aria-label="Skip"></button>
             </div>
             <div class="volume--container">
               <span class="icon icon--speaker"></span>
@@ -117,7 +124,9 @@ export function renderAudio(root, store) {
       </div>
     </section>
   `;
-
+  
+  const btPanel = root.querySelector('[data-panel="bt"]');
+  const fmPanel = root.querySelector('[data-panel="fm"]');
 
   root.querySelector(".audio__tabs").addEventListener("click", (e) => {
     const btn = e.target.closest(".tab");
@@ -128,6 +137,11 @@ export function renderAudio(root, store) {
 
   store.subscribeSelector(s => s.bt_audio, (l) => {
     if(!l) return;
-    renderBluetooth(root, l);
+    renderBluetooth(btPanel, l);
+  });
+  store.subscribeSelector(s => s.fm_audio, (l) => {
+    if(!l) return;
+    console.log(l);
+    renderFmRadio(fmPanel, l);
   });
 }

@@ -98,28 +98,64 @@
   display: flex;
   width: 100%;
   height: 95px;
-  background-color: rgba(240, 248, 255, 0.135);
+  background-color: rgba(240, 248, 255, 0.044);
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: var(--gap);
 }
+.bluetooth--toggle-wrapper {
+  width: 74px;
+  height: 74px;
+  border: none;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .bluetooth--previous {
-   
+  -webkit-mask-image: url("../assets/icons/previous-svgrepo-com.svg");
+  mask-image: url("../assets/icons/previous-svgrepo-com.svg");
+  width: 38px;
+  height: 38px;
+  background-color: white;
 }
 .bluetooth--toggle {
-
+  -webkit-mask-image: url("../assets/icons/pause-svgrepo-com.svg");
+  mask-image: url("../assets/icons/pause-svgrepo-com.svg");
+  width: 100%;
+  height: 48%;
+  background-color: white;
 }
 .bluetooth--skip {
-
+  -webkit-mask-image: url("../assets/icons/skip-svgrepo-com.svg");
+  mask-image: url("../assets/icons/skip-svgrepo-com.svg");
+  width: 38px;
+  height: 38px;
+  background-color: white;
 }
 
 .bluetooth--toggle.is-playing {
-  background-color: var(--ui-accent);
+  -webkit-mask-image: url("../assets/icons/pause-svgrepo-com.svg");
+  mask-image: url("../assets/icons/pause-svgrepo-com.svg");
 }
 .bluetooth--toggle.is-paused {
-  background-color: var(--disabled);
+  -webkit-mask-image: url("../assets/icons/play-svgrepo-com.svg");
+  mask-image: url("../assets/icons/play-svgrepo-com.svg");
 }
+
+.bluetooth--toggle-wrapper.is-playing {
+  background-color: var(--ui-accent);
+}
+.bluetooth--toggle-wrapper.is-paused {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+
 
 .volume--container {
   width: 100%;
