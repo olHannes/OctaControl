@@ -47,8 +47,20 @@
   --battery-full:  #16A34A;
 
   --network: #14B8A6;
+  
+
+  --bluetooth-background: #224A78;
+  --bluetooth-color: #60A5FA;
+  --bluetooth-highlight: #60A5FA;
   --bluetooth: #2563EB;
+
+  
+  --radio-background: #0F6B5E;
+  --radio-color: #34D399;
+  --radio-highlight: #34D399;
+
   --radio: #06B6D4;
+
   --disabled:  #64748B;
 
   --favourite: #FB923C;

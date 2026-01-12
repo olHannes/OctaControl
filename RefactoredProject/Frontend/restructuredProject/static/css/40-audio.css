@@ -1,0 +1,135 @@
+.audio {
+  display: flex;
+  justify-content: center;
+}
+
+.audio .card {
+  padding: 0;
+  overflow: hidden;
+  width: 85%;
+  -webkit-box-shadow: 0px 0px 47px -1px var(--ui-accent-border);
+  box-shadow: 0px 0px 47px -1px var(--ui-accent-border);
+}
+
+.audio__tabs { display: flex; }
+
+.audio__tabs .tab {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--disabled);
+  padding: 1rem 0;
+  cursor: pointer;
+
+  opacity: 0.6;
+  position: relative;
+
+  font-size: 1.2rem;
+  color: var(--disabled);
+}
+
+.audio__tabs .icon {
+  width: 30px;
+  height: 30px;
+  background-color: var(--disabled);
+}
+
+.audio__tabs .tab--bt.is-active {
+  color: var(--bluetooth-color);
+  background: var(--bluetooth-background);
+  border-bottom: 1px solid var(--bluetooth-highlight);
+  opacity: 1;
+}
+.tab--bt.is-active .icon {
+  background-color: var(--bluetooth-color);
+}
+
+.audio__tabs .tab--fm.is-active {
+  color: var(--radio-color);
+  background: var(--radio-background);
+  border-bottom: 1px solid var(--radio-highlight);
+  opacity: 1;
+}
+.tab--fm.is-active .icon {
+  background-color: var(--radio-color);
+}
+
+.audio__body {
+  padding: 5px 35px;
+}
+
+
+.current--song {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.song-image {
+  height: 20dvh;
+  border-radius: 26px;
+  margin-right: var(--gap);
+}
+
+.position--marker {
+  width: 100%;
+  height: 50px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  background-color: rgba(255, 255, 255, 0.216);
+}
+.bluetooth--position {
+  width: 100%;
+}
+.position--description {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bluetooth--controller {
+  display: flex;
+  width: 100%;
+  height: 95px;
+  background-color: rgba(240, 248, 255, 0.135);
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap);
+}
+.bluetooth--previous {
+   
+}
+.bluetooth--toggle {
+
+}
+.bluetooth--skip {
+
+}
+
+.bluetooth--toggle.is-playing {
+  background-color: var(--ui-accent);
+}
+.bluetooth--toggle.is-paused {
+  background-color: var(--disabled);
+}
+
+.volume--container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.volume--slider {
+  width: 85%;
+}

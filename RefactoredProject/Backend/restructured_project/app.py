@@ -10,6 +10,7 @@ from api.sensors_api import sensors_api
 from api.lighting_api import lighting_api
 from api.audio_source_api import audio_source_api
 from sockets.sensor_socket import init_sensor_socket
+from sockets.audio_socket import init_audio_socket
 
 from api.bluetooth_mock import bt_setup_api
 from api.wlan_api import wifi_api
@@ -51,7 +52,7 @@ app.register_blueprint(bt_setup_api, url_prefix="/api/bluetooth")
 #WebSocket initialisieren
 ####################################################################
 init_sensor_socket(socketio)
-#init_test(socketio)
+init_audio_socket(socketio)
 
 
 #Start

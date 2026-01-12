@@ -23,6 +23,8 @@ const store = createStore({
     local_time: null,
     flags: null,
   },
+  fm_audio: { frequency: null, radioStation: null, isFavorite: false, presetIndex: null, signal: null, favorites: [], volume: null, },
+  bt_audio: { connected: false, device: null, playing: false, title: null, artist: null, album: null, positionMs: null, durationMs: null, volume: 0, },
   ui: { theme: "dark", systemColor: "#3aa0ff" },
   system: { battery: 70, audioSource: "bluetooth", version: null },
   network: { power: null, state: null, internet: null, ip: null, ssid: null, signal: null, knownNetworks: [], scannedNetworks: [] },
@@ -55,6 +57,21 @@ socket.on("sensor_update", (data) => {
   });
 });
 
+socket.on("fm_audio_update", (data) => {
+  const cur = store.get().fm_audio;
+
+  store.setSlice("fm_audio", {
+    ...data
+  });
+});
+
+socket.on("bt_audio_update", (data) => {
+  const cur = store.get().bt_audio;
+
+  store.setSlice("bt_audio", {
+    ...data
+  });
+});
 
 
 const themeBtn = document.querySelector("#themeBtn");
