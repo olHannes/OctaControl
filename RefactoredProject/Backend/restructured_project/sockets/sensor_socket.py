@@ -1,5 +1,3 @@
-import time
-import threading
 from services.sensor_service import SensorService
 
 def init_sensor_socket(socketio):
