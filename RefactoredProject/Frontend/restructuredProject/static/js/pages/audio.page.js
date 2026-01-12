@@ -15,6 +15,8 @@ function formatMs(ms) {
 }
 
 export function renderBluetooth(root, data) {
+  const btTab = document.querySelector(".audio .tab--bt");
+  const fmTab = document.querySelector(".audio .tab--fm");
   const btTitle = root.querySelector(".song-title");
   const btArtist = root.querySelector(".song-artist");
   const btDevice = root.querySelector(".song-device");
@@ -52,18 +54,27 @@ export function renderBluetooth(root, data) {
     btPositionSlider.value = percent;
   }
 
-  if (btAudioToggle && btAudioToggleWrapper) {
+  if (btAudioToggle) {
     if (data.playing === true) {
       btAudioToggle.classList.add("is-playing");
       btAudioToggle.classList.remove("is-paused");
-      btAudioToggleWrapper.classList.add("is-playing");
-      btAudioToggleWrapper.classList.remove("is-paused");
     } else {
       btAudioToggle.classList.add("is-paused");
       btAudioToggle.classList.remove("is-playing");
+    }
+  }
+  if (btAudioToggleWrapper) {
+    if (data.playing === true) {
+      btAudioToggleWrapper.classList.add("is-playing");
+      btAudioToggleWrapper.classList.remove("is-paused");
+    } else {
       btAudioToggleWrapper.classList.add("is-paused");
       btAudioToggleWrapper.classList.remove("is-playing");
     }
+  }
+  if(btTab && fmTab) {
+    btTab.classList.toggle("is-active", true);
+    fmTab.classList.toggle("is-active", false);
   }
 }
 
