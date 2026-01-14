@@ -26,7 +26,7 @@ const store = createStore({
   fm_audio: { frequency: null, radioStation: null, isFavorite: false, presetIndex: null, signal: null, favorites: [], volume: null, },
   bt_audio: { connected: false, device: null, playing: false, title: null, artist: null, album: null, positionMs: null, durationMs: null, volume: 0, },
   ui: { theme: "dark", systemColor: "#3aa0ff" },
-  system: { battery: 70, audioSource: "bluetooth", version: null },
+  system: { battery: 30, audioSource: null, version: null },
   network: { power: null, state: null, internet: null, ip: null, ssid: null, signal: null, knownNetworks: [], scannedNetworks: [] },
   bluetooth: { power: null, visibility: null, connectedDeviceName: null, connectedDeviceMac: null, pairedDevices: [], scannedDevices: []},
   software: { branch: null, commit: null, date: null, dirty: null },

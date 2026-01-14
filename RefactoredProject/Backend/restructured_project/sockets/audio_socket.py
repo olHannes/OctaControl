@@ -7,7 +7,7 @@ def init_audio_socket(socketio):
             svc = AudioService.get()
             if svc.active_source == "bluetooth":
                 socketio.emit("bt_audio_update", svc.read_bt())
-            socketio.sleep(2)
+            socketio.sleep(1)
     
     def loop_fm():
         while True:

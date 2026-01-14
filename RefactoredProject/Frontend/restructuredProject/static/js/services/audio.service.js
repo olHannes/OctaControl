@@ -16,7 +16,7 @@ export const bluetoothAudioService = {
 }
 
 export const fmAudioService = {
-    state() { return apiGet("/api/audio"); },
+    state() { return apiGet("/api/audio/bluetooth/"); },
     scanUp() { return apiGet("/api/audio/scan?direction=up"); },
     scanDown() { return apiGet("/api/audio/scan?direction=down"); },
     goUp() { return apiGet("/api/audio/go?direction=up"); },
