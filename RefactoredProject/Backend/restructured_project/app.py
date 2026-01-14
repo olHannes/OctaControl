@@ -9,6 +9,8 @@ from api.system_api import system_api
 from api.sensors_api import sensors_api
 from api.lighting_api import lighting_api
 from api.audio_source_api import audio_source_api
+from api.audio_bt_api import btAudio_api
+
 from sockets.sensor_socket import init_sensor_socket
 from sockets.audio_socket import init_audio_socket
 
@@ -44,7 +46,9 @@ def index():
 app.register_blueprint(system_api, url_prefix="/api/system")
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
-app.register_blueprint(audio_source_api, url_prefix="/api/audio_source")
+
+app.register_blueprint(audio_source_api, url_prefix="/api/audio/source")
+app.register_blueprint(btAudio_api, url_prefix="/api/audio/bluetooth")
 
 app.register_blueprint(wifi_api, url_prefix="/api/wlan")
 app.register_blueprint(bt_setup_api, url_prefix="/api/bluetooth")
