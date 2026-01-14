@@ -83,7 +83,7 @@ export function renderLighting(root, store) {
             </div>
 
             <input
-              class="brightness__slider"
+              class="range brightness__slider"
               id="brightSlider"
               type="range"
               min="0"

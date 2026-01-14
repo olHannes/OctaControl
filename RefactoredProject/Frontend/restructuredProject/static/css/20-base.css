@@ -157,3 +157,25 @@ section { height: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .spinner svg { animation: none; }
 }
+
+
+
+
+.range {
+  width: 400px;
+  height: 15px;
+  -webkit-appearance: none;
+  background: var(--range-track);
+  outline: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: -1006px 0 0 1000px var(--range-fill);
+}

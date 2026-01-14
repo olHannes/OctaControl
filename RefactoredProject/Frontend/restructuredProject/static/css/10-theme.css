@@ -69,6 +69,18 @@
   --system-shutdown-light: #a919193b;
   --system-shutdown-muted: #FCA5A5;
 
+  --range-track: color-mix(in srgb, var(--card) 85%,black);
+  --range-fill: #556b94;
+
+
+
+  --ui-text-primary: var(--fg);
+  --ui-text-secondary: var(--muted);
+  --ui-text-muted: color-mix(in srgb, var(--muted) 75%, transparent);
+  --ui-text-disabled: var(--disabled);
+
+  --ui-text-weak: color-mix(in srgb, var(--fg) 65%, transparent);
+
 }
 
 

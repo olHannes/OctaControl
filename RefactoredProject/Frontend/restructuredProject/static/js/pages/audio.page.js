@@ -14,6 +14,7 @@ function formatMs(ms) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+
 export function renderBluetooth(root, data) {
   const btTab = document.querySelector(".audio .tab--bt");
   const fmTab = document.querySelector(".audio .tab--fm");
@@ -25,6 +26,7 @@ export function renderBluetooth(root, data) {
   const btPositionDuration = root.querySelector(".bluetooth--position-duration");
   const btAudioToggle = root.querySelector(".bluetooth--toggle");
   const btAudioToggleWrapper = root.querySelector(".bluetooth--toggle-wrapper");
+  const btVolumeIcon = root.querySelector(".loudness");
   const btVolumeSlider = root.querySelector(".volume--slider");
   const btVolumeDisplay = root.querySelector(".volume--display");
 
@@ -33,7 +35,7 @@ export function renderBluetooth(root, data) {
   btDevice && (btDevice.innerText = data.device ?? "Not provided");
   btPositionCurrent && (btPositionCurrent.innerText = data.positionMs ?? 0);
   btPositionDuration && (btPositionDuration.innerText = data.durationMs ?? 0);
-  btVolumeDisplay && (btVolumeDisplay.innerText = data.volume ?? 0);
+  btVolumeDisplay && (btVolumeDisplay.innerText = (data.volume ?? 0) + "%");
   btVolumeSlider && (btVolumeSlider.value = data.volume ?? 30);
 
   if (btPositionCurrent) {
@@ -54,6 +56,15 @@ export function renderBluetooth(root, data) {
     btPositionSlider.value = percent;
   }
 
+  if(btVolumeIcon) {
+    if(data.volume === 0) {
+      btVolumeIcon.classList.toggle("volume--icon-muted", true);
+      btVolumeIcon.classList.toggle("volume--icon-on", false);
+    } else {
+      btVolumeIcon.classList.toggle("volume--icon-muted", false);
+      btVolumeIcon.classList.toggle("volume--icon-on", true);
+    }
+  }
   if (btAudioToggle) {
     if (data.playing === true) {
       btAudioToggle.classList.add("is-playing");
@@ -80,7 +91,13 @@ export function renderBluetooth(root, data) {
 
 
 function renderFmRadio(root, data) {
+  const btTab = document.querySelector(".audio .tab--bt");
+  const fmTab = document.querySelector(".audio .tab--fm");
 
+  if(btTab && fmTab) {
+    fmTab.classList.toggle("is-active", true);
+    btTab.classList.toggle("is-active", false);
+  }
 }
 
 
@@ -103,7 +120,11 @@ export function renderAudio(root, store) {
         <div class="audio__body">
           <section class="panel panel--bt" role="tabpanel" data-panel="bt">
             <div class="current--song">
-              <img src="../static/assets/images/album_cover_placeholder.jpg" alt="Song Cover" class="song-image"></img>
+            
+            <div class="song-image-box is-placeholder">
+              <div class="placeholder-icon">♪</div>
+            </div>
+
               <div class="vertical-container">
                 <h3 class="song-title">Title Placeholder</h3>
                 <p class="song-artist">Artist Placeholder</p>
@@ -111,7 +132,7 @@ export function renderAudio(root, store) {
               </div>
             </div>
             <div class="position--marker">
-              <input type="range" class="bluetooth--position" min=0 max=100 step=1></input>
+              <input type="range" class="range bluetooth--position" min=0 max=100 step=1 disabled=true></input>
               <div class="position--description">
                 <span class="bluetooth--position-current">0:00</span>
                 <span class="bluetooth--position-duration">0:00</span>
@@ -125,8 +146,8 @@ export function renderAudio(root, store) {
               <button class="icon bluetooth--skip" type="button" aria-label="Skip"></button>
             </div>
             <div class="volume--container">
-              <span class="icon icon--speaker"></span>
-              <input type="range" class="volume--slider" min=0 max=100 step=2></input>
+              <span class="loudness icon volume--icon-on"></span>
+              <input type="range" class="range volume--slider" min=0 max=100 step=2></input>
               <span class="volume--display">0%</span>
             </div>
           </section>
