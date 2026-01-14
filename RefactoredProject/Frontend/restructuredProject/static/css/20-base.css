@@ -161,7 +161,7 @@ section { height: 100%; }
 
 .is-busy {
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.8;
 }
 
 
