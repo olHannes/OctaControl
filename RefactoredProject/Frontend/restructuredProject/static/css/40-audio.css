@@ -248,6 +248,70 @@
 
 
 
+.panel--fm header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+.panel--fm header div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap);
+}
+.fm-freq {
+  color: var(--ui-accent);
+  font-size: 4.5rem;
+  font-weight: 100;
+}
+.fm-unit {
+  color: var(--disabled);
+  font-size: 2rem;
+  font-weight: 200;
+}
+.fm-favorite {
+  height: 15px;
+  width: 15px;
+}
+.fm-name {
+  color: var(--ui-accent);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+
+.fm-freq-view {
+  margin-bottom: 25px;
+}
+.fm-range {
+  width: 100%;
+}
+.fm-freq-bounds {
+  display: flex;
+  justify-content: space-between;
+}
+.freq-min {
+  margin: 0;
+  color: var(--disabled);
+}
+.freq-max {
+  margin: 0;
+  color: var(--disabled);
+}
+
+
+.fm-favorites-title-block {
+  display: flex;
+  gap: 5px;
+}
+.fm-favorites-title {
+  margin: 0;
+}
+
+
+
 
 .volume--container {
   width: 100%;
@@ -257,24 +321,23 @@
   justify-content: space-around;
   margin-top: 20px;
 }
-
 .volume--slider {
   width: 85%;
 }
-
 .volume--container .icon {
   height: 30px;
   width: 30px;
 }
-
 .volume--icon-muted {
   -webkit-mask-image: url("../assets/icons/speaker-cross-svgrepo-com.svg");
   mask-image: url("../assets/icons/speaker-cross-svgrepo-com.svg");
   background-color: var(--disabled);
 }
-
 .volume--icon-on {
   -webkit-mask-image: url("../assets/icons/speaker-2-svgrepo-com.svg");
   mask-image: url("../assets/icons/speaker-2-svgrepo-com.svg");
   background-color: var(--ui-accent);
+}
+.volume--display {
+  color: var(--disabled);
 }

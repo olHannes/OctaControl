@@ -145,7 +145,52 @@ export async function renderAudio(root, store) {
               <span class="volume--display">0%</span>
             </div>
           </section>
-          <section class="panel panel--fm" role="tabpanel" data-panel="fm" hidden></section>
+
+
+          <section class="panel panel--fm" role="tabpanel" data-panel="fm" hidden>
+            <header>
+              <div>
+                <span class="fm-freq">95.7</span>
+                <p class="fm-unit">MHZ</p>
+                <button type="button" class="fm-favorite"></button>
+              </div>
+              <span class="fm-name">Scanning...</span>
+            </header>
+
+            <div class="fm-freq-view">
+              <input type="range" class="range fm-range" disabled=true min=0 max=100></input>
+              <div class="fm-freq-bounds">
+                <p class="freq-min">00.0</p>
+                <p class="freq-max">000.0</p>
+              </div>
+            </div>
+
+            <div class="fm-control">
+            </div>
+
+            <div class="fm-favorites-container">
+              <div class="fm-favorites-title-block">
+                <span class="icon icon--favorite"></span>
+                <p class="fm-favorites-title">Favorites</p>
+              </div>
+              <div class="fm-favorites">
+              
+              </div>
+            </div>
+
+            <div class="fm-presets-container">
+              <p class="fm-presets-title">Quick Presets</p>
+              <div class="fm-presets">
+
+              </div>
+            </div>
+          
+            <div class="volume--container">
+              <span class="loudness icon volume--icon-on"></span>
+              <input type="range" class="range volume--slider" min=0 max=100 step=2></input>
+              <span class="volume--display">0%</span>
+            </div>
+          </section>
         </div>
       </div>
     </section>
