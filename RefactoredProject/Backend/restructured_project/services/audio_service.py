@@ -82,6 +82,8 @@ class AudioService:
     def set_active_source(self, source: str):
         if source in ("bluetooth", "radio"):
             self.active_source = source
+            if source == "radio":
+                self.bt.pause()
     
     def set_volume(self, volume: int):
         reader = self._active_reader()
