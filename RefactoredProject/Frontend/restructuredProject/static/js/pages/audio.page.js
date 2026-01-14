@@ -1,5 +1,104 @@
 // js/pages/audio.page.js
 import { audioService, bluetoothAudioService, fmAudioService } from "../services/audio.service.js";
+import { withBusy } from "../features/panelLock.js";
+
+export async function loadInitialBt(store) {
+  const data = await bluetoothAudioService.state();
+  store.setSlice("bt_audio", data);
+}
+export async function loadInitialFm(store) {
+  const data = await fmAudioService.state();
+  store.setSlice("fm_audio", data);
+}
+
+export async function loadInitialData(store) {
+  const data = await audioService.get();
+  console.log(data.activeSource);
+  if(data && data.activeSource === "bluetooth") {
+    loadInitialBt(store);
+  }else if(data && data.activeSource === "radio") {
+    loadInitialFm(store);
+  }
+}
+
+
+
+export function addBtEventListener(root, store) {
+  const btPanel = root.querySelector('[data-panel="bt"]');
+  if (!btPanel) return;
+
+  const playToggle = btPanel.querySelector(".bluetooth--toggle");
+  const btnPrev = btPanel.querySelector(".bluetooth--previous");
+  const btnSkip = btPanel.querySelector(".bluetooth--skip");
+  const posSlider = btPanel.querySelector(".bluetooth--position");
+  const volSlider = btPanel.querySelector(".volume--slider");
+
+    // --- Play / Pause ---
+  playToggle?.addEventListener("click", () => {
+    withBusy(btPanel, async () => {
+      const state = store.getState().bt_audio;
+      if(!state) return;
+      if(state.playing) {
+        await bluetoothAudioService.pause();
+      } else {
+        await bluetoothAudioService.play();
+      }
+
+      const fresh = await bluetoothAudioService.state();
+      store.setSlice("bt_audio", fresh);
+    }).catch(console.error);
+  });
+
+  // --- Previous ---
+  btnPrev?.addEventListener("click", () => {
+    withBusy(btPanel, async () => {
+      await bluetoothAudioService.previous();
+      const fresh = await bluetoothAudioService.state();
+      store.setSlice("bt_audio", fresh);
+    }).catch(console.error);
+  });
+
+  // --- Skip ---
+  btnSkip?.addEventListener("click", () => {
+    withBusy(btPanel, async () => {
+      await bluetoothAudioService.skip();
+      const fresh = await bluetoothAudioService.state();
+      store.setSlice(fresh);
+    }).catch(console.error);
+  });
+
+  // --- Position Slider (SEEK) ---
+  posSlider?.addEventListener("change", (e) => {
+    withBusy(btPanel, async () => {
+      const state = store.getState().bt_audio;
+      if (!state?.durationMs) return;
+
+      const percent = Number(e.target.value);
+      const positionMs = Math.round(
+        (percent/100)*state.durationMs
+      );
+      
+      await bluetoothAudioService.updatePosition({positionMs});
+      const fresh = bluetoothAudioService.state();
+      store.setSlice("bt_audio", fresh);
+    }).catch(console.error);
+  });
+
+  // --- Volume ---
+  volSlider?.addEventListener("change", async (e) => {
+    const volume = Number(e.target.value);
+
+    try {
+      await bluetoothAudioService.updateVolume({ volume });
+      const fresh = await bluetoothAudioService.state();
+      store.setSlice("bt_audio", fresh);
+    } catch (err) {
+      console.error("BT volume failed", err);
+    }
+  });
+}
+
+
 
 function formatMs(ms) {
   if (ms == null || ms < 0) return "0:00";
@@ -13,7 +112,6 @@ function formatMs(ms) {
   }
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
-
 
 export function renderBluetooth(root, data) {
   const btTab = document.querySelector(".audio .tab--bt");
@@ -132,7 +230,7 @@ export function renderAudio(root, store) {
               </div>
             </div>
             <div class="position--marker">
-              <input type="range" class="range bluetooth--position" min=0 max=100 step=1 disabled=true></input>
+              <input type="range" class="range bluetooth--position" min=0 max=100 step=1></input>
               <div class="position--description">
                 <span class="bluetooth--position-current">0:00</span>
                 <span class="bluetooth--position-duration">0:00</span>
@@ -157,6 +255,8 @@ export function renderAudio(root, store) {
     </section>
   `;
   
+  addBtEventListener(root, store);
+
   const btPanel = root.querySelector('[data-panel="bt"]');
   const fmPanel = root.querySelector('[data-panel="fm"]');
 
@@ -173,7 +273,9 @@ export function renderAudio(root, store) {
   });
   store.subscribeSelector(s => s.fm_audio, (l) => {
     if(!l) return;
-    console.log(l);
     renderFmRadio(fmPanel, l);
   });
+
+  loadInitialData(store).catch(console.error);
+
 }

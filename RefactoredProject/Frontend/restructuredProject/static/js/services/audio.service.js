@@ -1,24 +1,26 @@
 import { apiGet, apiPatch, apiPost } from "../api.js";
 
 export const audioService = {
-    switchSource(oldSource, newSource) { return apiPatch("/api/audio/change", {oldSource, newSource}); },
+    get() { return apiGet("/api/audio/source/status"); },
+    switchSource(oldSource, newSource) { return apiPatch("/api/audio/source/change", {oldSource, newSource}); },
 }
 
 export const bluetoothAudioService = {
-    state() { return apiGet("/api/audio/state"); },
-    play() { return apiGet("/api/audio/play"); },
-    pause() { return apiGet("/api/audio/pause"); },
-    skip() { return apiGet("/api/audio/skip"); },
-    previous() { return apiGet("/api/audio/previous"); },
-    updateVolume(volume) { return apiPatch("/api/audio/volume", {volume}); },
+    state() { return apiGet("/api/audio/bluetooth/"); },
+    play() { return apiPost("/api/audio/bluetooth/play"); },
+    pause() { return apiPost("/api/audio/bluetooth/pause"); },
+    skip() { return apiPost("/api/audio/bluetooth/skip"); },
+    previous() { return apiPost("/api/audio/bluetooth/previous"); },
+    updatePosition(pos) { return apiPost("/api/audio/bluetooth/set_position", pos); },
+    updateVolume(volume) { return apiPatch("", {volume}); },
 }
 
 export const fmAudioService = {
-    state() { return apiGet("/api/audio/state"); },
+    state() { return apiGet("/api/audio"); },
     scanUp() { return apiGet("/api/audio/scan?direction=up"); },
     scanDown() { return apiGet("/api/audio/scan?direction=down"); },
     goUp() { return apiGet("/api/audio/go?direction=up"); },
     goDown() { return apiGet("/api/audio/go?direction=down"); },
     setPreset(freq) { return apiPost("/api/audio/set", {freq}); },
-    updateVolume(volume) { return apiPatch("/api/audio/volume", {volume}); },
+    updateVolume(volume) { return apiPatch("", {volume}); },
 }

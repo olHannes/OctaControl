@@ -1,85 +1,56 @@
 
-import time 
-import random
-class DummyBtReader:
-    def __init__(self):
-        self.connected = True
-        self.device = "Samsung S22 - Dummy"
-
-        self.playing = True
-        self.title = "Dummy Song"
-        self.artist = "Dummy Artist"
-        self.album = "Dummy Album"
-
-        self.durationMs = 3 * 60 * 1000
-        self.positionMs = 240
-
-        self.volume = 50
-
-        self._last_ts = time.monotonic()
-    
-    def _tick(self):
-        now = time.monotonic()
-        delta_ms = int((now-self._last_ts) * 1000)
-        self._last_ts = now
-
-        if self.playing:
-            self.positionMs += delta_ms
-            if self.positionMs >= self.durationMs:
-                self.positionMs = self.durationMs
-                self.playing = False
-    def get_data(self):
-        self._tick()
-
-        return {
-            "connected": self.connected,
-            "device": self.device,
-            "playing": self.playing,
-            "title": self.title,
-            "artist": self.artist,
-            "album": self.album,
-            "positionMs": self.positionMs,
-            "durationMs": self.durationMs,
-            "volume": self.volume,
-        }
-
-    def play(self):
-        if self.connected:
-            self.playing = True
-            self._last_ts = time.monotonic()
-
-    def pause(self):
-        self._tick()
-        self.playing = False
-
-    def skip(self):
-        self._new_track()
-
-    def previous(self):
-        self._new_track()
-
-    def set_volume(self, volume: int):
-        self.volume = max(0, min(100, int(volume)))
-
-    def _new_track(self):
-        self.positionMs = 0
-        self.durationMs = random.randint(120, 360) * 1000
-        self.title = f"Dummy Song {random.randint(1,99)}"
-        self.artist = "Dummy Artist"
-        self.album = "Dummy Album"
-        self.playing = True
-        self._last_ts = time.monotonic()
-
+from Reader.dummy_btReader import DummyBtReader
 
 
 
 class DummyFmReader:
-    pass
+    def get_data(self):
+        pass
+    def set_volume(self, volume: int):
+        pass
+    def set_freq(self, freq):
+        pass
+    def scan_up(self):
+        pass
+    def scan_down(self):
+        pass
+    def save_fav(self, freq):
+        pass
+
+
 
 class BtReader:
-    pass
+    def set_volume(self, volume: int):
+        pass
+    def get_data(self):
+        pass
+    def set_position(self, positionMs: int):
+        pass
+    def play(self):
+        pass
+    def pause(self):
+        pass
+    def skip(self):
+        pass
+    def previous(self):
+        pass
+
+
 class FmReader:
-    pass
+    def get_data(self):
+        pass
+    def set_volume(self, volume: int):
+        pass
+    def set_freq(self, freq):
+        pass
+    def scan_up(self):
+        pass
+    def scan_down(self):
+        pass
+    def save_fav(self, freq):
+        pass
+
+
 
 
 #Audio Service (used in Sockets to get real or mock data)
@@ -99,6 +70,9 @@ class AudioService:
 
         self.active_source = None
     
+    def _active_reader(self):
+        return self.bt if self.active_source == "bluetooth" else self.fm
+    
     @classmethod
     def get(cls):
         if not cls._instance:
@@ -108,6 +82,12 @@ class AudioService:
     def set_active_source(self, source: str):
         if source in ("bluetooth", "radio"):
             self.active_source = source
+    
+    def set_volume(self, volume: int):
+        reader = self._active_reader()
+        if not hasattr(reader, "set_volume"):
+            raise NotImplementedError("set_volume not supported")
+        reader.set_volume(volume)
     
     def read_bt(self):
         return self.bt.get_data()

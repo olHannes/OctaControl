@@ -67,7 +67,6 @@ socket.on("fm_audio_update", (data) => {
 
 socket.on("bt_audio_update", (data) => {
   const cur = store.get().bt_audio;
-
   store.setSlice("bt_audio", {
     ...data
   });

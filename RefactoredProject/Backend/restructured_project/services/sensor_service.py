@@ -1,5 +1,5 @@
-from uart.dummy_uart import DummyUartReader
-from uart.uart_sensor_reader import SensorUartReader
+from Reader.dummy_uart import DummyUartReader
+from Reader.uart_sensor_reader import SensorUartReader
 
 class SensorService:
     _instance = None
