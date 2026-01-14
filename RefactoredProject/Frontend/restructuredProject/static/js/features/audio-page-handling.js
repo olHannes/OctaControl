@@ -5,7 +5,7 @@ import { withBusy } from "../features/panelLock.js";
 * initial loading
 */
 export async function loadInitialData(store) {
-  loadInitialSource(store);
+  await loadInitialSource(store);
   loadInitialBt(store);
   loadInitialFm(store);
 }
@@ -25,13 +25,15 @@ async function loadInitialSource(store) {
 
 
 // apply tab ui
-export function applyActiveSourceUI(root, activeSource) {
+export function applyActiveSourceUI(root, store) {
   const btTab = root.querySelector(".audio .tab--bt");
   const fmTab = root.querySelector(".audio .tab--fm");
   const btPanel = root.querySelector('[data-panel="bt"]');
   const fmPanel = root.querySelector('[data-panel="fm"]');
 
-  const isBt = activeSource === "bluetooth";
+  const storedSource = store?.getState().system;
+
+  const isBt = storedSource?.audioSource === "bluetooth";
   btTab?.classList.toggle("is-active", isBt);
   fmTab?.classList.toggle("is-active", !isBt);
 
@@ -48,8 +50,8 @@ export function applyActiveSourceUI(root, activeSource) {
 * Event Listener Handling
 */
 export function addAudioEventListener(root, store) {
-  addBtEventListener(root, store);
   addAudioTabSwitchListeners(root, store);
+  addBtEventListener(root, store);
   addFmEventListener(root, store);
 }
 
@@ -87,7 +89,7 @@ function addAudioTabSwitchListeners(root, store) {
         const fm = await fmAudioService.state();
         store.setSlice("fm_audio", fm);
       }
-      applyActiveSourceUI(root, freshStatus.activeSource);
+      applyActiveSourceUI(root, store);
     }).catch(console.error);
   });
 }

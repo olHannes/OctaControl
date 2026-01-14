@@ -95,7 +95,7 @@ function renderFmRadio(root, data) {
 }
 
 
-export function renderAudio(root, store) {
+export async function renderAudio(root, store) {
   root.innerHTML = `
     <section class="audio">
       <div class="card">
@@ -155,7 +155,6 @@ export function renderAudio(root, store) {
   
   const fmPanel = root.querySelector('[data-panel="fm"]');
   const btPanel = root.querySelector('[data-panel="bt"]');
-  const status = store.getState().system;
   
   store.subscribeSelector(s => s.bt_audio, (l) => {
     if(!l) return;
@@ -166,6 +165,6 @@ export function renderAudio(root, store) {
     renderFmRadio(fmPanel, l);
   });
   
-  audioHandler.loadInitialData(store).catch(console.error);
-  audioHandler.applyActiveSourceUI(root, status?.audioSource);
+  await audioHandler.loadInitialData(store).catch(console.error);
+  audioHandler.applyActiveSourceUI(root, store);
 }
