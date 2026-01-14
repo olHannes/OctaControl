@@ -86,8 +86,8 @@ class AudioService:
     def set_volume(self, volume: int):
         reader = self._active_reader()
         if not hasattr(reader, "set_volume"):
-            raise NotImplementedError("set_volume not supported")
-        reader.set_volume(volume)
+            return False
+        return reader.set_volume(volume)
     
     def read_bt(self):
         return self.bt.get_data()

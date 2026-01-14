@@ -12,7 +12,7 @@ export const bluetoothAudioService = {
     skip() { return apiPost("/api/audio/bluetooth/skip"); },
     previous() { return apiPost("/api/audio/bluetooth/previous"); },
     updatePosition(pos) { return apiPost("/api/audio/bluetooth/set_position", pos); },
-    updateVolume(volume) { return apiPatch("", {volume}); },
+    updateVolume(volume) { return apiPatch("/api/system/volume", volume); },
 }
 
 export const fmAudioService = {
@@ -22,5 +22,5 @@ export const fmAudioService = {
     goUp() { return apiGet("/api/audio/go?direction=up"); },
     goDown() { return apiGet("/api/audio/go?direction=down"); },
     setPreset(freq) { return apiPost("/api/audio/set", {freq}); },
-    updateVolume(volume) { return apiPatch("", {volume}); },
+    updateVolume(volume) { return apiPatch("/api/system/volume", volume); },
 }

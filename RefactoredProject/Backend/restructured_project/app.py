@@ -4,8 +4,11 @@ from flask_socketio import SocketIO
 from flask_cors import CORS
 
 from database import init_db
+from services.AudioSourceService import AudioSourceService
+from services.audio_service import AudioService
 
 from api.system_api import system_api
+
 from api.sensors_api import sensors_api
 from api.lighting_api import lighting_api
 from api.audio_source_api import audio_source_api
@@ -44,6 +47,7 @@ def index():
     return render_template("index.html")
 
 app.register_blueprint(system_api, url_prefix="/api/system")
+
 app.register_blueprint(sensors_api, url_prefix="/api/sensors")
 app.register_blueprint(lighting_api, url_prefix="/api/lighting")
 
@@ -57,6 +61,10 @@ app.register_blueprint(bt_setup_api, url_prefix="/api/bluetooth")
 ####################################################################
 init_sensor_socket(socketio)
 init_audio_socket(socketio)
+
+#Initialize Moduls
+####################################################################
+AudioService.get().set_active_source(AudioSourceService.get().load()["activeSource"])
 
 
 #Start
