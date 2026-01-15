@@ -38,11 +38,17 @@
   gap: 0.25rem;
 }
 
+.audio .card {
+  width: 750px;
+  height: 70dvh;
+}
+
+
 .song-title {
   font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--ui-text-primary);
+  color: var(--ui-accent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -272,13 +278,27 @@
   font-weight: 200;
 }
 .fm-favorite {
-  height: 15px;
-  width: 15px;
+  height: 25px;
+  width: 25px;
 }
 .fm-name {
   color: var(--ui-accent);
   font-size: 1.5rem;
   font-weight: 400;
+}
+.icon--favorite {
+  -webkit-mask-image: url("../assets/icons/star-svgrepo-com.svg");
+  mask-image: url("../assets/icons/star-svgrepo-com.svg");
+  background-color: #FFC107;
+}
+.icon--favorite-filled {
+  -webkit-mask-image: url("../assets/icons/star-filled-svgrepo-com.svg");
+  mask-image: url("../assets/icons/star-filled-svgrepo-com.svg");
+  background-color: #FFC107;
+}
+.fm-favorite[aria-pressed="true"] { 
+  -webkit-mask-image: url("../assets/icons/star-filled-svgrepo-com.svg"); 
+  mask-image: url("../assets/icons/star-filled-svgrepo-com.svg"); 
 }
 
 

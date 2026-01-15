@@ -152,7 +152,7 @@ export async function renderAudio(root, store) {
               <div>
                 <span class="fm-freq">95.7</span>
                 <p class="fm-unit">MHZ</p>
-                <button type="button" class="fm-favorite"></button>
+                <button type="button" class="icon icon--favorite fm-favorite" aria-pressed="false"></button>
               </div>
               <span class="fm-name">Scanning...</span>
             </header>
@@ -181,7 +181,7 @@ export async function renderAudio(root, store) {
             <div class="fm-presets-container">
               <p class="fm-presets-title">Quick Presets</p>
               <div class="fm-presets">
-
+                
               </div>
             </div>
           
