@@ -86,10 +86,6 @@ def set_freq():
     return jsonify({"ok": True, "action": "set", "freq": freq_khz}), 200
 
 
-@fmAudio_api.route("/favorites", methods=["GET"])
-def favorites_list():
-    favs = AudioService.get().fm_list_favorites()
-    return jsonify({"ok": True, "favorites": favs}), 200
 @fmAudio_api.route("/presets", methods=["GET"])
 def presets_list():
     favs = AudioService.get().fm_list_presets()
