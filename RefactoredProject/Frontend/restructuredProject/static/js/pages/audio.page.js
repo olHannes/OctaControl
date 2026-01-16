@@ -92,6 +92,7 @@ export function renderBluetooth(root, data) {
 
 
 function renderFmRadio(root, data) {
+  console.log("data in render fm", data);
 }
 
 
@@ -205,6 +206,7 @@ export async function renderAudio(root, store) {
     if(!l) return;
     renderBluetooth(btPanel, l);
   });
+
   store.subscribeSelector(s => s.fm_audio, (l) => {
     if(!l) return;
     renderFmRadio(fmPanel, l);

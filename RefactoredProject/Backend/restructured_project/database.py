@@ -31,7 +31,8 @@ def wipe_db():
     db.execute("DROP TABLE IF EXISTS sensors")
     db.execute("DROP TABLE IF EXISTS sensor_log")
     db.execute("DROP TABLE IF EXISTS audio_state")
-    db.execute("DROP TABLE IF EXISTS dab_stations")
+    db.execute("DROP TABLE IF EXISTS fm_presets")
+    db.execute("DROP TABLE IF EXISTS fm_favorites")
     db.execute("DROP TABLE IF EXISTS gps_track")
     db.execute("DROP TABLE IF EXISTS system_log")
     db.execute("DROP TABLE IF EXISTS calibration")
@@ -87,14 +88,21 @@ def init_db():
     """)
 
     db.execute("""
-    CREATE TABLE IF NOT EXISTS dab_stations (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ensemble TEXT,
-        name TEXT NOT NULL,
-        service_id TEXT NOT NULL UNIQUE,
-        favorite BOOLEAN DEFAULT 0
+    CREATE TABLE IF NOT EXISTS fm_presets (
+        slot INTEGER PRIMARY KEY CHECK(slot BETWEEN 0 AND 5),
+        frequency_khz INTEGER NOT NULL CHECK(frequency_khz BETWEEN 87500 AND 108000),
+        name TEXT    
     )
     """)
+
+    db.execute("""
+    CREATE TABLE IF NOT EXISTS fm_favorites (
+        frequency_khz INTEGER PRIMARY KEY CHECK(frequency_khz BETWEEN 87500 AND 108000),
+        name TEXT NOT NULL,
+        created_at INTEGER
+    )
+    """)
+
 
     db.execute("""
     CREATE TABLE IF NOT EXISTS gps_track (
@@ -135,6 +143,7 @@ def init_db():
             ("lighting.brightness", "70"),
             ("lighting.colorKey", "sunset"),
             ("audio.active_source", "bluetooth"),
+            ("fm.last_frequency_khz", 98500),
     ])
 
     db.executemany("""
@@ -159,4 +168,15 @@ def init_db():
          "Position, Speed, Altitude, Time", 1)
     ])
 
+    db.executemany("""
+    INSERT OR IGNORE INTO fm_presets (slot, frequency_khz, name)
+    VALUES (?, ?, ?)
+    """, [
+        (0, 88500, "Preset 1"),
+        (1, 91500, "Preset 2"),
+        (2, 94500, "Preset 3"),
+        (3, 98500, "Preset 4"),
+        (4, 101300, "Preset 5"),
+        (5, 104600, "Preset 6"),
+    ])
     db.commit()
