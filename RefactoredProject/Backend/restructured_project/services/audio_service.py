@@ -1,22 +1,8 @@
 
+from services.audio_repo import AudioStateRepo
+
 from Reader.dummy_btReader import DummyBtReader
-
-
-
-class DummyFmReader:
-    def get_data(self):
-        pass
-    def set_volume(self, volume: int):
-        pass
-    def set_freq(self, freq):
-        pass
-    def scan_up(self):
-        pass
-    def scan_down(self):
-        pass
-    def save_fav(self, freq):
-        pass
-
+from Reader.dummy_fmReader import DummyFmReader
 
 
 class BtReader:
@@ -65,6 +51,7 @@ class AudioService:
             self.bt = DummyBtReader()
         try:    #FM-Radio
             self.fm = FmReader()
+            a = 5/0
         except:
             self.fm = DummyFmReader()
 
@@ -87,9 +74,10 @@ class AudioService:
     
     def set_volume(self, volume: int):
         reader = self._active_reader()
-        if not hasattr(reader, "set_volume"):
-            return False
-        return reader.set_volume(volume)
+        ok = hasattr(reader, "set_volume") and reader.set_volume(volume)
+        if ok:
+            AudioStateRepo.set_source_volume(self.active_source, int(volume))
+        return ok
     
     def read_bt(self):
         return self.bt.get_data()
