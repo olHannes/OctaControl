@@ -23,7 +23,7 @@ export const fmAudioService = {
     goUp() { return apiGet("/api/audio/radio/go?direction=up"); },
     goDown() { return apiGet("/api/audio/radio/go?direction=down"); },
     setFrequency(freq) { return apiPost("/api/audio/radio/set", {freq}); },
-    addFavorite(freq, name) { return apiPost("/api/audio/radio/favorites", freq, name); },
-    deleteFavorite(freq) { return apiDelete("/api/audio/radio/favorites", freq); },
+    addFavorite(freq, name) { return apiPost("/api/audio/radio/favorites", {freq, name}); },
+    deleteFavorite(freq) { return apiDelete("/api/audio/radio/favorites", {freq}); },
     updateVolume(volume) { return apiPatch("/api/system/volume", volume); },
 }

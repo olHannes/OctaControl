@@ -138,7 +138,71 @@ export function renderBluetooth(root, data) {
 
 
 function renderFmRadio(root, data) {
-  //console.log("data in render fm", data);
+  const fmFreq = root.querySelector(".fm-freq");
+  const fmFavBtn = root.querySelector(".favorite-btn");
+  const fmTitle = root.querySelector(".fm-name");
+  const fmFreqRange = root.querySelector(".fm-range");
+  const fmFavContainer = root.querySelector(".fm-favorites");
+
+  fmFreq && (fmFreq.innerText = data.frequency ? formatMhzFromKhz(data.frequency) : "--.-");
+  fmTitle && (fmTitle.innerText = data.radioStation ?? "Scanning...");
+  
+  if(fmFavBtn) {
+    fmFavBtn.setAttribute("aria-pressed", data.isFavorite ? "true": "false");
+
+    if (Number.isInteger(data.frequency)) {
+      fmFavBtn.dataset.freqKhz = String(data.frequency);
+      fmFavBtn.dataset.stationName = data.radioStation ?? "";
+    } else {
+      delete fmFavBtn.dataset.freqKhz;
+      delete fmFavBtn.dataset.stationName;
+    }
+  }
+
+  if(fmFreqRange && Number.isInteger(data.frequency)) {
+    const minKhz = 87500;
+    const maxKhz = 108000;
+    const span = Math.max(1, maxKhz - minKhz);
+    const percent = Math.min(100, Math.max(0, Math.round(((data.frequency - minKhz) / span) * 100)));
+    fmFreqRange.value = percent;
+  }
+
+  if(fmFavContainer) {
+    const favs = Array.isArray(data.favorites) ? data.favorites : [];
+    fmFavContainer.innerHTML = favs.map(f => {
+      const freqKhz = Number(f?.frequency);
+      const name = (f?.name ?? "").toString();
+
+      if(!Number.isInteger(freqKhz)) return "";
+      const isActive = Number.isInteger(data.frequency) && freqKhz === Number(data.frequency);
+      return `
+        <div class="fm-quick-preset fm-favorite-item${isActive ? " active": ""}" data-freq-khz="${freqKhz}">
+          <p>${formatMhzFromKhz(freqKhz)}</p>
+          <span class="fm-favorite-name">${name}</span>
+        </div>
+      `
+    }).join("");
+
+    if(fmFavContainer.dataset.bound !== "1") {
+      fmFavContainer.dataset.bound = "1";
+      fmFavContainer.addEventListener("click", async (e) => {
+        const item = e.target.closest(".fm-favorite-item");
+        if(!item || !fmFavContainer.contains(item)) return;
+        const freqKhz = Number(item.dataset.freqKhz);
+        if(!Number.isInteger(freqKhz)) return;
+
+        try {
+          await fmAudioService.setFrequency(freqKhz);
+        } catch (err) {
+          console.error("set favorite freqency failed", err);
+        } 
+      });
+    }
+  }
+
+  if (Number.isInteger(data.frequency)) {
+    setActivePreset(root, data.frequency);
+  }
 }
 
 
@@ -199,7 +263,7 @@ export async function renderAudio(root, store) {
               <div>
                 <span class="fm-freq">95.7</span>
                 <p class="fm-unit">MHZ</p>
-                <button type="button" class="icon icon--favorite fm-favorite" aria-pressed="false"></button>
+                <button type="button" class="icon icon--favorite fm-favorite favorite-btn" aria-pressed="false"></button>
               </div>
               <span class="fm-name">Scanning...</span>
             </header>
@@ -261,4 +325,27 @@ export async function renderAudio(root, store) {
   
   await audioHandler.loadInitialData(store).catch(console.error);
   audioHandler.applyActiveSourceUI(root, store);
+
+  //handle favorite button
+  const favBtn = root.querySelector(".favorite-btn");
+  if(!favBtn || favBtn.dataset.bound==="1") return;
+  favBtn.dataset.bound = "1";
+  favBtn.addEventListener("click", () => {
+    const isFavorite = favBtn.getAttribute("aria-pressed") === "true";
+    const freqKhz = Number(favBtn.dataset.freqKhz);
+    const stationName = favBtn.dataset.stationName ?? "";
+
+    if (!Number.isInteger(freqKhz)) {
+      console.warn("favorite click ignored – invalid frequency");
+      return;
+    }
+
+    try {
+      if(isFavorite) {
+        fmAudioService.deleteFavorite(freqKhz);
+      } else {
+        fmAudioService.addFavorite(freqKhz, stationName);
+      }
+    } catch (err) { console.error(err); }
+  });
 }
