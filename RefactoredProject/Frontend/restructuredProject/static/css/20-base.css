@@ -164,6 +164,12 @@ section { height: 100%; }
   opacity: 0.8;
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 .range {
   width: 400px;

@@ -176,9 +176,9 @@ function renderFmRadio(root, data) {
       if(!Number.isInteger(freqKhz)) return "";
       const isActive = Number.isInteger(data.frequency) && freqKhz === Number(data.frequency);
       return `
-        <div class="fm-quick-preset fm-favorite-item${isActive ? " active": ""}" data-freq-khz="${freqKhz}">
-          <p>${formatMhzFromKhz(freqKhz)}</p>
-          <span class="fm-favorite-name">${name}</span>
+        <div class="fm-favorite-item${isActive ? " active": ""}" data-freq-khz="${freqKhz}">
+          <p class="fm-favorit-freq">${formatMhzFromKhz(freqKhz)}</p>
+          <span class="fm-favorite-name truncate">${name}</span>
         </div>
       `
     }).join("");

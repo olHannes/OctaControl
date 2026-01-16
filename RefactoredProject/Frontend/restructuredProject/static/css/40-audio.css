@@ -259,7 +259,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 25px;
+  margin-bottom: 5px;
 }
 .panel--fm header div {
   display: flex;
@@ -269,13 +269,15 @@
 }
 .fm-freq {
   color: var(--ui-accent);
-  font-size: 4.5rem;
+  font-size: 3.75rem;
   font-weight: 100;
 }
 .fm-unit {
   color: var(--disabled);
   font-size: 2rem;
   font-weight: 200;
+  padding: 0;
+  margin: 0;
 }
 .fm-favorite {
   height: 25px;
@@ -321,14 +323,47 @@
   color: var(--disabled);
 }
 
-
 .fm-favorites-title-block {
   display: flex;
   gap: 5px;
+  margin-bottom: 4px;
 }
 .fm-favorites-title {
   margin: 0;
 }
+.fm-favorites {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+}
+.fm-favorite-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 25px;
+  max-height: 110px;
+  border-radius: 20px;
+  background-color: var(--object-background);
+}
+.fm-favorit-freq {
+  font-size: 1.3rem;
+  font-weight: 200;
+  margin: 0;
+  padding: 0;
+}
+.fm-favorite-name {
+  font-size: 1.1rem;
+  font-weight: 100;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 .fm-presets {
   display: flex;
