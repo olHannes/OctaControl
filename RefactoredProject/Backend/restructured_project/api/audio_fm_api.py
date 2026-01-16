@@ -115,10 +115,10 @@ def favorite_add():
 
 @fmAudio_api.route("/favorites", methods=["DELETE"])
 def favorite_delete():
-    freq_raw = request.args.get("freq")
-    if freq_raw is None:
+    body = request.get_json()
+    if not body or "freq" not in body:
         return bad_request("Missing required query parameter 'freq'", param="freq")
-
+    freq_raw = body["freq"]
     try:
         freq_khz = parse_freq_khz(freq_raw)
     except ValueError as e:
