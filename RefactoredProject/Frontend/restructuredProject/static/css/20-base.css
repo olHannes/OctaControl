@@ -181,5 +181,5 @@ section { height: 100%; }
   border-radius: 50%;
   background: white;
   cursor: pointer;
-  box-shadow: -1006px 0 0 1000px var(--range-fill);
+  box-shadow: -1006px 0 0 1000px var(--object-background);
 }

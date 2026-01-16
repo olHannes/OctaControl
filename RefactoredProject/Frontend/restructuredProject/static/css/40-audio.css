@@ -40,7 +40,7 @@
 
 .audio .card {
   width: 750px;
-  height: 70dvh;
+  height: auto;
 }
 
 
@@ -330,7 +330,26 @@
   margin: 0;
 }
 
-
+.fm-presets {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.fm-quick-preset {
+  background-color: var(--object-background);
+  padding: 15px 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fm-quick-preset p {
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 200;
+}
 
 
 .volume--container {

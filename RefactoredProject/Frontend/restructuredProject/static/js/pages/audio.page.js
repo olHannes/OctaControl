@@ -3,8 +3,54 @@ import { audioService, bluetoothAudioService, fmAudioService } from "../services
 import * as audioHandler from "../features/audio-page-handling.js";
 
 
+/*Initial Rendering of Presets*/
+function formatMhzFromKhz(freqKhz) {
+  return (freqKhz / 1000).toFixed(1);
+}
+function renderPresets(root, presets) {
+  const list = root.querySelector(".fm-presets");
+  if(!list) return;
 
+  list.innerHTML = presets.map(p => `
+    <div class="fm-quick-preset" data-freq-khz="${p.frequency}">
+      <p>${formatMhzFromKhz(p.frequency)}</p>
+    </div>
+  `).join("");
+}
+function bindPresetClicks(root) {
+  const list = root.querySelector(".fm-presets");
+  if (!list || list.dataset.bound === "1") return;
+  list.dataset.bound = "1";
 
+  list.addEventListener("click", async (e) => {
+    const item = e.target.closest(".fm-quick-preset");
+    if(!item || !list.contains(item)) return;
+
+    const freqKhz = Number(item.dataset.freqKhz);
+    if(!Number.isInteger(freqKhz)) return;
+
+    try {
+      await fmAudioService.setFrequency(freqKhz);
+    } catch (err) {
+      console.error("set preset failed", err);
+    }
+  });
+}
+function setActivePreset(root, currentFreqKhz) {
+  const list = root.querySelector(".fm-presets");
+  if (!list) return;
+
+  list.querySelectorAll(".fm-quick-preset").forEach(el => {
+    const f = Number(el.dataset.freqKhz);
+    el.classList.toggle("active", f === Number(currentFreqKhz));
+  });
+}
+async function initRenderPresets(root) {
+  const data = await fmAudioService.getPresets();
+  if(!data?.ok || !Array.isArray(data.presets)) return;
+  renderPresets(root, data.presets);
+  bindPresetClicks(root);
+}
 
 
 
@@ -92,7 +138,7 @@ export function renderBluetooth(root, data) {
 
 
 function renderFmRadio(root, data) {
-  console.log("data in render fm", data);
+  //console.log("data in render fm", data);
 }
 
 
@@ -182,7 +228,6 @@ export async function renderAudio(root, store) {
             <div class="fm-presets-container">
               <p class="fm-presets-title">Quick Presets</p>
               <div class="fm-presets">
-                
               </div>
             </div>
           
@@ -197,6 +242,8 @@ export async function renderAudio(root, store) {
     </section>
   `;
   
+  initRenderPresets(root);
+
   audioHandler.addAudioEventListener(root, store);
   
   const fmPanel = root.querySelector('[data-panel="fm"]');

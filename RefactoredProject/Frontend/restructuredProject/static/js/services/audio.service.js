@@ -17,11 +17,12 @@ export const bluetoothAudioService = {
 
 export const fmAudioService = {
     state() { return apiGet("/api/audio/radio/"); },
+    getPresets() { return apiGet("/api/audio/radio/presets"); },
     scanUp() { return apiGet("/api/audio/radio/scan?direction=up"); },
     scanDown() { return apiGet("/api/audio/radio/scan?direction=down"); },
     goUp() { return apiGet("/api/audio/radio/go?direction=up"); },
     goDown() { return apiGet("/api/audio/radio/go?direction=down"); },
-    setFrequency(freq) { return apiPost("/api/audio/radio/set", freq); },
+    setFrequency(freq) { return apiPost("/api/audio/radio/set", {freq}); },
     addFavorite(freq, name) { return apiPost("/api/audio/radio/favorites", freq, name); },
     deleteFavorite(freq) { return apiDelete("/api/audio/radio/favorites", freq); },
     updateVolume(volume) { return apiPatch("/api/system/volume", volume); },
