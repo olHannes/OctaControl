@@ -107,25 +107,24 @@ class DummyFmReader:
         except Exception:
             return False
 
-    def go(self, direction):
-        if direction == "up":
-            if self.frequency+self.FM_STEP <= self.FM_MAX:
-                self.frequency += self.FM_STEP
-        elif direction == "down":
-            if self.frequency-self.FM_STEP >= self.FM_MIN:
-                self.frequency -= self.FM_STEP
-        return self.frequency
+    def go_up(self) -> bool:
+        next_f = self.frequency + self.FM_STEP
+        if next_f > self.FM_MAX:
+            return False
+        self._tune(next_f)
+        return True
 
-    def scan(self, direction):
-        if direction == "up":
-            return self.scan_up()
-        elif direction == "down":
-            return self.scan_down()
-        return False
+    def go_down(self) -> bool:
+        next_f = self.frequency - self.FM_STEP
+        if next_f < self.FM_MIN:
+            return False
+        self._tune(next_f)
+        return True
+
+
     
     def scan_up(self) -> bool:
         return self._scan(+1)
-
     def scan_down(self) -> bool:
         return self._scan(-1)
 

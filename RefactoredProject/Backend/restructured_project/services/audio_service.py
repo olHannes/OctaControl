@@ -1,5 +1,5 @@
 
-from services.audio_repo import AudioStateRepo
+from services.audio_repo import AudioStateRepo, FmStateRepo
 
 from Reader.dummy_btReader import DummyBtReader
 from Reader.dummy_fmReader import DummyFmReader
@@ -83,4 +83,53 @@ class AudioService:
         return self.bt.get_data()
 
     def read_fm(self):
-        return self.fm.get_data()
+        data = self.fm.get_data()
+        favs = FmStateRepo.list_favorites()
+        data["favorites"] = favs
+
+        cur_freq = data.get("frequency")
+        if cur_freq is not None:
+            data["isFavorite"] = any(int(f["frequency"]) == int(cur_freq) for f in favs)
+        else:
+            data["isFavorite"] = False
+        return data
+    
+
+
+
+# ----- Fm-Radio specific functions (handles database changes) -----
+    def fm_set_freq(self, freq_khz: int):
+        ok = self.fm.set_freq(freq_khz)
+        if ok:
+            FmStateRepo.set_last_freq_khz(freq_khz)
+        return ok
+    
+    def fm_go(self, direction: str):
+        ok = self.fm.go_up() if direction == "up" else self.fm.go_down()
+        if ok:
+            data = self.fm.get_data()
+            if "frequency" in data and data["frequency"] is not None:
+                FmStateRepo.set_last_freq_khz(int(data["frequency"]))
+        return ok
+    
+    def fm_scan(self, direction: str):
+        ok = self.fm.scan_up() if direction == "up" else self.fm.scan_down()
+        if ok:
+            data = self.fm.get_data()
+            if "frequency" in data and data["frequency"] is not None:
+                FmStateRepo.set_last_freq_khz(int(data["frequency"]))
+        return ok
+    
+    def fm_add_favorite(self, freq_khz: int, name: str):
+        FmStateRepo.add_favorite(freq_khz, name)
+        return True
+    
+    def fm_delete_favorite(self, freq_khz: int):
+        FmStateRepo.delete_favorite(freq_khz)
+        return True
+    
+    def fm_list_favorites(self):
+        return FmStateRepo.list_favorites()
+    
+    def fm_list_presets(self):
+        return FmStateRepo.list_presets()

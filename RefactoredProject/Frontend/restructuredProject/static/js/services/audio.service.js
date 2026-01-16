@@ -1,4 +1,4 @@
-import { apiGet, apiPatch, apiPost } from "../api.js";
+import { apiGet, apiPatch, apiPost, apiDelete } from "../api.js";
 
 export const audioService = {
     get() { return apiGet("/api/audio/source/status"); },
@@ -21,6 +21,8 @@ export const fmAudioService = {
     scanDown() { return apiGet("/api/audio/radio/scan?direction=down"); },
     goUp() { return apiGet("/api/audio/radio/go?direction=up"); },
     goDown() { return apiGet("/api/audio/radio/go?direction=down"); },
-    setFrequency(freq) { return apiPost("/api/audio/radio/set", {freq}); },
+    setFrequency(freq) { return apiPost("/api/audio/radio/set", freq); },
+    addFavorite(freq, name) { return apiPost("/api/audio/radio/favorites", freq, name); },
+    deleteFavorite(freq) { return apiDelete("/api/audio/radio/favorites", freq); },
     updateVolume(volume) { return apiPatch("/api/system/volume", volume); },
 }
