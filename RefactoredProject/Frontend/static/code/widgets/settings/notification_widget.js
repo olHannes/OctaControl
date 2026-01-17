@@ -79,7 +79,7 @@ class Notification extends HTMLElement {
                     align-items: center;
                     gap: 12px;
                     
-                    background: linear-gradient(135deg, #ff9800, #ffc107);
+                    background: linear-gradient(135deg, var(--favorite), #ffc107);
                     color: #fff;
                     padding: 14px 20px;
                     border-radius: 12px;

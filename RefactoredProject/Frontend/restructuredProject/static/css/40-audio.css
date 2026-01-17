@@ -291,12 +291,12 @@
 .icon--favorite {
   -webkit-mask-image: url("../assets/icons/star-svgrepo-com.svg");
   mask-image: url("../assets/icons/star-svgrepo-com.svg");
-  background-color: #FFC107;
+  background-color: var(--favorite);
 }
 .icon--favorite-filled {
   -webkit-mask-image: url("../assets/icons/star-filled-svgrepo-com.svg");
   mask-image: url("../assets/icons/star-filled-svgrepo-com.svg");
-  background-color: #FFC107;
+  background-color: var(--favorite);
 }
 .fm-favorite[aria-pressed="true"] { 
   -webkit-mask-image: url("../assets/icons/star-filled-svgrepo-com.svg"); 
@@ -348,6 +348,11 @@
   border-radius: 20px;
   background-color: var(--object-background);
 }
+.fm-favorite-item.active {
+  color: var(--favorite);
+  background-color: var(--panel);
+  border: 1px solid var(--ui-accent-border);
+}
 .fm-favorit-freq {
   font-size: 1.3rem;
   font-weight: 200;
@@ -384,6 +389,10 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 200;
+}
+.fm-quick-preset.active {
+  background-color: var(--panel);
+  border: 1px solid var(--ui-accent-border);
 }
 
 
