@@ -90,6 +90,8 @@ class DummyFmReader:
             "radioStation": self.radioStation,
             "signal": self.signal,
             "volume": self.volume,
+            "min_freq": self.FM_MIN,
+            "max_freq": self.FM_MAX
         }
 
     def set_volume(self, volume: int) -> bool:
