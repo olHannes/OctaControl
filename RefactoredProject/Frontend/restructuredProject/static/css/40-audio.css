@@ -334,6 +334,37 @@
   color: var(--disabled);
 }
 
+.fm-control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+.fm-control .vertical-container {
+  gap: 33px;
+}
+.fm-control span {
+  background-color: rgba(255, 255, 255, 0.367);
+}
+.fm-freq-up {
+  -webkit-mask-image: url("../assets/icons/arrow-up-svgrepo-com.svg");
+  mask-image: url("../assets/icons/arrow-up-svgrepo-com.svg");
+}
+.fm-freq-down {
+  -webkit-mask-image: url("../assets/icons/arrow-down-svgrepo-com.svg");
+  mask-image: url("../assets/icons/arrow-down-svgrepo-com.svg");
+}
+.fm-freq-right {
+  -webkit-mask-image: url("../assets/icons/arrow-right-svgrepo-com.svg");
+  mask-image: url("../assets/icons/arrow-right-svgrepo-com.svg");
+}
+.fm-freq-left {
+  -webkit-mask-image: url("../assets/icons/arrow-left-svgrepo-com.svg");
+  mask-image: url("../assets/icons/arrow-left-svgrepo-com.svg");
+}
+
+
 .fm-favorites-title-block {
   display: flex;
   gap: 5px;

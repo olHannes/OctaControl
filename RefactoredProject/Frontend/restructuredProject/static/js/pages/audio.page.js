@@ -281,6 +281,12 @@ export async function renderAudio(root, store) {
             </div>
 
             <div class="fm-control">
+              <span class="fm-freq-left icon"></span>
+              <div class="vertical-container">
+                <span class="fm-freq-up icon icon--arrow-left"></span>
+                <span class="fm-freq-down icon icon--arrow-right"></span>
+              </div>
+              <span class="fm-freq-right icon"></span>
             </div>
 
             <div class="fm-favorites-container">
@@ -352,4 +358,7 @@ export async function renderAudio(root, store) {
       }
     } catch (err) { console.error(err); }
   });
+
+  //handle fm-control buttons
+  
 }
