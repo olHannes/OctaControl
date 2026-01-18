@@ -360,5 +360,36 @@ export async function renderAudio(root, store) {
   });
 
   //handle fm-control buttons
-  
+  const fmNextBtn = root.querySelector(".fm-freq-right");
+  fmNextBtn?.addEventListener("click",async () => {
+    if(fmNextBtn.disabled) return;
+    fmNextBtn.disabled = true;
+    await fmAudioService.goUp();
+    await new Promise(r => setTimeout(r, 750));
+    fmNextBtn.disabled = false;
+  });
+  const fmPreviousBtn = root.querySelector(".fm-freq-left");
+  fmPreviousBtn?.addEventListener("click", async () => {
+    if(fmPreviousBtn.disabled) return;
+    fmPreviousBtn.disabled = true;
+    await fmAudioService.goDown();
+    await new Promise(r => setTimeout(r, 750));
+    fmPreviousBtn.disabled = false;
+  });
+  const fmUpBtn = root.querySelector(".fm-freq-up");
+  fmUpBtn?.addEventListener("click", async () => {
+    if(fmUpBtn.disabled) return;
+    fmUpBtn.disabled = true;
+    await fmAudioService.scanUp();
+    await new Promise(r => setTimeout(r, 750));
+    fmUpBtn.disabled = false;
+  });
+  const fmDownBtn = root.querySelector(".fm-freq-down");
+  fmDownBtn?.addEventListener("click", async () => {
+    if(fmDownBtn.disabled) return;
+    fmDownBtn.disabled = true;
+    await fmAudioService.scanDown();
+    await new Promise(r => setTimeout(r, 750));
+    fmDownBtn.disabled = false;
+  });
 }

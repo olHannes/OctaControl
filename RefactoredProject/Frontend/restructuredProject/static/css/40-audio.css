@@ -356,12 +356,16 @@
   mask-image: url("../assets/icons/arrow-down-svgrepo-com.svg");
 }
 .fm-freq-right {
-  -webkit-mask-image: url("../assets/icons/arrow-right-svgrepo-com.svg");
-  mask-image: url("../assets/icons/arrow-right-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/skip-svgrepo-com.svg");
+  mask-image: url("../assets/icons/skip-svgrepo-com.svg");
+  height: 25px;
+  width: 25px;
 }
 .fm-freq-left {
-  -webkit-mask-image: url("../assets/icons/arrow-left-svgrepo-com.svg");
-  mask-image: url("../assets/icons/arrow-left-svgrepo-com.svg");
+  -webkit-mask-image: url("../assets/icons/previous-svgrepo-com.svg");
+  mask-image: url("../assets/icons/previous-svgrepo-com.svg");
+  height: 25px;
+  width: 25px;
 }
 
 
