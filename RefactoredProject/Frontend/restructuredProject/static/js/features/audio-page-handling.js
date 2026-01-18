@@ -171,5 +171,59 @@ function addBtEventListener(root, store) {
 }
 
 function addFmEventListener(root, store) {
+  //handle favorite button
+  const favBtn = root.querySelector(".favorite-btn");
+  if(!favBtn || favBtn.dataset.bound==="1") return;
+  favBtn.dataset.bound = "1";
+  favBtn.addEventListener("click", () => {
+    const isFavorite = favBtn.getAttribute("aria-pressed") === "true";
+    const freqKhz = Number(favBtn.dataset.freqKhz);
+    const stationName = favBtn.dataset.stationName ?? "";
 
+    if (!Number.isInteger(freqKhz)) {
+      console.warn("favorite click ignored – invalid frequency");
+      return;
+    }
+    try {
+      if(isFavorite) {
+        fmAudioService.deleteFavorite(freqKhz);
+      } else {
+        fmAudioService.addFavorite(freqKhz, stationName);
+      }
+    } catch (err) { console.error(err); }
+  });
+
+  //handle fm-control buttons
+  const fmNextBtn = root.querySelector(".fm-freq-right");
+  fmNextBtn?.addEventListener("click",async () => {
+    if(fmNextBtn.disabled) return;
+    fmNextBtn.disabled = true;
+    await fmAudioService.goUp();
+    await new Promise(r => setTimeout(r, 750));
+    fmNextBtn.disabled = false;
+  });
+  const fmPreviousBtn = root.querySelector(".fm-freq-left");
+  fmPreviousBtn?.addEventListener("click", async () => {
+    if(fmPreviousBtn.disabled) return;
+    fmPreviousBtn.disabled = true;
+    await fmAudioService.goDown();
+    await new Promise(r => setTimeout(r, 750));
+    fmPreviousBtn.disabled = false;
+  });
+  const fmUpBtn = root.querySelector(".fm-freq-up");
+  fmUpBtn?.addEventListener("click", async () => {
+    if(fmUpBtn.disabled) return;
+    fmUpBtn.disabled = true;
+    await fmAudioService.scanUp();
+    await new Promise(r => setTimeout(r, 750));
+    fmUpBtn.disabled = false;
+  });
+  const fmDownBtn = root.querySelector(".fm-freq-down");
+  fmDownBtn?.addEventListener("click", async () => {
+    if(fmDownBtn.disabled) return;
+    fmDownBtn.disabled = true;
+    await fmAudioService.scanDown();
+    await new Promise(r => setTimeout(r, 750));
+    fmDownBtn.disabled = false;
+  });
 }
