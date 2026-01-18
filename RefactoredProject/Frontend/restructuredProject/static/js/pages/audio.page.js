@@ -143,9 +143,13 @@ function renderFmRadio(root, data) {
   const fmTitle = root.querySelector(".fm-name");
   const fmFreqRange = root.querySelector(".fm-range");
   const fmFavContainer = root.querySelector(".fm-favorites");
+  const fmFreqMin = root.querySelector(".freq-min");
+  const fmFreqMax = root.querySelector(".freq-max");
 
   fmFreq && (fmFreq.innerText = data.frequency ? formatMhzFromKhz(data.frequency) : "--.-");
   fmTitle && (fmTitle.innerText = data.radioStation ?? "Scanning...");
+  fmFreqMin && (fmFreqMin.innerText = data.min_freq ? formatMhzFromKhz(data.min_freq) : "00.0");
+  fmFreqMax && (fmFreqMax.innerText = data.max_freq ? formatMhzFromKhz(data.max_freq) : "000.0");
   
   if(fmFavBtn) {
     fmFavBtn.setAttribute("aria-pressed", data.isFavorite ? "true": "false");
@@ -159,9 +163,9 @@ function renderFmRadio(root, data) {
     }
   }
 
-  if(fmFreqRange && Number.isInteger(data.frequency)) {
-    const minKhz = 87500;
-    const maxKhz = 108000;
+  if(fmFreqRange && Number.isInteger(data.frequency) && data.min_freq && data.max_freq) {
+    const maxKhz = data.max_freq;
+    const minKhz = data.min_freq;
     const span = Math.max(1, maxKhz - minKhz);
     const percent = Math.min(100, Math.max(0, Math.round(((data.frequency - minKhz) / span) * 100)));
     fmFreqRange.value = percent;

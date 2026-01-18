@@ -17,7 +17,7 @@
   --tile-bg: rgba(20, 45, 30, .55);
   --tile-border: rgba(60, 200, 120, .16);
 
-  --object-background: #ffffff24;
+  --object-background: #ffffff0f;
 
   --color-palette-skoda: #25d38a;
   --color-palette-ocean: #3b82f6;
@@ -31,9 +31,13 @@
   --system-color: var(--color-palette-sunset);
   --ui-accent: var(--system-color);
   --ui-accent-weak: color-mix(in srgb, var(--system-color) 20%, transparent);
+  --ui-accent-weak_2: color-mix(in srgb, var(--system-color) 15%, transparent);
   --ui-accent-border: color-mix(in srgb, var(--system-color) 35%, transparent);
   --ui-accent-hover: color-mix(in srgb, var(--system-color) 85%, white);
   --ui-accent-active: color-mix(in srgb, var(--system-color) 85%, black);
+  --ui-accent-bright: color-mix(in srgb,var(--system-color) 95%,white 5%);
+
+
 
   --light-blue: #42A5F5;
   --light-orange: #FFCA28;
